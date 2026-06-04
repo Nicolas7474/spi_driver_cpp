@@ -33,7 +33,7 @@ int main (void)
 	NBdelay_ms(100);
 
 	// Simply call initialization with your desired runtime prescaler speed division
-	spi1.Init(BaudRatePrescaler::DIV_8);
+	spi1.Init(BaudRatePrescaler::DIV_8); // DIV_8 => 11.25 MHz
 
 
 	uint8_t bufferTx[] = {0x9F, 0x11, 0x22, 0x33, 0x44};
@@ -46,11 +46,11 @@ int main (void)
 	while(1) {
 
 		spi1.CS1_Low();
-
 		spi1.Transmit(vue, 10);
 		spi1.Receive(vue2, 10);
 
-		// spi1.TransmitReceive(vue, vue2, 10);
+
+		//spi1.TransmitReceive(vue, vue2, 10);
 
 		spi1.CS1_High();
 

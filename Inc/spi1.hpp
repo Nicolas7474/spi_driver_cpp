@@ -89,9 +89,8 @@ private:
 
 
 /* =======================================================================================================================
-  SEPARATE HIGH-SPEED INLINE DEFINITIONS :
-  The compiler literally erases the concept of the function call.
-  Reduces drastically the delay between falling edge of CS and first edge of MOSI (by factor 2 at least).
+  SEPARATE HIGH-SPEED INLINE DEFINITIONS : the compiler literally erases the concept of the function call.
+  Reduces drastically the delay between falling edge of CS and first edge of MOSI (more than factor 2).
   Split the function into a fast inline header and a heavy static worker, which avoids code bloat: if a
   large inline function is called in 20 different places throughout the codebase, the complete function code
   will be copied into the flash memory 20 distinct times and can quickly deplete the available flash space.
@@ -124,6 +123,7 @@ __attribute__((always_inline)) inline BareM_Status SpiDriver::Transmit(std::span
 	}
 	return Transmit_MainBody(txData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
 }
+
 
 __attribute__((always_inline)) inline BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
 	// Clean, optimized entry user point - fast safety check

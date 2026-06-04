@@ -380,8 +380,8 @@ void Spi1_LowLevelInit(void) {
     GPIOB->MODER |=  ((2 << GPIO_MODER_MODER4_Pos) | (2 << GPIO_MODER_MODER5_Pos));
     GPIOB->AFR[0] &= ~((0xF << GPIO_AFRL_AFSEL4_Pos) | (0xF << GPIO_AFRL_AFSEL5_Pos));
     GPIOB->AFR[0] |=  ((5   << GPIO_AFRL_AFSEL4_Pos) | (5   << GPIO_AFRL_AFSEL5_Pos));
-    GPIOB->PUPDR &= ~(3 << GPIO_PUPDR_PUPD14_Pos); // gently pulls (40Kohm) the MISO line back up to the VCC rail whenever the slave releases the bus
-    GPIOB->PUPDR |=  (1 << GPIO_PUPDR_PUPD14_Pos); // 1 = Pull-up, 2 = Pull-down
+    GPIOB->PUPDR &= ~(3 << GPIO_PUPDR_PUPD4_Pos); // Helps to gently pull (40Kohm) the MISO line back up to the VCC rail whenever the slave releases the bus
+    GPIOB->PUPDR |=  (1 << GPIO_PUPDR_PUPD4_Pos); // 1 = Pull-up, 2 = Pull-down
 
     // CRITICAL: Force SPI Clock and Data lines to Very High Speed (30 MHz - 100 MHz+)
     GPIOA->OSPEEDR |= (3 << GPIO_OSPEEDR_OSPEED5_Pos);
@@ -390,12 +390,13 @@ void Spi1_LowLevelInit(void) {
     // 4. PA15 = CS1 (Standard GPIO Output, Low Speed for natural hardware padding)
     GPIOA->MODER   &= ~(3 << GPIO_MODER_MODER15_Pos);
     GPIOA->MODER   |=  (1 << GPIO_MODER_MODER15_Pos);
-    GPIOA->OSPEEDR |= (1 << GPIO_OSPEEDR_OSPEED15_Pos); // 01 = Mid Speed
+    GPIOA->OSPEEDR |= (2 << GPIO_OSPEEDR_OSPEED15_Pos); // 2 = High Speed
     GPIOA->BSRR     =  GPIO_BSRR_BS15;                    // Start High
 
     // 5. PC13 = CS2 (Standard GPIO Output, Low Speed)
     GPIOC->MODER   &= ~(3 << GPIO_MODER_MODER13_Pos);
     GPIOC->MODER   |=  (1 << GPIO_MODER_MODER13_Pos);
-    GPIOC->OSPEEDR |= ~(3 << GPIO_OSPEEDR_OSPEED13_Pos); //  Speed ??
+    GPIOC->OSPEEDR &= ~(3 << GPIO_OSPEEDR_OSPEED13_Pos);
+    GPIOC->OSPEEDR |=  (2 << GPIO_OSPEEDR_OSPEED13_Pos); // 2 = High Speed, 1 = Mid Speed
     GPIOC->BSRR     =  GPIO_BSRR_BS13;                    // Start High
 }
