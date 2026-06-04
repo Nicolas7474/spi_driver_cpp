@@ -52,21 +52,21 @@ struct SpiHardwareConfig {
 
 
 class SpiDriver {
+
 public:
     explicit SpiDriver(const SpiHardwareConfig& hardwareConfig);
     ~SpiDriver() = default;
 
     BareM_Status Init(BaudRatePrescaler prescaler);
-    BareM_Status Transmit(const uint8_t* data, uint32_t size, uint32_t timeoutMs);
-    BareM_Status Receive(uint8_t* data, uint32_t size, uint32_t timeoutMs);
-    BareM_Status Transmit_DMA(std::span<const uint8_t> payload);
-    BareM_Status Receive_DMA(uint8_t* pData, uint32_t len);
-
-    // This stays completely hidden in your .cpp file, drawing zero flash bloat
-    BareM_Status TransmitReceive_PollingLoop(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
-    // Inline function - he compiler literally erases the concept of the function call
-    // Reduce drastically the delay between falling edge of CS and first edge of CLK (420ns->165ns)
+    // Polling functions declarations
+    BareM_Status Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs);
+    BareM_Status Transmit_MainBody(std::span<const uint8_t> txData, uint32_t timeoutMs);
+    BareM_Status Receive(std::span<uint8_t> rxData, uint32_t timeoutMs);
     BareM_Status TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
+    BareM_Status TransmitReceive_MainBody(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
+    // DMA functions declarations
+    BareM_Status Receive_DMA(uint8_t* pData, uint32_t len);
+    BareM_Status Transmit_DMA(std::span<const uint8_t> payload);
 
     SpiState GetState() const { return m_state; }
     void Handle_DMA_RX_IRQ();
@@ -88,24 +88,69 @@ private:
 };
 
 
-/* SEPARATE HIGH-SPEED INLINE DEFINITION
-  Split the function into a fast inline header and a heavy static worker avoids Code Bloat (Flash Memory Expansion).
-  If you call a big inline function in 20 different places throughout the codebase, the complete, complex while loop engine
-  will be copied into the flash memory 20 distinct times. For a large bare-metal application running on a memory-constrained MCU,
-  this can quickly deplete the available flash space. __attribute__((always_inline)) should be reserved for cases where timing is critical.
- */
-__attribute__((always_inline)) inline BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
-	// This is the clean, hyper-optimized entry point the user calls
+/* =======================================================================================================================
+  SEPARATE HIGH-SPEED INLINE DEFINITIONS :
+  The compiler literally erases the concept of the function call.
+  Reduces drastically the delay between falling edge of CS and first edge of MOSI (by factor 2 at least).
+  Split the function into a fast inline header and a heavy static worker, which avoids code bloat: if a
+  large inline function is called in 20 different places throughout the codebase, the complete function code
+  will be copied into the flash memory 20 distinct times and can quickly deplete the available flash space.
+  __attribute__((always_inline)) should be reserved when timing is critical.
+======================================================================================================================= */
 
-    // FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store
-    if (!txData.empty()) {				// Kick the hardware immediately (the first byte)
-        config.spi->DR = txData[0]; 	// Reduce drastically the delay between falling edge of CS and first edge of CLK (780ns->420ns)
-    } else {
-        config.spi->DR = 0x00; // Safe dummy kick for pure Receive operations
-    }
-
-    return TransmitReceive_PollingLoop(txData, rxData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
+__attribute__((always_inline)) inline BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs) {
+	// FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store
+	if (__builtin_expect(m_state == SpiState::READY, 1)) {
+		if (!txData.empty()) {				// Kick the hardware immediately (the first byte)
+			config.spi->DR = txData[0]; 	// Reduce drastically the delay between falling edge of CS and that of CLK (780ns -> 420ns)
+		} else {
+			return BareM_Status::ERROR;
+		}
+	} else {
+		// FALLBACK: The programmer made a mistake or a background task is running
+		uint32_t timeout_ct = GetSysTick() + timeoutMs;
+		// We wait/block right here until the previous transaction clears up or times out
+		while (m_state != SpiState::READY) {
+			if (GetSysTick() > timeout_ct) {
+				return BareM_Status::TIMEOUT;
+			}
+		}
+		// The bus finally cleared, fire the delayed first byte
+		if (!txData.empty()) {
+			config.spi->DR = txData[0];
+		} else {
+			return BareM_Status::ERROR;
+		}
+	}
+	return Transmit_MainBody(txData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
 }
+
+__attribute__((always_inline)) inline BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
+	// Clean, optimized entry user point - fast safety check
+	if (__builtin_expect(m_state == SpiState::READY, 1)) {
+		// FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store
+		if (!txData.empty()) {				// Kick the hardware immediately (the first byte)
+			config.spi->DR = txData[0]; 	// Reduce drastically the delay between falling edge of CS and that of CLK (780ns -> 420ns)
+		} else {
+			config.spi->DR = 0x00; // Safe dummy kick for pure Receive operations
+		}
+	} else {
+        // FALLBACK: The programmer made a mistake or a background task is running
+        uint32_t timeout_ct = GetSysTick() + timeoutMs;
+        while (m_state != SpiState::READY) {
+            if (GetSysTick() > timeout_ct) {
+                return BareM_Status::TIMEOUT;
+            }
+        }
+        if (!txData.empty()) {
+            config.spi->DR = txData[0];
+        } else {
+            config.spi->DR = 0x00;
+        }
+    }
+    return TransmitReceive_MainBody(txData, rxData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
+}
+
 
 
 extern SpiDriver spi1;

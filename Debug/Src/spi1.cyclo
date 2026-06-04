@@ -1,15 +1,15 @@
-../Src/spi1.cpp:336:6:void Spi1_LowLevelInit()	1
+../Src/spi1.cpp:368:6:void Spi1_LowLevelInit()	1
 ../Src/spi1.cpp:5:1:SpiDriver::SpiDriver(const SpiHardwareConfig&)	1
 ../Src/spi1.cpp:56:6:void SpiDriver::ClearDmaFlags(DMA_Stream_TypeDef*)	18
 ../Src/spi1.cpp:22:6:void SpiDriver::ConfigureDma()	8
 ../Src/spi1.cpp:7:14:BareM_Status SpiDriver::Init(BaudRatePrescaler)	2
-../Src/spi1.cpp:75:14:BareM_Status SpiDriver::Transmit(const uint8_t*, uint32_t, uint32_t)	9
-../Src/spi1.cpp:109:14:BareM_Status SpiDriver::Receive(uint8_t*, uint32_t, uint32_t)	10
-../Src/spi1.cpp:150:14:BareM_Status SpiDriver::TransmitReceive_PollingLoop(std::span<const unsigned char>, std::span<unsigned char>, uint32_t)	17
-../Src/spi1.cpp:230:14:BareM_Status SpiDriver::Transmit_DMA(std::span<const unsigned char>)	4
-../Src/spi1.cpp:251:14:BareM_Status SpiDriver::Receive_DMA(uint8_t*, uint32_t)	5
-../Src/spi1.cpp:279:6:void SpiDriver::Handle_DMA_RX_IRQ()	2
-../Src/spi1.cpp:288:6:void SpiDriver::Handle_DMA_TX_IRQ()	3
-../Src/spi1.cpp:324:10:void DMA2_Stream2_IRQHandler()	1
-../Src/spi1.cpp:329:10:void DMA2_Stream3_IRQHandler()	1
-../Src/spi1.cpp:370:1:cpp)	1
+../Src/spi1.cpp:79:14:BareM_Status SpiDriver::Receive(std::span<unsigned char>, uint32_t)	10
+../Src/spi1.cpp:133:14:BareM_Status SpiDriver::Transmit_MainBody(std::span<const unsigned char>, uint32_t)	10
+../Src/spi1.cpp:186:14:BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const unsigned char>, std::span<unsigned char>, uint32_t)	17
+../Src/spi1.cpp:262:14:BareM_Status SpiDriver::Transmit_DMA(std::span<const unsigned char>)	4
+../Src/spi1.cpp:283:14:BareM_Status SpiDriver::Receive_DMA(uint8_t*, uint32_t)	5
+../Src/spi1.cpp:311:6:void SpiDriver::Handle_DMA_RX_IRQ()	2
+../Src/spi1.cpp:320:6:void SpiDriver::Handle_DMA_TX_IRQ()	3
+../Src/spi1.cpp:356:10:void DMA2_Stream2_IRQHandler()	1
+../Src/spi1.cpp:361:10:void DMA2_Stream3_IRQHandler()	1
+../Src/spi1.cpp:402:1:cpp)	1

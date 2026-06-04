@@ -46,11 +46,11 @@ int main (void)
 	while(1) {
 
 		spi1.CS1_Low();
-		//SPI1->DR = bufferTx[0];
-//		spi1.Transmit_DMA(vue.subspan(0, 1));
-//		spi1.Receive_DMA(buf, 3);
 
-		spi1.TransmitReceive(vue, vue2, 10);
+		spi1.Transmit(vue, 10);
+		spi1.Receive(vue2, 10);
+
+		// spi1.TransmitReceive(vue, vue2, 10);
 
 		spi1.CS1_High();
 

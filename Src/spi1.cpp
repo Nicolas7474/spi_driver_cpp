@@ -72,52 +72,30 @@ void SpiDriver::ClearDmaFlags(DMA_Stream_TypeDef* stream) {
     }
 }
 
-BareM_Status SpiDriver::Transmit(const uint8_t* data, uint32_t size, uint32_t timeoutMs) {
-    if (size == 0) return BareM_Status::ERROR;
-    while (m_state == SpiState::BUSY_TX);
 
-    m_state = SpiState::BUSY_TX;
+
+
+
+BareM_Status SpiDriver::Receive(std::span<uint8_t> rxData, uint32_t timeoutMs) {
+    if (rxData.empty()) return BareM_Status::ERROR;
+
     uint32_t timeout_ct = GetSysTick() + timeoutMs;
-    uint32_t i = 0;
 
-    while (i < size) {
-        while (!(config.spi->SR & SPI_SR_TXE)) {
-            if (GetSysTick() > timeout_ct) {
-                m_state = SpiState::READY;
-                return BareM_Status::TIMEOUT;
-            }
-        }
-        config.spi->DR = data[i];
-        i++;
+    // Check if the peripheral is ready
+    while (m_state != SpiState::READY) {
+    	if (GetSysTick() > timeout_ct) {
+    		m_state = SpiState::READY;
+    		return BareM_Status::TIMEOUT;
+    	}
     }
-
-    while (!(config.spi->SR & SPI_SR_TXE));
-    while (config.spi->SR & SPI_SR_BSY) {
-        if (GetSysTick() > timeout_ct) {
-            m_state = SpiState::READY;
-            return BareM_Status::TIMEOUT;
-        }
-    }
-
-    [[maybe_unused]] volatile uint32_t dummyReg = config.spi->DR;
-    [[maybe_unused]] volatile uint32_t dummySr  = config.spi->SR;
-
-    m_state = SpiState::READY;
-    return BareM_Status::OK;
-}
-
-BareM_Status SpiDriver::Receive(uint8_t* data, uint32_t size, uint32_t timeoutMs) {
-    if (size == 0) return BareM_Status::ERROR;
-    while (m_state == SpiState::BUSY_RX);
-
     m_state = SpiState::BUSY_RX;
-    uint32_t timeout_ct = GetSysTick() + timeoutMs;
 
     // Clear any residual garbage flag
     [[maybe_unused]] volatile uint32_t dummyRead = config.spi->DR;
 
-    uint32_t txCounter = size;
-    uint32_t rxCounter = size;
+    uint32_t txCounter = rxData.size();
+    uint32_t rxCounter = rxData.size();
+    uint8_t* destPtr = rxData.data();
 
     // PIPELINED LOOP: Separate the TX pushes from the RX pulls
     while (rxCounter > 0) {
@@ -128,7 +106,7 @@ BareM_Status SpiDriver::Receive(uint8_t* data, uint32_t size, uint32_t timeoutMs
         }
         // 2. Read bytes as soon as they arrive
         if (config.spi->SR & SPI_SR_RXNE) {
-            *data++ = static_cast<uint8_t>(config.spi->DR);
+            *destPtr++ = static_cast<uint8_t>(config.spi->DR);
             rxCounter--;
         }
         // 3. Optional: Add your timeout check here if needed
@@ -146,8 +124,66 @@ BareM_Status SpiDriver::Receive(uint8_t* data, uint32_t size, uint32_t timeoutMs
 
 
 
-// Regular, non-inlined function that does the heavy lifting
-BareM_Status SpiDriver::TransmitReceive_PollingLoop(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
+
+
+
+
+
+BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint32_t timeoutMs) {
+	// Regular, non-inlined function that does the heavy lifting
+
+    uint32_t timeout_ct = GetSysTick() + timeoutMs;
+
+    // Check if the peripheral is ready
+    while (m_state != SpiState::READY) {
+        if (GetSysTick() > timeout_ct) {
+            m_state = SpiState::READY;
+            return BareM_Status::TIMEOUT;
+        }
+    }
+    m_state = SpiState::BUSY_TX;
+
+    const uint8_t* txPtr = txData.data();
+    uint32_t totalBytes  = txData.size() - 1;
+    uint32_t bytesSent   = 0;
+    uint32_t bytesRead   = 0;
+
+    // Hyper-fast pipelined loop (No nested blocking loops!)
+    while (bytesRead < totalBytes) {
+
+        // 1. Keep the Transmit Mailbox full whenever TXE is ready
+        if (bytesSent < totalBytes && (config.spi->SR & SPI_SR_TXE)) {
+            config.spi->DR = *txPtr++;
+            bytesSent++;
+        }
+        // 2. Clear out RX bytes instantly as they arrive, without blocking
+        if (config.spi->SR & SPI_SR_RXNE) {
+            [[maybe_unused]] volatile uint8_t dummySink = static_cast<uint8_t>(config.spi->DR);
+            bytesRead++;
+        }
+        // 3. Single safety timeout gate for the entire loop execution
+        if (GetSysTick() > timeout_ct) {
+            m_state = SpiState::READY;
+            return BareM_Status::TIMEOUT;
+        }
+    }
+
+    // Wait to allow Chip Select (CS) to be pulled high again
+    while (config.spi->SR & SPI_SR_BSY) {
+        if (GetSysTick() > timeout_ct) {
+            m_state = SpiState::READY;
+            return BareM_Status::TIMEOUT;
+        }
+    }
+
+    m_state = SpiState::READY;
+    return BareM_Status::OK;
+}
+
+
+
+BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
+	// Regular, non-inlined function that does the heavy lifting
 
 	uint32_t totalSize = 0;
     uint32_t skipRxBytes = 0;
@@ -171,8 +207,8 @@ BareM_Status SpiDriver::TransmitReceive_PollingLoop(std::span<const uint8_t> txD
     uint32_t realRxLeft       = rxData.size();
 
     // Safe pointer setups without sacrificing setup-latency speed
-    uint8_t pureRxDummy = 0x00;
-    const uint8_t* txPtr = txData.empty() ? &pureRxDummy : (txData.data() + 1);
+    uint8_t RxDummy = 0x00;
+    const uint8_t* txPtr = txData.empty() ? &RxDummy : (txData.data() + 1);
     uint32_t txPointerIncrement = txData.empty() ? 0 : 1;
 
     uint8_t dummySink = 0;
@@ -198,7 +234,6 @@ BareM_Status SpiDriver::TransmitReceive_PollingLoop(std::span<const uint8_t> txD
             }
             txBytesRemaining--;
         }
-
         // --- RECEIVE HANDLER ---
         if (config.spi->SR & SPI_SR_RXNE) {
             uint8_t receivedByte = static_cast<uint8_t>(config.spi->DR);
@@ -211,19 +246,15 @@ BareM_Status SpiDriver::TransmitReceive_PollingLoop(std::span<const uint8_t> txD
             }
             rxClocksCounted++;
         }
-
         if (GetSysTick() > timeout_ct) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
     }
-
     while (config.spi->SR & SPI_SR_BSY);
     m_state = SpiState::READY;
     return BareM_Status::OK;
 }
-
-
 
 
 
@@ -365,6 +396,6 @@ void Spi1_LowLevelInit(void) {
     // 5. PC13 = CS2 (Standard GPIO Output, Low Speed)
     GPIOC->MODER   &= ~(3 << GPIO_MODER_MODER13_Pos);
     GPIOC->MODER   |=  (1 << GPIO_MODER_MODER13_Pos);
-    GPIOC->OSPEEDR |= ~(1 << GPIO_OSPEEDR_OSPEED13_Pos); // Mid Speed
+    GPIOC->OSPEEDR |= ~(3 << GPIO_OSPEEDR_OSPEED13_Pos); //  Speed ??
     GPIOC->BSRR     =  GPIO_BSRR_BS13;                    // Start High
 }
