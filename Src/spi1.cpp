@@ -30,7 +30,7 @@ void SpiDriver::ConfigureDma() {
     ClearDmaFlags(config.rxStream);
 
     config.rxStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC
-                        | DMA_SxCR_TCIE | DMA_SxCR_HTIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
+                        | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
     config.rxStream->CR &= ~(3 << DMA_SxCR_DIR_Pos);
     config.rxStream->FCR |= DMA_SxFCR_DMDIS;
     config.rxStream->FCR |= (DMA_SxFCR_FTH_0 | DMA_SxFCR_FTH_1);
@@ -44,7 +44,7 @@ void SpiDriver::ConfigureDma() {
     ClearDmaFlags(config.txStream);
 
     config.txStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC | DMA_SxCR_DIR_0
-                        | DMA_SxCR_TCIE | DMA_SxCR_HTIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
+                        | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
     config.txStream->FCR |= DMA_SxFCR_DMDIS;
 
     NVIC_SetPriority(config.txDmaIrq, 2);
@@ -54,25 +54,29 @@ void SpiDriver::ConfigureDma() {
 }
 
 void SpiDriver::ClearDmaFlags(DMA_Stream_TypeDef* stream) {
+/*	Calculates the exact bit offset inside the DMA Low Interrupt Status Register (LISR)
+    or (HISR) based on the stream passed in, clearing all status flags in one shot. */
+
     uint32_t streamIndex = 0;
-    if (stream == DMA2_Stream0 || stream == DMA1_Stream0) streamIndex = 0;
+
+    if      (stream == DMA2_Stream0 || stream == DMA1_Stream0) streamIndex = 0;
     else if (stream == DMA2_Stream1 || stream == DMA1_Stream1) streamIndex = 6;
     else if (stream == DMA2_Stream2 || stream == DMA1_Stream2) streamIndex = 16;
     else if (stream == DMA2_Stream3 || stream == DMA1_Stream3) streamIndex = 22;
-    else if (stream == DMA2_Stream4 || stream == DMA1_Stream4) streamIndex = 0;
-    else if (stream == DMA2_Stream5 || stream == DMA1_Stream5) streamIndex = 6;
-    else if (stream == DMA2_Stream6 || stream == DMA1_Stream6) streamIndex = 16;
-    else if (stream == DMA2_Stream7 || stream == DMA1_Stream7) streamIndex = 22;
+    else if (stream == DMA2_Stream4 || stream == DMA1_Stream4) streamIndex = 0;   // HISR boundary
+    else if (stream == DMA2_Stream5 || stream == DMA1_Stream5) streamIndex = 6;   // HISR boundary
+    else if (stream == DMA2_Stream6 || stream == DMA1_Stream6) streamIndex = 16;  // HISR boundary
+    else if (stream == DMA2_Stream7 || stream == DMA1_Stream7) streamIndex = 22;  // HISR boundary
 
+    // Mask 0x3DU clears FIFO Error, Direct Mode Error, Transfer Error, Half Transfer, and Transfer Complete
     uint32_t mask = (0x3DU << streamIndex);
+
     if (stream < DMA2_Stream4) {
         config.dmaBase->LIFCR = mask;
     } else {
         config.dmaBase->HIFCR = mask;
     }
 }
-
-
 
 
 
@@ -257,77 +261,86 @@ BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData
 }
 
 
+BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
 
-BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> payload) {
+	if (rxData.empty()) return BareM_Status::ERROR;
 
-    if (payload.empty()) return BareM_Status::ERROR;
-    while (m_state == SpiState::BUSY_TX);
+	while (m_state != SpiState::READY);
+	m_state = SpiState::BUSY_RX;
 
+	[[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
+
+	config.rxStream->CR &= ~DMA_SxCR_EN; // Disable DMA stream to allow configuration
+	config.txStream->CR &= ~DMA_SxCR_EN;
+	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
+
+	ClearDmaFlags(config.txStream);
+	ClearDmaFlags(config.rxStream);
+
+	config.rxStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
+	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
+	config.rxStream->NDTR = rxData.size();
+
+	config.txStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
+	config.txStream->M0AR = reinterpret_cast<uintptr_t>(&m_dummyTx);
+	config.txStream->NDTR = rxData.size(); // Dummy bytes to generate the CLK required for the Slave to shift out its data
+
+	config.txStream->CR &= ~DMA_SxCR_MINC; // Disable Memory Increment on TX so it locks onto the single dummy variable address
+	config.rxStream->CR |= DMA_SxCR_EN;
+	config.txStream->CR |= DMA_SxCR_EN;
+
+	return BareM_Status::OK;  // while(m_state!=SpiState::READY) -> no blocking before returning
+}
+
+
+BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> txdata) {
+
+    if (txdata.empty()) return BareM_Status::ERROR;
+
+    while (m_state != SpiState::READY);
     m_state = SpiState::BUSY_TX;
-    config.txStream->CR &= ~DMA_SxCR_EN;
+
+    config.txStream->CR &= ~DMA_SxCR_EN; 	// Disable DMA stream to allow configuration
     while (config.txStream->CR & DMA_SxCR_EN);
 
     ClearDmaFlags(config.txStream);
 
     config.txStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-    config.txStream->M0AR = reinterpret_cast<uint32_t>(payload.data());
-    config.txStream->NDTR = static_cast<uint16_t>(payload.size()); // NDTR is on 16 bits
-
+    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txdata.data());
+    config.txStream->NDTR = static_cast<uint16_t>(txdata.size()); // NDTR is on 16 bits
+    config.txStream->CR |= DMA_SxCR_MINC; //  Re-enable Memory Increment
     config.txStream->CR  |= DMA_SxCR_EN;
 
-    //while (m_state != SpiState::READY);
-    return BareM_Status::OK;
+    return BareM_Status::OK;   // while(m_state!=SpiState::READY) -> no blocking before returning
 }
 
-BareM_Status SpiDriver::Receive_DMA(uint8_t* pData, uint32_t len) {
-    if (len == 0) return BareM_Status::ERROR;
-    //while (m_state == SpiState::BUSY_RX);
 
-    m_state = SpiState::BUSY_RX;
-    config.rxStream->CR &= ~DMA_SxCR_EN;
-    while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
-
-    ClearDmaFlags(config.txStream);
-    ClearDmaFlags(config.rxStream);
-
-    config.rxStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-    config.rxStream->M0AR = reinterpret_cast<uint32_t>(pData);
-    config.rxStream->NDTR = len;
-
-    config.txStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-    config.txStream->M0AR = reinterpret_cast<uint32_t>(&m_dummyTx);
-    config.txStream->NDTR = len;
-
-    [[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
-
-    config.rxStream->CR |= DMA_SxCR_EN;
-    config.txStream->CR |= DMA_SxCR_EN;
-
-    while (m_state != SpiState::READY);
-    return BareM_Status::OK;
-}
 
 void SpiDriver::Handle_DMA_RX_IRQ() {
-    uint32_t lisr = config.dmaBase->LISR;
-    if (lisr & DMA_LISR_TCIF2) {
-        ClearDmaFlags(config.rxStream);
-        config.rxStream->CR &= ~DMA_SxCR_EN;
-        m_state = SpiState::READY;
-    }
+    // RX is a pure data worker. We clear flags and leave CR alone.
+    // The STM32 hardware automatically disables the stream when NDTR hits 0.
+    ClearDmaFlags(config.rxStream);
 }
 
 void SpiDriver::Handle_DMA_TX_IRQ() {
     uint32_t lisr = config.dmaBase->LISR;
-    if (lisr & DMA_LISR_TCIF3) {
-        ClearDmaFlags(config.txStream);
-        config.txStream->CR &= ~DMA_SxCR_EN;
+    ClearDmaFlags(config.txStream);
+
+    if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
+        config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
+
+        // CRITICAL: Ensure the hardware shift registers are 100% empty
+        // and the physical pins have stopped toggling before freeing the driver
         while (config.spi->SR & SPI_SR_BSY);
-        /* Trick to reduce drastically the delay between the last edge of the clock and the raising edge of CS:
-           if CS_High() command was written, the CS signal is triggered directly in the ISR. No wait for status Ready */
+
+        m_state = SpiState::READY;
+    } else {
+        // Fallback for DMA Errors (TEIF, DMEIF)
+        config.txStream->CR &= ~DMA_SxCR_EN;
+        config.rxStream->CR &= ~DMA_SxCR_EN;
         m_state = SpiState::READY;
     }
 }
-
 
 /***************************** SPI1 INSTANCE CONFIGURATION ********************************/
 
@@ -354,12 +367,10 @@ SpiDriver spi1(Spi1Config);
 extern "C" {
     void DMA2_Stream2_IRQHandler(void) {
         spi1.Handle_DMA_RX_IRQ();
-        NVIC_ClearPendingIRQ(DMA2_Stream2_IRQn);
     }
 
     void DMA2_Stream3_IRQHandler(void) {
         spi1.Handle_DMA_TX_IRQ();
-        NVIC_ClearPendingIRQ(DMA2_Stream3_IRQn);
     }
 }
 

@@ -65,8 +65,9 @@ public:
     BareM_Status TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
     BareM_Status TransmitReceive_MainBody(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
     // DMA functions declarations
-    BareM_Status Receive_DMA(uint8_t* pData, uint32_t len);
-    BareM_Status Transmit_DMA(std::span<const uint8_t> payload);
+    BareM_Status Receive_DMA(std::span<uint8_t> rxData);
+    BareM_Status Transmit_DMA(std::span<const uint8_t> txdata);
+
 
     SpiState GetState() const { return m_state; }
     void Handle_DMA_RX_IRQ();
@@ -91,13 +92,16 @@ private:
 /* =======================================================================================================================
   SEPARATE HIGH-SPEED INLINE DEFINITIONS : the compiler literally erases the concept of the function call.
   Reduces drastically the delay between falling edge of CS and first edge of MOSI (more than factor 2).
+  Used with polling transfers only, since DMA introduces a much larger latency and inlining has only little effect.
   Split the function into a fast inline header and a heavy static worker, which avoids code bloat: if a
   large inline function is called in 20 different places throughout the codebase, the complete function code
   will be copied into the flash memory 20 distinct times and can quickly deplete the available flash space.
-  __attribute__((always_inline)) should be reserved when timing is critical.
+  __attribute__((always_inline)) should be reserved when timing is critical
 ======================================================================================================================= */
 
-__attribute__((always_inline)) inline BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs) {
+
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs) {
 	// FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store
 	if (__builtin_expect(m_state == SpiState::READY, 1)) {
 		if (!txData.empty()) {				// Kick the hardware immediately (the first byte)
@@ -125,7 +129,8 @@ __attribute__((always_inline)) inline BareM_Status SpiDriver::Transmit(std::span
 }
 
 
-__attribute__((always_inline)) inline BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs) {
 	// Clean, optimized entry user point - fast safety check
 	if (__builtin_expect(m_state == SpiState::READY, 1)) {
 		// FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store

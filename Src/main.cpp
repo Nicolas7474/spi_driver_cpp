@@ -46,15 +46,18 @@ int main (void)
 	while(1) {
 
 		spi1.CS1_Low();
-		spi1.Transmit(vue, 10);
-		spi1.Receive(vue2, 10);
-
+		//spi1.Transmit(vue, 10);
+		//spi1.Receive(vue2, 10);
+		spi1.Transmit_DMA(vue);
+		spi1.Receive_DMA(vue2);
+		//while(DMA2_Stream2->CR & DMA_SxCR_EN);
+		while(spi1.GetState() != SpiState::READY);
 
 		//spi1.TransmitReceive(vue, vue2, 10);
 
 		spi1.CS1_High();
 
-		NBdelay_ms(500);
+		NBdelay_ms(800);
 
 	}
 

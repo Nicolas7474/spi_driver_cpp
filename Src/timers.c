@@ -59,9 +59,6 @@ void Delay_us_TIM7(uint16_t us)
 }
 
 
-
-
-
 // Records the starting tick count and waits until the required nb of ms has passed. It’s non-blocking, the CPU can still handle interrupts while waiting
 void NBdelay_ms(uint32_t ms)
 {
