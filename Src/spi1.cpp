@@ -8,19 +8,18 @@
 *   - That size must represent the TOTAL number of clock pulses needed for the entire conversation.
 *   - The real incoming data will always be offset in your receive buffer by the length of your command header !
 *   - Allocating a massive array to send only a few command bytes (ex: reading a Flash sector) is a massive waste of precious RAM.
-*   -> Use TransmitReceive_DMA (Symmetrical) only for tiny, fixed-size control messages (like reading the 3-byte Unique ID) where creating a tiny matching array is trivial.
+*   -> Use TransmitReceive_DMA (symmetrical) only for tiny, fixed-size control messages (like reading the 3-byte Unique ID) where creating a tiny matching array is trivial.
 *	-> Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads or 256-byte page reads) to keep your RAM completely clean.
 *	-> Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
 *	-> Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
 *	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
 *	- DMA functions have been kept non-blocking, so check while(spi1.GetState() != SpiState::READY); before pulling CS low or high again
-*	- GPIO used for STM32F469: MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
+*	- Weak Callback functions available for Tx/Rx/TxRx complete and Errors
+*	- GPIO used (STM32F469): MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
 */
-
 
 #include "spi1.hpp"
 #include <span>
-
 
 
 // Constructor definition
@@ -254,6 +253,7 @@ void SpiDriver::Handle_DMA_RX_IRQ() {
     // RX is a pure data worker. We clear flags and leave CR alone.
     // The STM32 hardware automatically disables the stream when NDTR hits 0.
 	*config.rxFcrReg = config.rxClearMask; // Instant hardware clear
+	 RxCpltCallback();
 }
 
 void SpiDriver::Handle_DMA_TX_IRQ() {
@@ -261,28 +261,60 @@ void SpiDriver::Handle_DMA_TX_IRQ() {
     *config.txFcrReg = config.txClearMask; // Instant hardware clear
 
     if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
-        config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
+    	config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
+    	SpiState previousState = m_state;  // Capture the operational context before clearing the state
+    	while (config.spi->SR & SPI_SR_BSY);
+    	m_state = SpiState::READY;
+    	// Route to the correct callback based on what the driver was doing
+    	if (previousState == SpiState::BUSY_TX_RX) {
+    		TxRxCpltCallback();
+    	}
+    	else if (previousState == SpiState::BUSY_TX) {
+    		TxCpltCallback();
+    	}
 
-        // CRITICAL: Ensure the hardware shift registers are 100% empty
-        // and the physical pins have stopped toggling before freeing the driver
-        while (config.spi->SR & SPI_SR_BSY);
-        m_state = SpiState::READY;
     } else {
-        // Fallback for DMA Errors (TEIF, DMEIF)
+    	// Fallback for DMA Errors (TEIF, DMEIF)
         config.txStream->CR &= ~DMA_SxCR_EN;
         config.rxStream->CR &= ~DMA_SxCR_EN;
         *config.rxFcrReg = config.rxClearMask; // Clean RX stream on unexpected fault
         m_state = SpiState::READY;
+        ErrorCallback();
     }
 }
 
 
+// ==============================================================================
+// WEAK DEFAULT CALLBACKS: The compiler will use these if they are not overriden
+// ==============================================================================
+
+__attribute__((weak)) void SpiDriver::TxCpltCallback() {
+	// Example :
+	/* 		if (this == &spi1) {
+				// Pull Flash Chip Select high instantly!
+			} else if (this == &spi2) {
+				// Pull Display Chip Select high!
+			}										*/
+}
+
+__attribute__((weak)) void SpiDriver::RxCpltCallback() {
+    // Default: Do nothing safely
+
+}
+
+__attribute__((weak)) void SpiDriver::TxRxCpltCallback() {
+    // Default: Do nothing safely
+}
+
+__attribute__((weak)) void SpiDriver::ErrorCallback() {
+    // Default: Do nothing safely
+	//if (this == &spi1) GPIOD->ODR^=GPIO_ODR_OD4; // Toggle orange led
+}
 
 
 /*================================================================
 /==============    SPI1 INSTANCE CONFIGURATION   =================
 /================================================================= */
-
 
 
 // Forward declaration of local low-level pin mapping function

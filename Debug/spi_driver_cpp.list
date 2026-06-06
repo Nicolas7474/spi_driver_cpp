@@ -5,21 +5,21 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .isr_vector   000001b0  08000000  08000000  00001000  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  1 .text         0000091c  080001b0  080001b0  000011b0  2**2
+  1 .text         00000910  080001b0  080001b0  000011b0  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       0000002c  08000acc  08000acc  00001acc  2**2
+  2 .rodata       0000002c  08000ac0  08000ac0  00001ac0  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08000af8  08000af8  00002004  2**0
+  3 .ARM.extab    00000000  08000aec  08000aec  00002004  2**0
                   CONTENTS, READONLY
-  4 .ARM          00000000  08000af8  08000af8  00002004  2**0
+  4 .ARM          00000000  08000aec  08000aec  00002004  2**0
                   CONTENTS, READONLY
-  5 .preinit_array 00000000  08000af8  08000af8  00002004  2**0
+  5 .preinit_array 00000000  08000aec  08000aec  00002004  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000008  08000af8  08000af8  00001af8  2**2
+  6 .init_array   00000008  08000aec  08000aec  00001aec  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .fini_array   00000004  08000b00  08000b00  00001b00  2**2
+  7 .fini_array   00000004  08000af4  08000af4  00001af4  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .data         00000004  20000000  08000b04  00002000  2**2
+  8 .data         00000004  20000000  08000af8  00002000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
   9 .ccmram       00000000  10000000  10000000  00002004  2**0
                   CONTENTS
@@ -29,27 +29,27 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  12 .ARM.attributes 00000030  00000000  00000000  00002004  2**0
                   CONTENTS, READONLY
- 13 .debug_info   00005d55  00000000  00000000  00002034  2**0
+ 13 .debug_info   00005e5f  00000000  00000000  00002034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00001064  00000000  00000000  00007d89  2**0
+ 14 .debug_abbrev 000010b1  00000000  00000000  00007e93  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_loclists 000009f0  00000000  00000000  00008ded  2**0
+ 15 .debug_loclists 00000a46  00000000  00000000  00008f44  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_aranges 00000140  00000000  00000000  000097e0  2**3
+ 16 .debug_aranges 00000160  00000000  00000000  00009990  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_rnglists 00000155  00000000  00000000  00009920  2**0
+ 17 .debug_rnglists 00000165  00000000  00000000  00009af0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_macro  000290ef  00000000  00000000  00009a75  2**0
+ 18 .debug_macro  000290ef  00000000  00000000  00009c55  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_line   00003cce  00000000  00000000  00032b64  2**0
+ 19 .debug_line   00003cc9  00000000  00000000  00032d44  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_str    000bc941  00000000  00000000  00036832  2**0
+ 20 .debug_str    000bc9e7  00000000  00000000  00036a0d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .comment      00000043  00000000  00000000  000f3173  2**0
+ 21 .comment      00000043  00000000  00000000  000f33f4  2**0
                   CONTENTS, READONLY
- 22 .debug_frame  00000280  00000000  00000000  000f31b8  2**2
+ 22 .debug_frame  000002d0  00000000  00000000  000f3438  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 23 .debug_line_str 00000069  00000000  00000000  000f3438  2**0
+ 23 .debug_line_str 00000069  00000000  00000000  000f3708  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -68,7 +68,7 @@ Disassembly of section .text:
  80001c6:	bd10      	pop	{r4, pc}
  80001c8:	20000004 	.word	0x20000004
  80001cc:	00000000 	.word	0x00000000
- 80001d0:	08000ab4 	.word	0x08000ab4
+ 80001d0:	08000aa8 	.word	0x08000aa8
 
 080001d4 <frame_dummy>:
  80001d4:	b508      	push	{r3, lr}
@@ -80,7 +80,7 @@ Disassembly of section .text:
  80001e2:	bd08      	pop	{r3, pc}
  80001e4:	00000000 	.word	0x00000000
  80001e8:	20000008 	.word	0x20000008
- 80001ec:	08000ab4 	.word	0x08000ab4
+ 80001ec:	08000aa8 	.word	0x08000aa8
 
 080001f0 <main>:
 #include "timers.h"
@@ -93,1436 +93,1450 @@ int main (void)
  80001f2:	b084      	sub	sp, #16
 	// Initialization functions
 	activateFPU();
- 80001f4:	f000 f8a6 	bl	8000344 <activateFPU>
+ 80001f4:	f000 f88a 	bl	800030c <activateFPU>
 	SysClockConfig();
- 80001f8:	f000 f8b4 	bl	8000364 <SysClockConfig>
+ 80001f8:	f000 f898 	bl	800032c <SysClockConfig>
 	SysTick_Init();
- 80001fc:	f000 fba8 	bl	8000950 <SysTick_Init>
+ 80001fc:	f000 fba2 	bl	8000944 <SysTick_Init>
 
 	GPIO_Config();
- 8000200:	f000 f958 	bl	80004b4 <GPIO_Config>
+ 8000200:	f000 f93c 	bl	800047c <GPIO_Config>
 	InterruptGPIO_Config();
- 8000204:	f000 f9cc 	bl	80005a0 <InterruptGPIO_Config>
+ 8000204:	f000 f9b0 	bl	8000568 <InterruptGPIO_Config>
 
-	//GPIOD->ODR^=GPIO_ODR_OD4; // turns off orange led
+	GPIOD->ODR^=GPIO_ODR_OD4; // turns off orange led
+ 8000208:	4a3c      	ldr	r2, [pc, #240]	@ (80002fc <main+0x10c>)
+ 800020a:	6953      	ldr	r3, [r2, #20]
+ 800020c:	f083 0310 	eor.w	r3, r3, #16
+ 8000210:	6153      	str	r3, [r2, #20]
 	NBdelay_ms(100);
- 8000208:	2064      	movs	r0, #100	@ 0x64
- 800020a:	f000 fbdb 	bl	80009c4 <NBdelay_ms>
+ 8000212:	2064      	movs	r0, #100	@ 0x64
+ 8000214:	f000 fbd0 	bl	80009b8 <NBdelay_ms>
 
 	// Simply call initialization with your desired runtime prescaler speed division
 	spi1.Init(BaudRatePrescaler::DIV_8); // DIV_8 => 11.25 MHz
- 800020e:	2110      	movs	r1, #16
- 8000210:	4848      	ldr	r0, [pc, #288]	@ (8000334 <main+0x144>)
- 8000212:	f000 fb2f 	bl	8000874 <_ZN9SpiDriver4InitE17BaudRatePrescaler>
+ 8000218:	2110      	movs	r1, #16
+ 800021a:	4839      	ldr	r0, [pc, #228]	@ (8000300 <main+0x110>)
+ 800021c:	f000 fb0e 	bl	800083c <_ZN9SpiDriver4InitE17BaudRatePrescaler>
 //	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 //	DWT->CYCCNT = 0;
 //	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
 
 	uint8_t bufferTx[] = {0x9F, 0x00, 0x00, 0x00, 0x00};
- 8000216:	239f      	movs	r3, #159	@ 0x9f
- 8000218:	9302      	str	r3, [sp, #8]
- 800021a:	2300      	movs	r3, #0
- 800021c:	f88d 300c 	strb.w	r3, [sp, #12]
+ 8000220:	239f      	movs	r3, #159	@ 0x9f
+ 8000222:	9302      	str	r3, [sp, #8]
+ 8000224:	2300      	movs	r3, #0
+ 8000226:	f88d 300c 	strb.w	r3, [sp, #12]
 
 	NBdelay_ms(200);
- 8000220:	20c8      	movs	r0, #200	@ 0xc8
- 8000222:	f000 fbcf 	bl	80009c4 <NBdelay_ms>
+ 800022a:	20c8      	movs	r0, #200	@ 0xc8
+ 800022c:	f000 fbc4 	bl	80009b8 <NBdelay_ms>
+    // DMA functions declarations
+    BareM_Status Receive_DMA(std::span<uint8_t> rxData);
+    BareM_Status Transmit_DMA(std::span<const uint8_t> txdata);
+    BareM_Status TransmitReceive_DMA(std::span<const uint8_t> txData, std::span<uint8_t> rxData);
 
-    SpiState GetState() const { return m_state; }
-    void Handle_DMA_RX_IRQ();
-    void Handle_DMA_TX_IRQ();
-
-    void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; }
- 8000226:	4d44      	ldr	r5, [pc, #272]	@ (8000338 <main+0x148>)
- 8000228:	f04f 4600 	mov.w	r6, #2147483648	@ 0x80000000
-
-	if (txdata.empty()) return BareM_Status::ERROR;
+    static void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; } // "static" strips away the hidden this pointer requirement
+ 8000230:	4d34      	ldr	r5, [pc, #208]	@ (8000304 <main+0x114>)
+ 8000232:	f04f 4600 	mov.w	r6, #2147483648	@ 0x80000000
+		return BareM_Status::ERROR;
+	}
 
 	// Fast guard: Compiler assumes this if statement is false
 	// and places the hot registration blitting directly in the pipeline stream.
 	if (__builtin_expect(m_state != SpiState::READY, 0)) {
- 800022c:	4c41      	ldr	r4, [pc, #260]	@ (8000334 <main+0x144>)
-	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
- 800022e:	4f43      	ldr	r7, [pc, #268]	@ (800033c <main+0x14c>)
- 8000230:	e04d      	b.n	80002ce <main+0xde>
+ 8000236:	4c32      	ldr	r4, [pc, #200]	@ (8000300 <main+0x110>)
+    // ClearDmaFlags() already called in the ISR, no need again here
+
+    uint32_t transferSize = txData.size();
+
+    // --- RX Stream Configuration ---
+    config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
+ 8000238:	4f33      	ldr	r7, [pc, #204]	@ (8000308 <main+0x118>)
+ 800023a:	e049      	b.n	80002d0 <main+0xe0>
 		uint32_t timeout_ct = GetSysTick() + 10;
- 8000232:	f000 fbc1 	bl	80009b8 <GetSysTick>
- 8000236:	f100 080a 	add.w	r8, r0, #10
+ 800023c:	f000 fbb6 	bl	80009ac <GetSysTick>
+ 8000240:	f100 080a 	add.w	r8, r0, #10
 		while (m_state != SpiState::READY) {
- 800023a:	7923      	ldrb	r3, [r4, #4]
- 800023c:	2b01      	cmp	r3, #1
- 800023e:	d04a      	beq.n	80002d6 <main+0xe6>
+ 8000244:	7923      	ldrb	r3, [r4, #4]
+ 8000246:	2b01      	cmp	r3, #1
+ 8000248:	d046      	beq.n	80002d8 <main+0xe8>
 			if (GetSysTick() > timeout_ct) {
- 8000240:	f000 fbba 	bl	80009b8 <GetSysTick>
- 8000244:	4580      	cmp	r8, r0
- 8000246:	d2f8      	bcs.n	800023a <main+0x4a>
+ 800024a:	f000 fbaf 	bl	80009ac <GetSysTick>
+ 800024e:	4580      	cmp	r8, r0
+ 8000250:	d2f8      	bcs.n	8000244 <main+0x54>
 				m_state = SpiState::READY; // Force reset driver state
- 8000248:	2301      	movs	r3, #1
- 800024a:	7123      	strb	r3, [r4, #4]
+ 8000252:	2301      	movs	r3, #1
+ 8000254:	7123      	strb	r3, [r4, #4]
 				return BareM_Status::TIMEOUT;
- 800024c:	e061      	b.n	8000312 <main+0x122>
-	m_state = SpiState::BUSY_RX;
- 800024e:	2302      	movs	r3, #2
- 8000250:	7123      	strb	r3, [r4, #4]
+ 8000256:	e031      	b.n	80002bc <main+0xcc>
+		config.rxStream->CR &= ~DMA_SxCR_EN;
+ 8000258:	685a      	ldr	r2, [r3, #4]
+ 800025a:	6813      	ldr	r3, [r2, #0]
+ 800025c:	f023 0301 	bic.w	r3, r3, #1
+ 8000260:	6013      	str	r3, [r2, #0]
+    	config.txStream->CR &= ~DMA_SxCR_EN;
+ 8000262:	6823      	ldr	r3, [r4, #0]
+ 8000264:	689a      	ldr	r2, [r3, #8]
+ 8000266:	6813      	ldr	r3, [r2, #0]
+ 8000268:	f023 0301 	bic.w	r3, r3, #1
+ 800026c:	6013      	str	r3, [r2, #0]
+    	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
+ 800026e:	6821      	ldr	r1, [r4, #0]
+ 8000270:	688a      	ldr	r2, [r1, #8]
+ 8000272:	6813      	ldr	r3, [r2, #0]
+ 8000274:	f013 0f01 	tst.w	r3, #1
+ 8000278:	d1fb      	bne.n	8000272 <main+0x82>
+ 800027a:	684b      	ldr	r3, [r1, #4]
+ 800027c:	681b      	ldr	r3, [r3, #0]
+ 800027e:	f013 0f01 	tst.w	r3, #1
+ 8000282:	d1f6      	bne.n	8000272 <main+0x82>
+    config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
+ 8000284:	6823      	ldr	r3, [r4, #0]
+ 8000286:	685a      	ldr	r2, [r3, #4]
+ 8000288:	60d7      	str	r7, [r2, #12]
+    config.rxStream->NDTR = transferSize; // Corrected: Removed the "+ 1" overread trap
+ 800028a:	6859      	ldr	r1, [r3, #4]
+ 800028c:	2204      	movs	r2, #4
+ 800028e:	604a      	str	r2, [r1, #4]
+    // config.rxStream->CR  |= DMA_SxCR_MINC; // No need to re-enable the RX increments memory
+
+    // --- TX Stream Configuration ---
+    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txData.data());
+ 8000290:	6899      	ldr	r1, [r3, #8]
+ 8000292:	a802      	add	r0, sp, #8
+ 8000294:	60c8      	str	r0, [r1, #12]
+    config.txStream->NDTR = transferSize; // Corrected: Removed the "+ 1" overread trap
+ 8000296:	6899      	ldr	r1, [r3, #8]
+ 8000298:	604a      	str	r2, [r1, #4]
+    config.txStream->CR  |= DMA_SxCR_MINC; // Keep memory increment enabled
+ 800029a:	689a      	ldr	r2, [r3, #8]
+ 800029c:	6813      	ldr	r3, [r2, #0]
+ 800029e:	f443 6380 	orr.w	r3, r3, #1024	@ 0x400
+ 80002a2:	6013      	str	r3, [r2, #0]
+
+    // --- Synchronous Engine Launch ---
+    config.rxStream->CR |= DMA_SxCR_EN; // Corrected: Enable RX first so it waits for incoming data
+ 80002a4:	6823      	ldr	r3, [r4, #0]
+ 80002a6:	685a      	ldr	r2, [r3, #4]
+ 80002a8:	6813      	ldr	r3, [r2, #0]
+ 80002aa:	f043 0301 	orr.w	r3, r3, #1
+ 80002ae:	6013      	str	r3, [r2, #0]
+    config.txStream->CR |= DMA_SxCR_EN; // Enable TX second; clock pulses begin instantly
+ 80002b0:	6823      	ldr	r3, [r4, #0]
+ 80002b2:	689a      	ldr	r2, [r3, #8]
+ 80002b4:	6813      	ldr	r3, [r2, #0]
+ 80002b6:	f043 0301 	orr.w	r3, r3, #1
+ 80002ba:	6013      	str	r3, [r2, #0]
+    SpiState GetState() const { return m_state; }
+ 80002bc:	7923      	ldrb	r3, [r4, #4]
+
+//		NBdelay_ms(1);
+//
+		spi1.CS1_Low();
+		spi1.TransmitReceive_DMA(vue, vue2);
+		while(spi1.GetState() != SpiState::READY);
+ 80002be:	2b01      	cmp	r3, #1
+ 80002c0:	d1fc      	bne.n	80002bc <main+0xcc>
+    static void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; } // Enforces the SpiDriver:: or spi1. prefix scoping
+ 80002c2:	f44f 4300 	mov.w	r3, #32768	@ 0x8000
+ 80002c6:	61ab      	str	r3, [r5, #24]
+		spi1.CS1_High();
+
+		NBdelay_ms(500);
+ 80002c8:	f44f 70fa 	mov.w	r0, #500	@ 0x1f4
+ 80002cc:	f000 fb74 	bl	80009b8 <NBdelay_ms>
+    static void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; } // "static" strips away the hidden this pointer requirement
+ 80002d0:	61ae      	str	r6, [r5, #24]
+	if (__builtin_expect(m_state != SpiState::READY, 0)) {
+ 80002d2:	7923      	ldrb	r3, [r4, #4]
+ 80002d4:	2b01      	cmp	r3, #1
+ 80002d6:	d1b1      	bne.n	800023c <main+0x4c>
+	m_state = SpiState::BUSY_TX_RX;
+ 80002d8:	2304      	movs	r3, #4
+ 80002da:	7123      	strb	r3, [r4, #4]
 	[[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
- 8000252:	6823      	ldr	r3, [r4, #0]
- 8000254:	681a      	ldr	r2, [r3, #0]
- 8000256:	68d2      	ldr	r2, [r2, #12]
- 8000258:	9201      	str	r2, [sp, #4]
-	config.rxStream->CR &= ~DMA_SxCR_EN; // Disable DMA stream to allow configuration
- 800025a:	685a      	ldr	r2, [r3, #4]
- 800025c:	6813      	ldr	r3, [r2, #0]
- 800025e:	f023 0301 	bic.w	r3, r3, #1
- 8000262:	6013      	str	r3, [r2, #0]
-	config.txStream->CR &= ~DMA_SxCR_EN;
- 8000264:	6823      	ldr	r3, [r4, #0]
- 8000266:	689a      	ldr	r2, [r3, #8]
- 8000268:	6813      	ldr	r3, [r2, #0]
- 800026a:	f023 0301 	bic.w	r3, r3, #1
- 800026e:	6013      	str	r3, [r2, #0]
-	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
- 8000270:	6821      	ldr	r1, [r4, #0]
- 8000272:	688a      	ldr	r2, [r1, #8]
- 8000274:	6813      	ldr	r3, [r2, #0]
- 8000276:	f013 0f01 	tst.w	r3, #1
- 800027a:	d1fb      	bne.n	8000274 <main+0x84>
- 800027c:	684b      	ldr	r3, [r1, #4]
- 800027e:	681b      	ldr	r3, [r3, #0]
- 8000280:	f013 0f01 	tst.w	r3, #1
- 8000284:	d1f6      	bne.n	8000274 <main+0x84>
-	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
- 8000286:	684b      	ldr	r3, [r1, #4]
- 8000288:	60df      	str	r7, [r3, #12]
-	config.rxStream->NDTR = rxData.size();
- 800028a:	684b      	ldr	r3, [r1, #4]
- 800028c:	2203      	movs	r2, #3
- 800028e:	605a      	str	r2, [r3, #4]
-	config.txStream->M0AR = reinterpret_cast<uintptr_t>(&m_dummyTx);
- 8000290:	6888      	ldr	r0, [r1, #8]
- 8000292:	4b2b      	ldr	r3, [pc, #172]	@ (8000340 <main+0x150>)
- 8000294:	60c3      	str	r3, [r0, #12]
-	config.txStream->NDTR = rxData.size(); // Dummy bytes to generate the CLK required for the Slave to shift out its data
- 8000296:	6888      	ldr	r0, [r1, #8]
- 8000298:	6042      	str	r2, [r0, #4]
-	config.txStream->CR &= ~DMA_SxCR_MINC; // Disable Memory Increment on TX so it locks onto the single dummy variable address
- 800029a:	6889      	ldr	r1, [r1, #8]
- 800029c:	680a      	ldr	r2, [r1, #0]
- 800029e:	f422 6280 	bic.w	r2, r2, #1024	@ 0x400
- 80002a2:	600a      	str	r2, [r1, #0]
-	config.rxStream->CR |= DMA_SxCR_EN;
- 80002a4:	f853 2c05 	ldr.w	r2, [r3, #-5]
- 80002a8:	6851      	ldr	r1, [r2, #4]
- 80002aa:	680a      	ldr	r2, [r1, #0]
- 80002ac:	f042 0201 	orr.w	r2, r2, #1
- 80002b0:	600a      	str	r2, [r1, #0]
-	config.txStream->CR |= DMA_SxCR_EN;
- 80002b2:	f853 3c05 	ldr.w	r3, [r3, #-5]
- 80002b6:	689a      	ldr	r2, [r3, #8]
- 80002b8:	6813      	ldr	r3, [r2, #0]
- 80002ba:	f043 0301 	orr.w	r3, r3, #1
- 80002be:	6013      	str	r3, [r2, #0]
-    void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; }
- 80002c0:	f44f 4300 	mov.w	r3, #32768	@ 0x8000
- 80002c4:	61ab      	str	r3, [r5, #24]
-//		spi1.CS1_Low();
-//		spi1.TransmitReceive_DMA(vue, vue2);
-//		while(spi1.GetState() != SpiState::READY);
-//		spi1.CS1_High();
+ 80002dc:	6823      	ldr	r3, [r4, #0]
+ 80002de:	681a      	ldr	r2, [r3, #0]
+ 80002e0:	68d2      	ldr	r2, [r2, #12]
+ 80002e2:	9201      	str	r2, [sp, #4]
+	if (__builtin_expect((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN), 0)) {
+ 80002e4:	689a      	ldr	r2, [r3, #8]
+ 80002e6:	6812      	ldr	r2, [r2, #0]
+ 80002e8:	f012 0f01 	tst.w	r2, #1
+ 80002ec:	d1b4      	bne.n	8000258 <main+0x68>
+ 80002ee:	685a      	ldr	r2, [r3, #4]
+ 80002f0:	6812      	ldr	r2, [r2, #0]
+ 80002f2:	f012 0f01 	tst.w	r2, #1
+ 80002f6:	d0c5      	beq.n	8000284 <main+0x94>
+ 80002f8:	e7ae      	b.n	8000258 <main+0x68>
+ 80002fa:	bf00      	nop
+ 80002fc:	40020c00 	.word	0x40020c00
+ 8000300:	2000002c 	.word	0x2000002c
+ 8000304:	40020000 	.word	0x40020000
+ 8000308:	20000020 	.word	0x20000020
 
-		NBdelay_ms(1000);
- 80002c6:	f44f 707a 	mov.w	r0, #1000	@ 0x3e8
- 80002ca:	f000 fb7b 	bl	80009c4 <NBdelay_ms>
-    void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; }
- 80002ce:	61ae      	str	r6, [r5, #24]
-	if (__builtin_expect(m_state != SpiState::READY, 0)) {
- 80002d0:	7923      	ldrb	r3, [r4, #4]
- 80002d2:	2b01      	cmp	r3, #1
- 80002d4:	d1ad      	bne.n	8000232 <main+0x42>
-			}
-		}
-	}
-	m_state = SpiState::BUSY_TX;
- 80002d6:	2303      	movs	r3, #3
- 80002d8:	7123      	strb	r3, [r4, #4]
-
-	config.txStream->CR &= ~DMA_SxCR_EN; 	// Disable DMA stream to allow configuration
- 80002da:	6823      	ldr	r3, [r4, #0]
- 80002dc:	689a      	ldr	r2, [r3, #8]
- 80002de:	6813      	ldr	r3, [r2, #0]
- 80002e0:	f023 0301 	bic.w	r3, r3, #1
- 80002e4:	6013      	str	r3, [r2, #0]
-	while (config.txStream->CR & DMA_SxCR_EN);
- 80002e6:	6821      	ldr	r1, [r4, #0]
- 80002e8:	688a      	ldr	r2, [r1, #8]
- 80002ea:	6813      	ldr	r3, [r2, #0]
- 80002ec:	f013 0f01 	tst.w	r3, #1
- 80002f0:	d1fb      	bne.n	80002ea <main+0xfa>
-	// ClearDmaFlags() already called in the ISR, no need again here
-
-    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txdata.data());
- 80002f2:	ab02      	add	r3, sp, #8
- 80002f4:	60d3      	str	r3, [r2, #12]
-    config.txStream->NDTR = static_cast<uint16_t>(txdata.size()); // NDTR is on 16 bits
- 80002f6:	688b      	ldr	r3, [r1, #8]
- 80002f8:	2201      	movs	r2, #1
- 80002fa:	605a      	str	r2, [r3, #4]
-    config.txStream->CR |= DMA_SxCR_MINC; //  (Re)enable Memory Increment
- 80002fc:	688a      	ldr	r2, [r1, #8]
- 80002fe:	6813      	ldr	r3, [r2, #0]
- 8000300:	f443 6380 	orr.w	r3, r3, #1024	@ 0x400
- 8000304:	6013      	str	r3, [r2, #0]
-    config.txStream->CR  |= DMA_SxCR_EN;
- 8000306:	6823      	ldr	r3, [r4, #0]
- 8000308:	689a      	ldr	r2, [r3, #8]
- 800030a:	6813      	ldr	r3, [r2, #0]
- 800030c:	f043 0301 	orr.w	r3, r3, #1
- 8000310:	6013      	str	r3, [r2, #0]
-	if (__builtin_expect(m_state != SpiState::READY, 0)) {
- 8000312:	7923      	ldrb	r3, [r4, #4]
- 8000314:	2b01      	cmp	r3, #1
- 8000316:	d09a      	beq.n	800024e <main+0x5e>
-		uint32_t timeout_ct = GetSysTick() + 10;
- 8000318:	f000 fb4e 	bl	80009b8 <GetSysTick>
- 800031c:	f100 080a 	add.w	r8, r0, #10
-		while (m_state != SpiState::READY) {
- 8000320:	7923      	ldrb	r3, [r4, #4]
- 8000322:	2b01      	cmp	r3, #1
- 8000324:	d093      	beq.n	800024e <main+0x5e>
-			if (GetSysTick() > timeout_ct) {
- 8000326:	f000 fb47 	bl	80009b8 <GetSysTick>
- 800032a:	4580      	cmp	r8, r0
- 800032c:	d2f8      	bcs.n	8000320 <main+0x130>
-				m_state = SpiState::READY; // Force reset driver state
- 800032e:	2301      	movs	r3, #1
- 8000330:	7123      	strb	r3, [r4, #4]
-				return BareM_Status::TIMEOUT;
- 8000332:	e7c5      	b.n	80002c0 <main+0xd0>
- 8000334:	2000002c 	.word	0x2000002c
- 8000338:	40020000 	.word	0x40020000
- 800033c:	20000020 	.word	0x20000020
- 8000340:	20000031 	.word	0x20000031
-
-08000344 <activateFPU>:
+0800030c <activateFPU>:
 
 
 void activateFPU(void) {
 
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
 	SCB->CPACR |= ((3UL << 20U)|(3UL << 22U));  /* set CP10 and CP11 Full Access */
- 8000344:	4a06      	ldr	r2, [pc, #24]	@ (8000360 <activateFPU+0x1c>)
- 8000346:	f8d2 3088 	ldr.w	r3, [r2, #136]	@ 0x88
- 800034a:	f443 0370 	orr.w	r3, r3, #15728640	@ 0xf00000
- 800034e:	f8c2 3088 	str.w	r3, [r2, #136]	@ 0x88
+ 800030c:	4a06      	ldr	r2, [pc, #24]	@ (8000328 <activateFPU+0x1c>)
+ 800030e:	f8d2 3088 	ldr.w	r3, [r2, #136]	@ 0x88
+ 8000312:	f443 0370 	orr.w	r3, r3, #15728640	@ 0xf00000
+ 8000316:	f8c2 3088 	str.w	r3, [r2, #136]	@ 0x88
 
 	// Enable Lazy Stacking for better ISR performance : When an interrupt (like your TIM7 or TIM8 ISRs) occurs, the processor normally has to save all the FPU registers
 	// to the stack. This is slow. Lazy Stacking tells the hardware only to save FPU registers if the ISR actually performs a floating-point operation.
 	FPU->FPCCR |= FPU_FPCCR_LSPEN_Msk;
- 8000352:	f502 7200 	add.w	r2, r2, #512	@ 0x200
- 8000356:	6b53      	ldr	r3, [r2, #52]	@ 0x34
- 8000358:	f043 4380 	orr.w	r3, r3, #1073741824	@ 0x40000000
- 800035c:	6353      	str	r3, [r2, #52]	@ 0x34
+ 800031a:	f502 7200 	add.w	r2, r2, #512	@ 0x200
+ 800031e:	6b53      	ldr	r3, [r2, #52]	@ 0x34
+ 8000320:	f043 4380 	orr.w	r3, r3, #1073741824	@ 0x40000000
+ 8000324:	6353      	str	r3, [r2, #52]	@ 0x34
 #endif
 	// Enabling the hardware bits isn't enough; you must also tell your compiler (GCC, Clang, or Keil) to actually generate FPU instructions instead of using slow software libraries.
 	// If you are using GCC (arm-none-eabi-gcc), add these flags to your build command:
 	// -mfloat-abi=hard: Uses the hardware FPU for calculations and passing arguments.
 	// -mfpu=fpv4-sp-d16: Specifies the specific FPU version on the STM32F4.
 }
- 800035e:	4770      	bx	lr
- 8000360:	e000ed00 	.word	0xe000ed00
+ 8000326:	4770      	bx	lr
+ 8000328:	e000ed00 	.word	0xe000ed00
 
-08000364 <SysClockConfig>:
+0800032c <SysClockConfig>:
 	#define PLL_M 	4
 	#define PLL_N 	180
 	#define PLL_P 	0  // PLLP = 2
 
 	// 1. ENABLE HSE and wait for the HSE to become Ready
 	RCC->CR |= RCC_CR_HSEON;  // RCC->CR |= 1<<16;
- 8000364:	4a4c      	ldr	r2, [pc, #304]	@ (8000498 <SysClockConfig+0x134>)
- 8000366:	6813      	ldr	r3, [r2, #0]
- 8000368:	f443 3380 	orr.w	r3, r3, #65536	@ 0x10000
- 800036c:	6013      	str	r3, [r2, #0]
+ 800032c:	4a4c      	ldr	r2, [pc, #304]	@ (8000460 <SysClockConfig+0x134>)
+ 800032e:	6813      	ldr	r3, [r2, #0]
+ 8000330:	f443 3380 	orr.w	r3, r3, #65536	@ 0x10000
+ 8000334:	6013      	str	r3, [r2, #0]
 	while (!(RCC->CR & RCC_CR_HSERDY));  // while (!(RCC->CR & (1<<17)));
- 800036e:	6813      	ldr	r3, [r2, #0]
- 8000370:	f413 3f00 	tst.w	r3, #131072	@ 0x20000
- 8000374:	d0fb      	beq.n	800036e <SysClockConfig+0xa>
+ 8000336:	6813      	ldr	r3, [r2, #0]
+ 8000338:	f413 3f00 	tst.w	r3, #131072	@ 0x20000
+ 800033c:	d0fb      	beq.n	8000336 <SysClockConfig+0xa>
 
 	// 2. Set the POWER ENABLE CLOCK and VOLTAGE REGULATOR
 	RCC->APB1ENR |= RCC_APB1ENR_PWREN;  // RCC->APB1ENR |= 1<<28; RCC APB1 peripheral clock enable register (RCC_APB1ENR);
- 8000376:	4b48      	ldr	r3, [pc, #288]	@ (8000498 <SysClockConfig+0x134>)
- 8000378:	6c1a      	ldr	r2, [r3, #64]	@ 0x40
- 800037a:	f042 5280 	orr.w	r2, r2, #268435456	@ 0x10000000
- 800037e:	641a      	str	r2, [r3, #64]	@ 0x40
+ 800033e:	4b48      	ldr	r3, [pc, #288]	@ (8000460 <SysClockConfig+0x134>)
+ 8000340:	6c1a      	ldr	r2, [r3, #64]	@ 0x40
+ 8000342:	f042 5280 	orr.w	r2, r2, #268435456	@ 0x10000000
+ 8000346:	641a      	str	r2, [r3, #64]	@ 0x40
 	PWR->CR |= PWR_CR_VOS;  // PWR->CR |= 3<<14; PWR power control register (PWR_CR);
- 8000380:	4946      	ldr	r1, [pc, #280]	@ (800049c <SysClockConfig+0x138>)
- 8000382:	680a      	ldr	r2, [r1, #0]
- 8000384:	f442 4240 	orr.w	r2, r2, #49152	@ 0xc000
- 8000388:	600a      	str	r2, [r1, #0]
+ 8000348:	4946      	ldr	r1, [pc, #280]	@ (8000464 <SysClockConfig+0x138>)
+ 800034a:	680a      	ldr	r2, [r1, #0]
+ 800034c:	f442 4240 	orr.w	r2, r2, #49152	@ 0xc000
+ 8000350:	600a      	str	r2, [r1, #0]
 
 	// 3. Configure the FLASH PREFETCH and the LATENCY Related Settings
 	FLASH->ACR = FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_PRFTEN | FLASH_ACR_LATENCY_5WS;  // FLASH->ACR = (1<<8) | (1<<9)| (1<<10)| (5<<0);
- 800038a:	4a45      	ldr	r2, [pc, #276]	@ (80004a0 <SysClockConfig+0x13c>)
- 800038c:	f240 7105 	movw	r1, #1797	@ 0x705
- 8000390:	6011      	str	r1, [r2, #0]
+ 8000352:	4a45      	ldr	r2, [pc, #276]	@ (8000468 <SysClockConfig+0x13c>)
+ 8000354:	f240 7105 	movw	r1, #1797	@ 0x705
+ 8000358:	6011      	str	r1, [r2, #0]
 
 	// 4. Configure the PRESCALARS HCLK, PCLK1, PCLK2
 	// AHB PR
 	RCC->CFGR |= RCC_CFGR_HPRE_DIV1;  // RCC->CFGR &= ~(1<<4); RCC clock configuration register (RCC_CFGR);
- 8000392:	689a      	ldr	r2, [r3, #8]
- 8000394:	609a      	str	r2, [r3, #8]
+ 800035a:	689a      	ldr	r2, [r3, #8]
+ 800035c:	609a      	str	r2, [r3, #8]
 
 	// APB1 PR
 	RCC->CFGR |= RCC_CFGR_PPRE1_DIV4;  // RCC->CFGR |= (5<<10);
- 8000396:	689a      	ldr	r2, [r3, #8]
- 8000398:	f442 52a0 	orr.w	r2, r2, #5120	@ 0x1400
- 800039c:	609a      	str	r2, [r3, #8]
+ 800035e:	689a      	ldr	r2, [r3, #8]
+ 8000360:	f442 52a0 	orr.w	r2, r2, #5120	@ 0x1400
+ 8000364:	609a      	str	r2, [r3, #8]
 
 	// APB2 PR
 	RCC->CFGR |= RCC_CFGR_PPRE2_DIV2;  // RCC->CFGR |= (4<<13);
- 800039e:	689a      	ldr	r2, [r3, #8]
- 80003a0:	f442 4200 	orr.w	r2, r2, #32768	@ 0x8000
- 80003a4:	609a      	str	r2, [r3, #8]
+ 8000366:	689a      	ldr	r2, [r3, #8]
+ 8000368:	f442 4200 	orr.w	r2, r2, #32768	@ 0x8000
+ 800036c:	609a      	str	r2, [r3, #8]
 
 	// 5. Configure the MAIN PLL
 	RCC->PLLCFGR = (PLL_M <<0) | (PLL_N << 6) | (PLL_P <<16) | (RCC_PLLCFGR_PLLSRC_HSE);  // (1<<22);
- 80003a6:	4a3f      	ldr	r2, [pc, #252]	@ (80004a4 <SysClockConfig+0x140>)
- 80003a8:	605a      	str	r2, [r3, #4]
+ 800036e:	4a3f      	ldr	r2, [pc, #252]	@ (800046c <SysClockConfig+0x140>)
+ 8000370:	605a      	str	r2, [r3, #4]
 
 	// 6. Enable the PLL and wait for it to become ready
 	RCC->CR |= RCC_CR_PLLON;  // RCC->CR |= (1<<24);
- 80003aa:	681a      	ldr	r2, [r3, #0]
- 80003ac:	f042 7280 	orr.w	r2, r2, #16777216	@ 0x1000000
- 80003b0:	601a      	str	r2, [r3, #0]
+ 8000372:	681a      	ldr	r2, [r3, #0]
+ 8000374:	f042 7280 	orr.w	r2, r2, #16777216	@ 0x1000000
+ 8000378:	601a      	str	r2, [r3, #0]
 	while (!(RCC->CR & RCC_CR_PLLRDY));  // while (!(RCC->CR & (1<<25)));
- 80003b2:	461a      	mov	r2, r3
- 80003b4:	6813      	ldr	r3, [r2, #0]
- 80003b6:	f013 7f00 	tst.w	r3, #33554432	@ 0x2000000
- 80003ba:	d0fb      	beq.n	80003b4 <SysClockConfig+0x50>
+ 800037a:	461a      	mov	r2, r3
+ 800037c:	6813      	ldr	r3, [r2, #0]
+ 800037e:	f013 7f00 	tst.w	r3, #33554432	@ 0x2000000
+ 8000382:	d0fb      	beq.n	800037c <SysClockConfig+0x50>
 
 	// 7. Select the Clock Source and wait for it to be set
 	RCC->CFGR |= RCC_CFGR_SW_PLL;  // RCC->CFGR |= (2<<0);
- 80003bc:	4a36      	ldr	r2, [pc, #216]	@ (8000498 <SysClockConfig+0x134>)
- 80003be:	6893      	ldr	r3, [r2, #8]
- 80003c0:	f043 0302 	orr.w	r3, r3, #2
- 80003c4:	6093      	str	r3, [r2, #8]
+ 8000384:	4a36      	ldr	r2, [pc, #216]	@ (8000460 <SysClockConfig+0x134>)
+ 8000386:	6893      	ldr	r3, [r2, #8]
+ 8000388:	f043 0302 	orr.w	r3, r3, #2
+ 800038c:	6093      	str	r3, [r2, #8]
 	while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);  // while (!(RCC->CFGR & (2<<2)));
- 80003c6:	6893      	ldr	r3, [r2, #8]
- 80003c8:	f003 030c 	and.w	r3, r3, #12
- 80003cc:	2b08      	cmp	r3, #8
- 80003ce:	d1fa      	bne.n	80003c6 <SysClockConfig+0x62>
+ 800038e:	6893      	ldr	r3, [r2, #8]
+ 8000390:	f003 030c 	and.w	r3, r3, #12
+ 8000394:	2b08      	cmp	r3, #8
+ 8000396:	d1fa      	bne.n	800038e <SysClockConfig+0x62>
 
 
 	// ------------- set RTC Wakeup Timer 1Hz ----------------------- //
 
 	PWR->CR |= PWR_CR_DBP; // (1U<<8); Disable backup domain write protection
- 80003d0:	4a32      	ldr	r2, [pc, #200]	@ (800049c <SysClockConfig+0x138>)
- 80003d2:	6813      	ldr	r3, [r2, #0]
- 80003d4:	f443 7380 	orr.w	r3, r3, #256	@ 0x100
- 80003d8:	6013      	str	r3, [r2, #0]
+ 8000398:	4a32      	ldr	r2, [pc, #200]	@ (8000464 <SysClockConfig+0x138>)
+ 800039a:	6813      	ldr	r3, [r2, #0]
+ 800039c:	f443 7380 	orr.w	r3, r3, #256	@ 0x100
+ 80003a0:	6013      	str	r3, [r2, #0]
 		while((PWR->CR & PWR_CR_DBP) == 0);
- 80003da:	6813      	ldr	r3, [r2, #0]
- 80003dc:	f413 7f80 	tst.w	r3, #256	@ 0x100
- 80003e0:	d0fb      	beq.n	80003da <SysClockConfig+0x76>
+ 80003a2:	6813      	ldr	r3, [r2, #0]
+ 80003a4:	f413 7f80 	tst.w	r3, #256	@ 0x100
+ 80003a8:	d0fb      	beq.n	80003a2 <SysClockConfig+0x76>
 	RCC->BDCR |= RCC_BDCR_BDRST; // (1U<<16); BDRST: Backup domain software reset (1: Resets the entire Backup domain)
- 80003e2:	4b2d      	ldr	r3, [pc, #180]	@ (8000498 <SysClockConfig+0x134>)
- 80003e4:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 80003e6:	f442 3280 	orr.w	r2, r2, #65536	@ 0x10000
- 80003ea:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003aa:	4b2d      	ldr	r3, [pc, #180]	@ (8000460 <SysClockConfig+0x134>)
+ 80003ac:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003ae:	f442 3280 	orr.w	r2, r2, #65536	@ 0x10000
+ 80003b2:	671a      	str	r2, [r3, #112]	@ 0x70
 	RCC->BDCR &= ~RCC_BDCR_BDRST; // 0: Reset not activated
- 80003ec:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 80003ee:	f422 3280 	bic.w	r2, r2, #65536	@ 0x10000
- 80003f2:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003b4:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003b6:	f422 3280 	bic.w	r2, r2, #65536	@ 0x10000
+ 80003ba:	671a      	str	r2, [r3, #112]	@ 0x70
 	RCC->BDCR |= RCC_BDCR_LSEON; //(1U<<0); Enable LSE Clock source and wait until LSERDY bit to set
- 80003f4:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 80003f6:	f042 0201 	orr.w	r2, r2, #1
- 80003fa:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003bc:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003be:	f042 0201 	orr.w	r2, r2, #1
+ 80003c2:	671a      	str	r2, [r3, #112]	@ 0x70
 		while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0); // (1U<<1)
- 80003fc:	461a      	mov	r2, r3
- 80003fe:	6f13      	ldr	r3, [r2, #112]	@ 0x70
- 8000400:	f013 0f02 	tst.w	r3, #2
- 8000404:	d0fb      	beq.n	80003fe <SysClockConfig+0x9a>
+ 80003c4:	461a      	mov	r2, r3
+ 80003c6:	6f13      	ldr	r3, [r2, #112]	@ 0x70
+ 80003c8:	f013 0f02 	tst.w	r3, #2
+ 80003cc:	d0fb      	beq.n	80003c6 <SysClockConfig+0x9a>
 	RCC->BDCR |= RCC_BDCR_RTCSEL; //  (1U<<8) Select LSE as RTC Clock
- 8000406:	4b24      	ldr	r3, [pc, #144]	@ (8000498 <SysClockConfig+0x134>)
- 8000408:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 800040a:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
- 800040e:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003ce:	4b24      	ldr	r3, [pc, #144]	@ (8000460 <SysClockConfig+0x134>)
+ 80003d0:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003d2:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
+ 80003d6:	671a      	str	r2, [r3, #112]	@ 0x70
 	RCC->BDCR &= ~(1U<<9); // Select LSE as RTC Clock (2nd bit)
- 8000410:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 8000412:	f422 7200 	bic.w	r2, r2, #512	@ 0x200
- 8000416:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003d8:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003da:	f422 7200 	bic.w	r2, r2, #512	@ 0x200
+ 80003de:	671a      	str	r2, [r3, #112]	@ 0x70
 	RCC->BDCR |= (1U<<15); // Enable RTC Clock
- 8000418:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
- 800041a:	f442 4200 	orr.w	r2, r2, #32768	@ 0x8000
- 800041e:	671a      	str	r2, [r3, #112]	@ 0x70
+ 80003e0:	6f1a      	ldr	r2, [r3, #112]	@ 0x70
+ 80003e2:	f442 4200 	orr.w	r2, r2, #32768	@ 0x8000
+ 80003e6:	671a      	str	r2, [r3, #112]	@ 0x70
 
 	RTC->WPR = 0xCA; // Disable the write protection for RTC registers. After backup domain reset, all the RTC registers
- 8000420:	f5a3 3304 	sub.w	r3, r3, #135168	@ 0x21000
- 8000424:	22ca      	movs	r2, #202	@ 0xca
- 8000426:	625a      	str	r2, [r3, #36]	@ 0x24
+ 80003e8:	f5a3 3304 	sub.w	r3, r3, #135168	@ 0x21000
+ 80003ec:	22ca      	movs	r2, #202	@ 0xca
+ 80003ee:	625a      	str	r2, [r3, #36]	@ 0x24
 	RTC->WPR = 0x53; // are write-protected. Writing to the RTC registers is enabled by writing a key into the Write Protection register.
- 8000428:	2253      	movs	r2, #83	@ 0x53
- 800042a:	625a      	str	r2, [r3, #36]	@ 0x24
+ 80003f0:	2253      	movs	r2, #83	@ 0x53
+ 80003f2:	625a      	str	r2, [r3, #36]	@ 0x24
 	RTC->CR &= ~RTC_CR_WUTE; //(1U<<10); Clear WUTE in RTC_CR to disable the wakeup timer before configuring it
- 800042c:	689a      	ldr	r2, [r3, #8]
- 800042e:	f422 6280 	bic.w	r2, r2, #1024	@ 0x400
- 8000432:	609a      	str	r2, [r3, #8]
+ 80003f4:	689a      	ldr	r2, [r3, #8]
+ 80003f6:	f422 6280 	bic.w	r2, r2, #1024	@ 0x400
+ 80003fa:	609a      	str	r2, [r3, #8]
 	RTC->ISR = RTC_ISR_WUTWF; // (1U<<2); The wakeup timer values can be changed when WUTE bit is cleared and WUTWF is set. (1: Wakeup timer configuration update allowed)
- 8000434:	2204      	movs	r2, #4
- 8000436:	60da      	str	r2, [r3, #12]
+ 80003fc:	2204      	movs	r2, #4
+ 80003fe:	60da      	str	r2, [r3, #12]
 
 	// Poll WUTWF until it is set in RTC_ICSR to make sure the access to wakeup autoreload counter and to WUCKSEL[2:0] bits is allowed
 	if((RTC->ISR & (1U<<6))==0)
- 8000438:	68db      	ldr	r3, [r3, #12]
- 800043a:	f013 0f40 	tst.w	r3, #64	@ 0x40
- 800043e:	d104      	bne.n	800044a <SysClockConfig+0xe6>
+ 8000400:	68db      	ldr	r3, [r3, #12]
+ 8000402:	f013 0f40 	tst.w	r3, #64	@ 0x40
+ 8000406:	d104      	bne.n	8000412 <SysClockConfig+0xe6>
 		while((RTC->ISR & RTC_ISR_WUTWF)==0);
- 8000440:	4a19      	ldr	r2, [pc, #100]	@ (80004a8 <SysClockConfig+0x144>)
- 8000442:	68d3      	ldr	r3, [r2, #12]
- 8000444:	f013 0f04 	tst.w	r3, #4
- 8000448:	d0fb      	beq.n	8000442 <SysClockConfig+0xde>
+ 8000408:	4a19      	ldr	r2, [pc, #100]	@ (8000470 <SysClockConfig+0x144>)
+ 800040a:	68d3      	ldr	r3, [r2, #12]
+ 800040c:	f013 0f04 	tst.w	r3, #4
+ 8000410:	d0fb      	beq.n	800040a <SysClockConfig+0xde>
 
 	// Configure the Wakeup Timer counter and auto clear value
 	RTC->WUTR = 0; // When the wakeup timer is enabled (WUTE set to 1), the WUTF flag is set every (WUT[15:0] + 1) ck_wut cycles
- 800044a:	4b17      	ldr	r3, [pc, #92]	@ (80004a8 <SysClockConfig+0x144>)
- 800044c:	2200      	movs	r2, #0
- 800044e:	615a      	str	r2, [r3, #20]
+ 8000412:	4b17      	ldr	r3, [pc, #92]	@ (8000470 <SysClockConfig+0x144>)
+ 8000414:	2200      	movs	r2, #0
+ 8000416:	615a      	str	r2, [r3, #20]
 	RTC->PRER = 0xFF;         // Configure the RTC PRER ; Synchronus value set as 255
- 8000450:	20ff      	movs	r0, #255	@ 0xff
- 8000452:	6118      	str	r0, [r3, #16]
+ 8000418:	20ff      	movs	r0, #255	@ 0xff
+ 800041a:	6118      	str	r0, [r3, #16]
 	RTC->PRER |= (0x7F<<16);    // Asynchronus value set as 127
- 8000454:	691a      	ldr	r2, [r3, #16]
- 8000456:	f442 02fe 	orr.w	r2, r2, #8323072	@ 0x7f0000
- 800045a:	611a      	str	r2, [r3, #16]
+ 800041c:	691a      	ldr	r2, [r3, #16]
+ 800041e:	f442 02fe 	orr.w	r2, r2, #8323072	@ 0x7f0000
+ 8000422:	611a      	str	r2, [r3, #16]
 	RTC->CR |= RTC_CR_WUCKSEL;  // WUCKSEL[2:0]: Configure the clock source; 10x: ck_spre (usually 1 Hz) clock is selected
- 800045c:	689a      	ldr	r2, [r3, #8]
- 800045e:	f042 0204 	orr.w	r2, r2, #4
- 8000462:	609a      	str	r2, [r3, #8]
+ 8000424:	689a      	ldr	r2, [r3, #8]
+ 8000426:	f042 0204 	orr.w	r2, r2, #4
+ 800042a:	609a      	str	r2, [r3, #8]
 
 	EXTI->IMR |= (1U<<22); // Configure and enable the EXTI Line 22 in interrupt mode
- 8000464:	4a11      	ldr	r2, [pc, #68]	@ (80004ac <SysClockConfig+0x148>)
- 8000466:	6811      	ldr	r1, [r2, #0]
- 8000468:	f441 0180 	orr.w	r1, r1, #4194304	@ 0x400000
- 800046c:	6011      	str	r1, [r2, #0]
+ 800042c:	4a11      	ldr	r2, [pc, #68]	@ (8000474 <SysClockConfig+0x148>)
+ 800042e:	6811      	ldr	r1, [r2, #0]
+ 8000430:	f441 0180 	orr.w	r1, r1, #4194304	@ 0x400000
+ 8000434:	6011      	str	r1, [r2, #0]
 	EXTI->RTSR |= (1U<<22); // Rising edge trigger enabled (for Event and Interrupt) for input line 10
- 800046e:	6891      	ldr	r1, [r2, #8]
- 8000470:	f441 0180 	orr.w	r1, r1, #4194304	@ 0x400000
- 8000474:	6091      	str	r1, [r2, #8]
+ 8000436:	6891      	ldr	r1, [r2, #8]
+ 8000438:	f441 0180 	orr.w	r1, r1, #4194304	@ 0x400000
+ 800043c:	6091      	str	r1, [r2, #8]
 
 	RTC->CR |= RTC_CR_WUTIE; // Wakeup timer interrupt enabled (1U<<14)
- 8000476:	689a      	ldr	r2, [r3, #8]
- 8000478:	f442 4280 	orr.w	r2, r2, #16384	@ 0x4000
- 800047c:	609a      	str	r2, [r3, #8]
+ 800043e:	689a      	ldr	r2, [r3, #8]
+ 8000440:	f442 4280 	orr.w	r2, r2, #16384	@ 0x4000
+ 8000444:	609a      	str	r2, [r3, #8]
 	RTC->CR |= RTC_CR_WUTE; // Enable the Wakeup Timer (1U<<10)
- 800047e:	689a      	ldr	r2, [r3, #8]
- 8000480:	f442 6280 	orr.w	r2, r2, #1024	@ 0x400
- 8000484:	609a      	str	r2, [r3, #8]
+ 8000446:	689a      	ldr	r2, [r3, #8]
+ 8000448:	f442 6280 	orr.w	r2, r2, #1024	@ 0x400
+ 800044c:	609a      	str	r2, [r3, #8]
 	RTC->WPR = RTC_WPR_KEY; // Enable the write protection for RTC registers (0xFF)
- 8000486:	6258      	str	r0, [r3, #36]	@ 0x24
+ 800044e:	6258      	str	r0, [r3, #36]	@ 0x24
  */
 __STATIC_INLINE void __NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
 {
   if ((int32_t)(IRQn) >= 0)
   {
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 8000488:	4b09      	ldr	r3, [pc, #36]	@ (80004b0 <SysClockConfig+0x14c>)
- 800048a:	22a0      	movs	r2, #160	@ 0xa0
- 800048c:	f883 2303 	strb.w	r2, [r3, #771]	@ 0x303
+ 8000450:	4b09      	ldr	r3, [pc, #36]	@ (8000478 <SysClockConfig+0x14c>)
+ 8000452:	22a0      	movs	r2, #160	@ 0xa0
+ 8000454:	f883 2303 	strb.w	r2, [r3, #771]	@ 0x303
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 8000490:	2208      	movs	r2, #8
- 8000492:	601a      	str	r2, [r3, #0]
+ 8000458:	2208      	movs	r2, #8
+ 800045a:	601a      	str	r2, [r3, #0]
 
 	NVIC_SetPriority(RTC_WKUP_IRQn, 10);
 	NVIC_EnableIRQ(RTC_WKUP_IRQn);
 }
- 8000494:	4770      	bx	lr
- 8000496:	bf00      	nop
- 8000498:	40023800 	.word	0x40023800
- 800049c:	40007000 	.word	0x40007000
- 80004a0:	40023c00 	.word	0x40023c00
- 80004a4:	00402d04 	.word	0x00402d04
- 80004a8:	40002800 	.word	0x40002800
- 80004ac:	40013c00 	.word	0x40013c00
- 80004b0:	e000e100 	.word	0xe000e100
+ 800045c:	4770      	bx	lr
+ 800045e:	bf00      	nop
+ 8000460:	40023800 	.word	0x40023800
+ 8000464:	40007000 	.word	0x40007000
+ 8000468:	40023c00 	.word	0x40023c00
+ 800046c:	00402d04 	.word	0x00402d04
+ 8000470:	40002800 	.word	0x40002800
+ 8000474:	40013c00 	.word	0x40013c00
+ 8000478:	e000e100 	.word	0xe000e100
 
-080004b4 <GPIO_Config>:
+0800047c <GPIO_Config>:
 
 
 void GPIO_Config (void)
 {
- 80004b4:	b430      	push	{r4, r5}
+ 800047c:	b430      	push	{r4, r5}
 	// 1. Enable the GPIO CLOCK
 	RCC->AHB1ENR |= (1<<0); // GPIO-A
- 80004b6:	4b35      	ldr	r3, [pc, #212]	@ (800058c <GPIO_Config+0xd8>)
- 80004b8:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 80004ba:	f042 0201 	orr.w	r2, r2, #1
- 80004be:	631a      	str	r2, [r3, #48]	@ 0x30
+ 800047e:	4b35      	ldr	r3, [pc, #212]	@ (8000554 <GPIO_Config+0xd8>)
+ 8000480:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 8000482:	f042 0201 	orr.w	r2, r2, #1
+ 8000486:	631a      	str	r2, [r3, #48]	@ 0x30
 	RCC->AHB1ENR |= (1<<1); // GPIO-B
- 80004c0:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 80004c2:	f042 0202 	orr.w	r2, r2, #2
- 80004c6:	631a      	str	r2, [r3, #48]	@ 0x30
+ 8000488:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 800048a:	f042 0202 	orr.w	r2, r2, #2
+ 800048e:	631a      	str	r2, [r3, #48]	@ 0x30
 	RCC->AHB1ENR |= (1<<3); // GPIO-D
- 80004c8:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 80004ca:	f042 0208 	orr.w	r2, r2, #8
- 80004ce:	631a      	str	r2, [r3, #48]	@ 0x30
+ 8000490:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 8000492:	f042 0208 	orr.w	r2, r2, #8
+ 8000496:	631a      	str	r2, [r3, #48]	@ 0x30
 	RCC->AHB1ENR |= (1<<6); // GPIO-G
- 80004d0:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 80004d2:	f042 0240 	orr.w	r2, r2, #64	@ 0x40
- 80004d6:	631a      	str	r2, [r3, #48]	@ 0x30
+ 8000498:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 800049a:	f042 0240 	orr.w	r2, r2, #64	@ 0x40
+ 800049e:	631a      	str	r2, [r3, #48]	@ 0x30
 	RCC->AHB1ENR |= (1<<10); // GPIO-K
- 80004d8:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 80004da:	f442 6280 	orr.w	r2, r2, #1024	@ 0x400
- 80004de:	631a      	str	r2, [r3, #48]	@ 0x30
+ 80004a0:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 80004a2:	f442 6280 	orr.w	r2, r2, #1024	@ 0x400
+ 80004a6:	631a      	str	r2, [r3, #48]	@ 0x30
 
 	// 2. Set the Pins as OUTPUT / INPUT
 	GPIOA->MODER &= ~(3<<0);  // pin PA0(bits 1:0)
- 80004e0:	f5a3 5360 	sub.w	r3, r3, #14336	@ 0x3800
- 80004e4:	681a      	ldr	r2, [r3, #0]
- 80004e6:	f022 0203 	bic.w	r2, r2, #3
- 80004ea:	601a      	str	r2, [r3, #0]
+ 80004a8:	f5a3 5360 	sub.w	r3, r3, #14336	@ 0x3800
+ 80004ac:	681a      	ldr	r2, [r3, #0]
+ 80004ae:	f022 0203 	bic.w	r2, r2, #3
+ 80004b2:	601a      	str	r2, [r3, #0]
 	GPIOB->MODER &= ~(3<<24); // PB12 input mode
- 80004ec:	4c28      	ldr	r4, [pc, #160]	@ (8000590 <GPIO_Config+0xdc>)
- 80004ee:	6822      	ldr	r2, [r4, #0]
- 80004f0:	f022 7240 	bic.w	r2, r2, #50331648	@ 0x3000000
- 80004f4:	6022      	str	r2, [r4, #0]
+ 80004b4:	4c28      	ldr	r4, [pc, #160]	@ (8000558 <GPIO_Config+0xdc>)
+ 80004b6:	6822      	ldr	r2, [r4, #0]
+ 80004b8:	f022 7240 	bic.w	r2, r2, #50331648	@ 0x3000000
+ 80004bc:	6022      	str	r2, [r4, #0]
 	// error GPIOG->MODER |= (1<<21);  //
 	GPIOG->MODER |= (1<<12);  // pin PG6(bits 13:12) as Output (01) - Green Led
- 80004f6:	4a27      	ldr	r2, [pc, #156]	@ (8000594 <GPIO_Config+0xe0>)
- 80004f8:	6811      	ldr	r1, [r2, #0]
- 80004fa:	f441 5180 	orr.w	r1, r1, #4096	@ 0x1000
- 80004fe:	6011      	str	r1, [r2, #0]
+ 80004be:	4a27      	ldr	r2, [pc, #156]	@ (800055c <GPIO_Config+0xe0>)
+ 80004c0:	6811      	ldr	r1, [r2, #0]
+ 80004c2:	f441 5180 	orr.w	r1, r1, #4096	@ 0x1000
+ 80004c6:	6011      	str	r1, [r2, #0]
 	GPIOK->MODER |= (1<<6);  // pin PK3(bits 7:6) as Output (01)
- 8000500:	4825      	ldr	r0, [pc, #148]	@ (8000598 <GPIO_Config+0xe4>)
- 8000502:	6801      	ldr	r1, [r0, #0]
- 8000504:	f041 0140 	orr.w	r1, r1, #64	@ 0x40
- 8000508:	6001      	str	r1, [r0, #0]
+ 80004c8:	4825      	ldr	r0, [pc, #148]	@ (8000560 <GPIO_Config+0xe4>)
+ 80004ca:	6801      	ldr	r1, [r0, #0]
+ 80004cc:	f041 0140 	orr.w	r1, r1, #64	@ 0x40
+ 80004d0:	6001      	str	r1, [r0, #0]
 	GPIOG->MODER &= ~(3<<26);  // pin PG13 as Output
- 800050a:	6811      	ldr	r1, [r2, #0]
- 800050c:	f021 6140 	bic.w	r1, r1, #201326592	@ 0xc000000
- 8000510:	6011      	str	r1, [r2, #0]
+ 80004d2:	6811      	ldr	r1, [r2, #0]
+ 80004d4:	f021 6140 	bic.w	r1, r1, #201326592	@ 0xc000000
+ 80004d8:	6011      	str	r1, [r2, #0]
 	GPIOG->MODER |= (1<<26);  // pin PG13 as Output
- 8000512:	6811      	ldr	r1, [r2, #0]
- 8000514:	f041 6180 	orr.w	r1, r1, #67108864	@ 0x4000000
- 8000518:	6011      	str	r1, [r2, #0]
+ 80004da:	6811      	ldr	r1, [r2, #0]
+ 80004dc:	f041 6180 	orr.w	r1, r1, #67108864	@ 0x4000000
+ 80004e0:	6011      	str	r1, [r2, #0]
 	GPIOD->MODER |= (1<<8);  // pin PD4 as Output (01) - Orange Led
- 800051a:	4920      	ldr	r1, [pc, #128]	@ (800059c <GPIO_Config+0xe8>)
- 800051c:	680d      	ldr	r5, [r1, #0]
- 800051e:	f445 7580 	orr.w	r5, r5, #256	@ 0x100
- 8000522:	600d      	str	r5, [r1, #0]
+ 80004e2:	4920      	ldr	r1, [pc, #128]	@ (8000564 <GPIO_Config+0xe8>)
+ 80004e4:	680d      	ldr	r5, [r1, #0]
+ 80004e6:	f445 7580 	orr.w	r5, r5, #256	@ 0x100
+ 80004ea:	600d      	str	r5, [r1, #0]
 	GPIOA->MODER &= ~(3U << (8 * 2)); // PA8 in input mode
- 8000524:	681d      	ldr	r5, [r3, #0]
- 8000526:	f425 3540 	bic.w	r5, r5, #196608	@ 0x30000
- 800052a:	601d      	str	r5, [r3, #0]
+ 80004ec:	681d      	ldr	r5, [r3, #0]
+ 80004ee:	f425 3540 	bic.w	r5, r5, #196608	@ 0x30000
+ 80004f2:	601d      	str	r5, [r3, #0]
 
 	// 3. Configure the OUTPUT MODE
 	GPIOA->PUPDR &= ~(1<<0); // input, 00: No pull-up, pull-down
- 800052c:	68dd      	ldr	r5, [r3, #12]
- 800052e:	f025 0501 	bic.w	r5, r5, #1
- 8000532:	60dd      	str	r5, [r3, #12]
+ 80004f4:	68dd      	ldr	r5, [r3, #12]
+ 80004f6:	f025 0501 	bic.w	r5, r5, #1
+ 80004fa:	60dd      	str	r5, [r3, #12]
 	GPIOA->PUPDR &= ~(1<<1); // input, 00: No pull-up, pull-down
- 8000534:	68dd      	ldr	r5, [r3, #12]
- 8000536:	f025 0502 	bic.w	r5, r5, #2
- 800053a:	60dd      	str	r5, [r3, #12]
+ 80004fc:	68dd      	ldr	r5, [r3, #12]
+ 80004fe:	f025 0502 	bic.w	r5, r5, #2
+ 8000502:	60dd      	str	r5, [r3, #12]
 	GPIOA->OSPEEDR &= ~(1<<30 | 1<<31);
- 800053c:	689d      	ldr	r5, [r3, #8]
- 800053e:	f025 4540 	bic.w	r5, r5, #3221225472	@ 0xc0000000
- 8000542:	609d      	str	r5, [r3, #8]
+ 8000504:	689d      	ldr	r5, [r3, #8]
+ 8000506:	f025 4540 	bic.w	r5, r5, #3221225472	@ 0xc0000000
+ 800050a:	609d      	str	r5, [r3, #8]
 	GPIOB->PUPDR &= ~(1<<24 | 1<<25); // PB12 input, 00: No pull-up, no pull-down
- 8000544:	68e5      	ldr	r5, [r4, #12]
- 8000546:	f025 7540 	bic.w	r5, r5, #50331648	@ 0x3000000
- 800054a:	60e5      	str	r5, [r4, #12]
+ 800050c:	68e5      	ldr	r5, [r4, #12]
+ 800050e:	f025 7540 	bic.w	r5, r5, #50331648	@ 0x3000000
+ 8000512:	60e5      	str	r5, [r4, #12]
 	GPIOG->OTYPER = 1;
- 800054c:	2501      	movs	r5, #1
- 800054e:	6055      	str	r5, [r2, #4]
+ 8000514:	2501      	movs	r5, #1
+ 8000516:	6055      	str	r5, [r2, #4]
 	GPIOG->OSPEEDR = 0;
- 8000550:	2400      	movs	r4, #0
- 8000552:	6094      	str	r4, [r2, #8]
+ 8000518:	2400      	movs	r4, #0
+ 800051a:	6094      	str	r4, [r2, #8]
 	GPIOK->OTYPER = 1;
- 8000554:	6045      	str	r5, [r0, #4]
+ 800051c:	6045      	str	r5, [r0, #4]
 	GPIOK->OSPEEDR = 0;
- 8000556:	6084      	str	r4, [r0, #8]
+ 800051e:	6084      	str	r4, [r0, #8]
 	GPIOG->OTYPER &= ~(1 << 13); // PG13 Push Pull Output
- 8000558:	6850      	ldr	r0, [r2, #4]
- 800055a:	f420 5000 	bic.w	r0, r0, #8192	@ 0x2000
- 800055e:	6050      	str	r0, [r2, #4]
+ 8000520:	6850      	ldr	r0, [r2, #4]
+ 8000522:	f420 5000 	bic.w	r0, r0, #8192	@ 0x2000
+ 8000526:	6050      	str	r0, [r2, #4]
 	GPIOG->OSPEEDR &= ~(3U << (26)); // PG13 Low Speed
- 8000560:	6890      	ldr	r0, [r2, #8]
- 8000562:	f020 6040 	bic.w	r0, r0, #201326592	@ 0xc000000
- 8000566:	6090      	str	r0, [r2, #8]
+ 8000528:	6890      	ldr	r0, [r2, #8]
+ 800052a:	f020 6040 	bic.w	r0, r0, #201326592	@ 0xc000000
+ 800052e:	6090      	str	r0, [r2, #8]
 	GPIOG->BSRR = (1U << 13); // set the PG13 to #1
- 8000568:	f44f 5000 	mov.w	r0, #8192	@ 0x2000
- 800056c:	6190      	str	r0, [r2, #24]
+ 8000530:	f44f 5000 	mov.w	r0, #8192	@ 0x2000
+ 8000534:	6190      	str	r0, [r2, #24]
 	GPIOD->OTYPER &= ~(1 << 4); // orange Led PD4 in P-P
- 800056e:	684a      	ldr	r2, [r1, #4]
- 8000570:	f022 0210 	bic.w	r2, r2, #16
- 8000574:	604a      	str	r2, [r1, #4]
+ 8000536:	684a      	ldr	r2, [r1, #4]
+ 8000538:	f022 0210 	bic.w	r2, r2, #16
+ 800053c:	604a      	str	r2, [r1, #4]
 	GPIOA->PUPDR &= ~(3U << (8 * 2)); // PA8 01: Pull-up
- 8000576:	68da      	ldr	r2, [r3, #12]
- 8000578:	f422 3240 	bic.w	r2, r2, #196608	@ 0x30000
- 800057c:	60da      	str	r2, [r3, #12]
+ 800053e:	68da      	ldr	r2, [r3, #12]
+ 8000540:	f422 3240 	bic.w	r2, r2, #196608	@ 0x30000
+ 8000544:	60da      	str	r2, [r3, #12]
 	GPIOA->PUPDR |= (1 << (8 * 2)); // PA8 01: Pull-up
- 800057e:	68da      	ldr	r2, [r3, #12]
- 8000580:	f442 3280 	orr.w	r2, r2, #65536	@ 0x10000
- 8000584:	60da      	str	r2, [r3, #12]
+ 8000546:	68da      	ldr	r2, [r3, #12]
+ 8000548:	f442 3280 	orr.w	r2, r2, #65536	@ 0x10000
+ 800054c:	60da      	str	r2, [r3, #12]
 }
- 8000586:	bc30      	pop	{r4, r5}
- 8000588:	4770      	bx	lr
- 800058a:	bf00      	nop
- 800058c:	40023800 	.word	0x40023800
- 8000590:	40020400 	.word	0x40020400
- 8000594:	40021800 	.word	0x40021800
- 8000598:	40022800 	.word	0x40022800
- 800059c:	40020c00 	.word	0x40020c00
+ 800054e:	bc30      	pop	{r4, r5}
+ 8000550:	4770      	bx	lr
+ 8000552:	bf00      	nop
+ 8000554:	40023800 	.word	0x40023800
+ 8000558:	40020400 	.word	0x40020400
+ 800055c:	40021800 	.word	0x40021800
+ 8000560:	40022800 	.word	0x40022800
+ 8000564:	40020c00 	.word	0x40020c00
 
-080005a0 <InterruptGPIO_Config>:
+08000568 <InterruptGPIO_Config>:
 
 
 void InterruptGPIO_Config (void)
 {
 	RCC->APB2ENR |= (1<<14);  // Enable SYSCFGEN: System configuration controller clock enable
- 80005a0:	4a28      	ldr	r2, [pc, #160]	@ (8000644 <InterruptGPIO_Config+0xa4>)
- 80005a2:	6c53      	ldr	r3, [r2, #68]	@ 0x44
- 80005a4:	f443 4380 	orr.w	r3, r3, #16384	@ 0x4000
- 80005a8:	6453      	str	r3, [r2, #68]	@ 0x44
+ 8000568:	4a28      	ldr	r2, [pc, #160]	@ (800060c <InterruptGPIO_Config+0xa4>)
+ 800056a:	6c53      	ldr	r3, [r2, #68]	@ 0x44
+ 800056c:	f443 4380 	orr.w	r3, r3, #16384	@ 0x4000
+ 8000570:	6453      	str	r3, [r2, #68]	@ 0x44
 	SYSCFG->EXTICR[0] &= ~(0xF<<0);  // Bits[7:6:5:4] = (0:0:0:0) -> configure EXTI1 line for PA1; SYSCFG external interrupt configuration register 1 (SYSCFG_EXTICR1)
- 80005aa:	f5a2 3280 	sub.w	r2, r2, #65536	@ 0x10000
- 80005ae:	6893      	ldr	r3, [r2, #8]
- 80005b0:	f023 030f 	bic.w	r3, r3, #15
- 80005b4:	6093      	str	r3, [r2, #8]
+ 8000572:	f5a2 3280 	sub.w	r2, r2, #65536	@ 0x10000
+ 8000576:	6893      	ldr	r3, [r2, #8]
+ 8000578:	f023 030f 	bic.w	r3, r3, #15
+ 800057c:	6093      	str	r3, [r2, #8]
 	EXTI->IMR |= (1<<0);  // Bit[0] = 1  --> Disable the Mask on EXTI 1 (Interrupt mask register (EXTI_IMR))
- 80005b6:	4b24      	ldr	r3, [pc, #144]	@ (8000648 <InterruptGPIO_Config+0xa8>)
- 80005b8:	6819      	ldr	r1, [r3, #0]
- 80005ba:	f041 0101 	orr.w	r1, r1, #1
- 80005be:	6019      	str	r1, [r3, #0]
+ 800057e:	4b24      	ldr	r3, [pc, #144]	@ (8000610 <InterruptGPIO_Config+0xa8>)
+ 8000580:	6819      	ldr	r1, [r3, #0]
+ 8000582:	f041 0101 	orr.w	r1, r1, #1
+ 8000586:	6019      	str	r1, [r3, #0]
 	EXTI->RTSR |= (1<<0);  // Enable Rising Edge Trigger for PA0 (Rising trigger selection register (EXTI_RTSR))
- 80005c0:	6899      	ldr	r1, [r3, #8]
- 80005c2:	f041 0101 	orr.w	r1, r1, #1
- 80005c6:	6099      	str	r1, [r3, #8]
+ 8000588:	6899      	ldr	r1, [r3, #8]
+ 800058a:	f041 0101 	orr.w	r1, r1, #1
+ 800058e:	6099      	str	r1, [r3, #8]
 	EXTI->FTSR &= ~(1<<0);  // Disable Falling Edge Trigger for PA0 (Falling trigger selection register (EXTI_FTSR))
- 80005c8:	68d9      	ldr	r1, [r3, #12]
- 80005ca:	f021 0101 	bic.w	r1, r1, #1
- 80005ce:	60d9      	str	r1, [r3, #12]
+ 8000590:	68d9      	ldr	r1, [r3, #12]
+ 8000592:	f021 0101 	bic.w	r1, r1, #1
+ 8000596:	60d9      	str	r1, [r3, #12]
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 80005d0:	491e      	ldr	r1, [pc, #120]	@ (800064c <InterruptGPIO_Config+0xac>)
- 80005d2:	20a0      	movs	r0, #160	@ 0xa0
- 80005d4:	f881 0306 	strb.w	r0, [r1, #774]	@ 0x306
+ 8000598:	491e      	ldr	r1, [pc, #120]	@ (8000614 <InterruptGPIO_Config+0xac>)
+ 800059a:	20a0      	movs	r0, #160	@ 0xa0
+ 800059c:	f881 0306 	strb.w	r0, [r1, #774]	@ 0x306
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 80005d8:	2040      	movs	r0, #64	@ 0x40
- 80005da:	6008      	str	r0, [r1, #0]
+ 80005a0:	2040      	movs	r0, #64	@ 0x40
+ 80005a2:	6008      	str	r0, [r1, #0]
 	NVIC_SetPriority(EXTI0_IRQn, 10);
 	NVIC_EnableIRQ(EXTI0_IRQn);
 
 	//SYSCFG->EXTICR[1] &= ~(0xF<<8);  // Bits[8:9:10:] = (0:0:0:0) -> configure EXTI1 line for PA1; SYSCFG external interrupt configuration register 1 (SYSCFG_EXTICR1)
 	SYSCFG->EXTICR[3] &= ~(0xF<<0); // first, clear the  bits / EXTI12 is in EXTICR[3], bits [3:0] / SYSCFG external interrupt configuration register 3
- 80005dc:	6950      	ldr	r0, [r2, #20]
- 80005de:	f020 000f 	bic.w	r0, r0, #15
- 80005e2:	6150      	str	r0, [r2, #20]
+ 80005a4:	6950      	ldr	r0, [r2, #20]
+ 80005a6:	f020 000f 	bic.w	r0, r0, #15
+ 80005aa:	6150      	str	r0, [r2, #20]
 	SYSCFG->EXTICR[3] |= (1<<0); // Set Port B (0001); These bits are written by software to select the source input for the EXTIx	external interrupt
- 80005e4:	6950      	ldr	r0, [r2, #20]
- 80005e6:	f040 0001 	orr.w	r0, r0, #1
- 80005ea:	6150      	str	r0, [r2, #20]
+ 80005ac:	6950      	ldr	r0, [r2, #20]
+ 80005ae:	f040 0001 	orr.w	r0, r0, #1
+ 80005b2:	6150      	str	r0, [r2, #20]
 	EXTI->IMR |= (1<<12);  // Bit[0] = 1  --> Disable the Mask on EXTI 1 (Interrupt mask register (EXTI_IMR))
- 80005ec:	6818      	ldr	r0, [r3, #0]
- 80005ee:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
- 80005f2:	6018      	str	r0, [r3, #0]
+ 80005b4:	6818      	ldr	r0, [r3, #0]
+ 80005b6:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
+ 80005ba:	6018      	str	r0, [r3, #0]
 	EXTI->RTSR |= (1<<12);  //  interrupt when button released - Enable Rising Edge Trigger for PB12 (Rising trigger selection register (EXTI_RTSR))
- 80005f4:	6898      	ldr	r0, [r3, #8]
- 80005f6:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
- 80005fa:	6098      	str	r0, [r3, #8]
+ 80005bc:	6898      	ldr	r0, [r3, #8]
+ 80005be:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
+ 80005c2:	6098      	str	r0, [r3, #8]
 	EXTI->FTSR |= (1<<12); // Rotary encoder switch - interrupt when button pushed - - Enable Rising Edge Trigger
- 80005fc:	68d8      	ldr	r0, [r3, #12]
- 80005fe:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
- 8000602:	60d8      	str	r0, [r3, #12]
+ 80005c4:	68d8      	ldr	r0, [r3, #12]
+ 80005c6:	f440 5080 	orr.w	r0, r0, #4096	@ 0x1000
+ 80005ca:	60d8      	str	r0, [r3, #12]
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 8000604:	2090      	movs	r0, #144	@ 0x90
- 8000606:	f881 0328 	strb.w	r0, [r1, #808]	@ 0x328
+ 80005cc:	2090      	movs	r0, #144	@ 0x90
+ 80005ce:	f881 0328 	strb.w	r0, [r1, #808]	@ 0x328
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 800060a:	f44f 7080 	mov.w	r0, #256	@ 0x100
- 800060e:	6048      	str	r0, [r1, #4]
+ 80005d2:	f44f 7080 	mov.w	r0, #256	@ 0x100
+ 80005d6:	6048      	str	r0, [r1, #4]
 	NVIC_SetPriority(EXTI15_10_IRQn, 9);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	//Map PA8 to EXTI8
 	SYSCFG->EXTICR[2] &= ~(0xF);
- 8000610:	6910      	ldr	r0, [r2, #16]
- 8000612:	f020 000f 	bic.w	r0, r0, #15
- 8000616:	6110      	str	r0, [r2, #16]
+ 80005d8:	6910      	ldr	r0, [r2, #16]
+ 80005da:	f020 000f 	bic.w	r0, r0, #15
+ 80005de:	6110      	str	r0, [r2, #16]
 	SYSCFG->EXTICR[2] |=  (0x0); 	// Writing 0 to the first 4 bits selects Port A for Line 8.
- 8000618:	6910      	ldr	r0, [r2, #16]
- 800061a:	6110      	str	r0, [r2, #16]
+ 80005e0:	6910      	ldr	r0, [r2, #16]
+ 80005e2:	6110      	str	r0, [r2, #16]
 	// Configure EXTI Line 8
 	EXTI->IMR |= (1 << 8);    // Unmask (enable) Interrupt Line 13
- 800061c:	681a      	ldr	r2, [r3, #0]
- 800061e:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
- 8000622:	601a      	str	r2, [r3, #0]
+ 80005e4:	681a      	ldr	r2, [r3, #0]
+ 80005e6:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
+ 80005ea:	601a      	str	r2, [r3, #0]
 	EXTI->FTSR |= (1 << 8);   // Enable Falling Edge Trigger (detects Grounding)
- 8000624:	68da      	ldr	r2, [r3, #12]
- 8000626:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
- 800062a:	60da      	str	r2, [r3, #12]
+ 80005ec:	68da      	ldr	r2, [r3, #12]
+ 80005ee:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
+ 80005f2:	60da      	str	r2, [r3, #12]
 	EXTI->RTSR |= (1 << 8);  // Enable Rising Edge
- 800062c:	689a      	ldr	r2, [r3, #8]
- 800062e:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
- 8000632:	609a      	str	r2, [r3, #8]
+ 80005f4:	689a      	ldr	r2, [r3, #8]
+ 80005f6:	f442 7280 	orr.w	r2, r2, #256	@ 0x100
+ 80005fa:	609a      	str	r2, [r3, #8]
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 8000634:	23f0      	movs	r3, #240	@ 0xf0
- 8000636:	f881 3317 	strb.w	r3, [r1, #791]	@ 0x317
+ 80005fc:	23f0      	movs	r3, #240	@ 0xf0
+ 80005fe:	f881 3317 	strb.w	r3, [r1, #791]	@ 0x317
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 800063a:	f44f 0300 	mov.w	r3, #8388608	@ 0x800000
- 800063e:	600b      	str	r3, [r1, #0]
+ 8000602:	f44f 0300 	mov.w	r3, #8388608	@ 0x800000
+ 8000606:	600b      	str	r3, [r1, #0]
 	NVIC_SetPriority(EXTI9_5_IRQn, 15);
 	NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
- 8000640:	4770      	bx	lr
- 8000642:	bf00      	nop
- 8000644:	40023800 	.word	0x40023800
- 8000648:	40013c00 	.word	0x40013c00
- 800064c:	e000e100 	.word	0xe000e100
+ 8000608:	4770      	bx	lr
+ 800060a:	bf00      	nop
+ 800060c:	40023800 	.word	0x40023800
+ 8000610:	40013c00 	.word	0x40013c00
+ 8000614:	e000e100 	.word	0xe000e100
 
-08000650 <_Z17Spi1_LowLevelInitv>:
+08000618 <_Z17Spi1_LowLevelInitv>:
 SpiDriver spi1(Spi1Config);
 
 // Concrete execution block mapping GPIO, AF5 configurations, and CS pins
 void Spi1_LowLevelInit(void) {
     // 1. Enable Clocks
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN;
- 8000650:	4b30      	ldr	r3, [pc, #192]	@ (8000714 <_Z17Spi1_LowLevelInitv+0xc4>)
- 8000652:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
- 8000654:	f042 0207 	orr.w	r2, r2, #7
- 8000658:	631a      	str	r2, [r3, #48]	@ 0x30
+ 8000618:	4b30      	ldr	r3, [pc, #192]	@ (80006dc <_Z17Spi1_LowLevelInitv+0xc4>)
+ 800061a:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
+ 800061c:	f042 0207 	orr.w	r2, r2, #7
+ 8000620:	631a      	str	r2, [r3, #48]	@ 0x30
     RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
- 800065a:	6c5a      	ldr	r2, [r3, #68]	@ 0x44
- 800065c:	f442 5280 	orr.w	r2, r2, #4096	@ 0x1000
- 8000660:	645a      	str	r2, [r3, #68]	@ 0x44
+ 8000622:	6c5a      	ldr	r2, [r3, #68]	@ 0x44
+ 8000624:	f442 5280 	orr.w	r2, r2, #4096	@ 0x1000
+ 8000628:	645a      	str	r2, [r3, #68]	@ 0x44
 
     // 2. PA5 = SPI1_SCK (Alternate Function)
     GPIOA->MODER &= ~(3 << GPIO_MODER_MODER5_Pos);
- 8000662:	f5a3 5360 	sub.w	r3, r3, #14336	@ 0x3800
- 8000666:	681a      	ldr	r2, [r3, #0]
- 8000668:	f422 6240 	bic.w	r2, r2, #3072	@ 0xc00
- 800066c:	601a      	str	r2, [r3, #0]
+ 800062a:	f5a3 5360 	sub.w	r3, r3, #14336	@ 0x3800
+ 800062e:	681a      	ldr	r2, [r3, #0]
+ 8000630:	f422 6240 	bic.w	r2, r2, #3072	@ 0xc00
+ 8000634:	601a      	str	r2, [r3, #0]
     GPIOA->MODER |=  (2 << GPIO_MODER_MODER5_Pos);
- 800066e:	681a      	ldr	r2, [r3, #0]
- 8000670:	f442 6200 	orr.w	r2, r2, #2048	@ 0x800
- 8000674:	601a      	str	r2, [r3, #0]
+ 8000636:	681a      	ldr	r2, [r3, #0]
+ 8000638:	f442 6200 	orr.w	r2, r2, #2048	@ 0x800
+ 800063c:	601a      	str	r2, [r3, #0]
     GPIOA->AFR[0] &= ~(0xF << GPIO_AFRL_AFSEL5_Pos);
- 8000676:	6a1a      	ldr	r2, [r3, #32]
- 8000678:	f422 0270 	bic.w	r2, r2, #15728640	@ 0xf00000
- 800067c:	621a      	str	r2, [r3, #32]
+ 800063e:	6a1a      	ldr	r2, [r3, #32]
+ 8000640:	f422 0270 	bic.w	r2, r2, #15728640	@ 0xf00000
+ 8000644:	621a      	str	r2, [r3, #32]
     GPIOA->AFR[0] |=  (5   << GPIO_AFRL_AFSEL5_Pos);
- 800067e:	6a1a      	ldr	r2, [r3, #32]
- 8000680:	f442 02a0 	orr.w	r2, r2, #5242880	@ 0x500000
- 8000684:	621a      	str	r2, [r3, #32]
+ 8000646:	6a1a      	ldr	r2, [r3, #32]
+ 8000648:	f442 02a0 	orr.w	r2, r2, #5242880	@ 0x500000
+ 800064c:	621a      	str	r2, [r3, #32]
 
     // 3. PB4 = MISO, PB5 = MOSI (Alternate Function)
     GPIOB->MODER &= ~((3 << GPIO_MODER_MODER4_Pos) | (3 << GPIO_MODER_MODER5_Pos));
- 8000686:	4a24      	ldr	r2, [pc, #144]	@ (8000718 <_Z17Spi1_LowLevelInitv+0xc8>)
- 8000688:	6811      	ldr	r1, [r2, #0]
- 800068a:	f421 6170 	bic.w	r1, r1, #3840	@ 0xf00
- 800068e:	6011      	str	r1, [r2, #0]
+ 800064e:	4a24      	ldr	r2, [pc, #144]	@ (80006e0 <_Z17Spi1_LowLevelInitv+0xc8>)
+ 8000650:	6811      	ldr	r1, [r2, #0]
+ 8000652:	f421 6170 	bic.w	r1, r1, #3840	@ 0xf00
+ 8000656:	6011      	str	r1, [r2, #0]
     GPIOB->MODER |=  ((2 << GPIO_MODER_MODER4_Pos) | (2 << GPIO_MODER_MODER5_Pos));
- 8000690:	6811      	ldr	r1, [r2, #0]
- 8000692:	f441 6120 	orr.w	r1, r1, #2560	@ 0xa00
- 8000696:	6011      	str	r1, [r2, #0]
+ 8000658:	6811      	ldr	r1, [r2, #0]
+ 800065a:	f441 6120 	orr.w	r1, r1, #2560	@ 0xa00
+ 800065e:	6011      	str	r1, [r2, #0]
     GPIOB->AFR[0] &= ~((0xF << GPIO_AFRL_AFSEL4_Pos) | (0xF << GPIO_AFRL_AFSEL5_Pos));
- 8000698:	6a11      	ldr	r1, [r2, #32]
- 800069a:	f421 017f 	bic.w	r1, r1, #16711680	@ 0xff0000
- 800069e:	6211      	str	r1, [r2, #32]
+ 8000660:	6a11      	ldr	r1, [r2, #32]
+ 8000662:	f421 017f 	bic.w	r1, r1, #16711680	@ 0xff0000
+ 8000666:	6211      	str	r1, [r2, #32]
     GPIOB->AFR[0] |=  ((5   << GPIO_AFRL_AFSEL4_Pos) | (5   << GPIO_AFRL_AFSEL5_Pos));
- 80006a0:	6a11      	ldr	r1, [r2, #32]
- 80006a2:	f441 01aa 	orr.w	r1, r1, #5570560	@ 0x550000
- 80006a6:	6211      	str	r1, [r2, #32]
+ 8000668:	6a11      	ldr	r1, [r2, #32]
+ 800066a:	f441 01aa 	orr.w	r1, r1, #5570560	@ 0x550000
+ 800066e:	6211      	str	r1, [r2, #32]
     GPIOB->PUPDR &= ~(3 << GPIO_PUPDR_PUPD4_Pos); // Helps to gently pull (40Kohm) the MISO line back up to the VCC rail whenever the slave releases the bus
- 80006a8:	68d1      	ldr	r1, [r2, #12]
- 80006aa:	f421 7140 	bic.w	r1, r1, #768	@ 0x300
- 80006ae:	60d1      	str	r1, [r2, #12]
+ 8000670:	68d1      	ldr	r1, [r2, #12]
+ 8000672:	f421 7140 	bic.w	r1, r1, #768	@ 0x300
+ 8000676:	60d1      	str	r1, [r2, #12]
     GPIOB->PUPDR |=  (1 << GPIO_PUPDR_PUPD4_Pos); // 1 = Pull-up, 2 = Pull-down
- 80006b0:	68d1      	ldr	r1, [r2, #12]
- 80006b2:	f441 7180 	orr.w	r1, r1, #256	@ 0x100
- 80006b6:	60d1      	str	r1, [r2, #12]
+ 8000678:	68d1      	ldr	r1, [r2, #12]
+ 800067a:	f441 7180 	orr.w	r1, r1, #256	@ 0x100
+ 800067e:	60d1      	str	r1, [r2, #12]
 
     // CRITICAL: Force SPI Clock and Data lines to Very High Speed (30 MHz - 100 MHz+)
     GPIOA->OSPEEDR |= (3 << GPIO_OSPEEDR_OSPEED5_Pos);
- 80006b8:	6899      	ldr	r1, [r3, #8]
- 80006ba:	f441 6140 	orr.w	r1, r1, #3072	@ 0xc00
- 80006be:	6099      	str	r1, [r3, #8]
+ 8000680:	6899      	ldr	r1, [r3, #8]
+ 8000682:	f441 6140 	orr.w	r1, r1, #3072	@ 0xc00
+ 8000686:	6099      	str	r1, [r3, #8]
     GPIOB->OSPEEDR |= (3 << GPIO_OSPEEDR_OSPEED4_Pos) | (3 << GPIO_OSPEEDR_OSPEED5_Pos);
- 80006c0:	6891      	ldr	r1, [r2, #8]
- 80006c2:	f441 6170 	orr.w	r1, r1, #3840	@ 0xf00
- 80006c6:	6091      	str	r1, [r2, #8]
+ 8000688:	6891      	ldr	r1, [r2, #8]
+ 800068a:	f441 6170 	orr.w	r1, r1, #3840	@ 0xf00
+ 800068e:	6091      	str	r1, [r2, #8]
 
     // 4. PA15 = CS1 (Standard GPIO Output, Low Speed for natural hardware padding)
     GPIOA->MODER   &= ~(3 << GPIO_MODER_MODER15_Pos);
- 80006c8:	681a      	ldr	r2, [r3, #0]
- 80006ca:	f022 4240 	bic.w	r2, r2, #3221225472	@ 0xc0000000
- 80006ce:	601a      	str	r2, [r3, #0]
+ 8000690:	681a      	ldr	r2, [r3, #0]
+ 8000692:	f022 4240 	bic.w	r2, r2, #3221225472	@ 0xc0000000
+ 8000696:	601a      	str	r2, [r3, #0]
     GPIOA->MODER   |=  (1 << GPIO_MODER_MODER15_Pos);
- 80006d0:	681a      	ldr	r2, [r3, #0]
- 80006d2:	f042 4280 	orr.w	r2, r2, #1073741824	@ 0x40000000
- 80006d6:	601a      	str	r2, [r3, #0]
+ 8000698:	681a      	ldr	r2, [r3, #0]
+ 800069a:	f042 4280 	orr.w	r2, r2, #1073741824	@ 0x40000000
+ 800069e:	601a      	str	r2, [r3, #0]
     GPIOA->OSPEEDR |= (2 << GPIO_OSPEEDR_OSPEED15_Pos); // 2 = High Speed
- 80006d8:	689a      	ldr	r2, [r3, #8]
- 80006da:	f042 4200 	orr.w	r2, r2, #2147483648	@ 0x80000000
- 80006de:	609a      	str	r2, [r3, #8]
+ 80006a0:	689a      	ldr	r2, [r3, #8]
+ 80006a2:	f042 4200 	orr.w	r2, r2, #2147483648	@ 0x80000000
+ 80006a6:	609a      	str	r2, [r3, #8]
     GPIOA->BSRR     =  GPIO_BSRR_BS15;                    // Start High
- 80006e0:	f44f 4200 	mov.w	r2, #32768	@ 0x8000
- 80006e4:	619a      	str	r2, [r3, #24]
+ 80006a8:	f44f 4200 	mov.w	r2, #32768	@ 0x8000
+ 80006ac:	619a      	str	r2, [r3, #24]
 
     // 5. PC13 = CS2 (Standard GPIO Output, Low Speed)
     GPIOC->MODER   &= ~(3 << GPIO_MODER_MODER13_Pos);
- 80006e6:	f503 6300 	add.w	r3, r3, #2048	@ 0x800
- 80006ea:	681a      	ldr	r2, [r3, #0]
- 80006ec:	f022 6240 	bic.w	r2, r2, #201326592	@ 0xc000000
- 80006f0:	601a      	str	r2, [r3, #0]
+ 80006ae:	f503 6300 	add.w	r3, r3, #2048	@ 0x800
+ 80006b2:	681a      	ldr	r2, [r3, #0]
+ 80006b4:	f022 6240 	bic.w	r2, r2, #201326592	@ 0xc000000
+ 80006b8:	601a      	str	r2, [r3, #0]
     GPIOC->MODER   |=  (1 << GPIO_MODER_MODER13_Pos);
- 80006f2:	681a      	ldr	r2, [r3, #0]
- 80006f4:	f042 6280 	orr.w	r2, r2, #67108864	@ 0x4000000
- 80006f8:	601a      	str	r2, [r3, #0]
+ 80006ba:	681a      	ldr	r2, [r3, #0]
+ 80006bc:	f042 6280 	orr.w	r2, r2, #67108864	@ 0x4000000
+ 80006c0:	601a      	str	r2, [r3, #0]
     GPIOC->OSPEEDR &= ~(3 << GPIO_OSPEEDR_OSPEED13_Pos);
- 80006fa:	689a      	ldr	r2, [r3, #8]
- 80006fc:	f022 6240 	bic.w	r2, r2, #201326592	@ 0xc000000
- 8000700:	609a      	str	r2, [r3, #8]
+ 80006c2:	689a      	ldr	r2, [r3, #8]
+ 80006c4:	f022 6240 	bic.w	r2, r2, #201326592	@ 0xc000000
+ 80006c8:	609a      	str	r2, [r3, #8]
     GPIOC->OSPEEDR |=  (2 << GPIO_OSPEEDR_OSPEED13_Pos); // 2 = High Speed, 1 = Mid Speed
- 8000702:	689a      	ldr	r2, [r3, #8]
- 8000704:	f042 6200 	orr.w	r2, r2, #134217728	@ 0x8000000
- 8000708:	609a      	str	r2, [r3, #8]
+ 80006ca:	689a      	ldr	r2, [r3, #8]
+ 80006cc:	f042 6200 	orr.w	r2, r2, #134217728	@ 0x8000000
+ 80006d0:	609a      	str	r2, [r3, #8]
     GPIOC->BSRR     =  GPIO_BSRR_BS13;                    // Start High
- 800070a:	f44f 5200 	mov.w	r2, #8192	@ 0x2000
- 800070e:	619a      	str	r2, [r3, #24]
+ 80006d2:	f44f 5200 	mov.w	r2, #8192	@ 0x2000
+ 80006d6:	619a      	str	r2, [r3, #24]
 }
- 8000710:	4770      	bx	lr
- 8000712:	bf00      	nop
- 8000714:	40023800 	.word	0x40023800
- 8000718:	40020400 	.word	0x40020400
+ 80006d8:	4770      	bx	lr
+ 80006da:	bf00      	nop
+ 80006dc:	40023800 	.word	0x40023800
+ 80006e0:	40020400 	.word	0x40020400
 
-0800071c <_ZN9SpiDriverC1ERK17SpiHardwareConfig>:
+080006e4 <_ZN9SpiDriverC1ERK17SpiHardwareConfig>:
 SpiDriver::SpiDriver(const SpiHardwareConfig& hardwareConfig) : config(hardwareConfig) {}
- 800071c:	6001      	str	r1, [r0, #0]
- 800071e:	2200      	movs	r2, #0
- 8000720:	7102      	strb	r2, [r0, #4]
- 8000722:	7142      	strb	r2, [r0, #5]
- 8000724:	7182      	strb	r2, [r0, #6]
- 8000726:	71c2      	strb	r2, [r0, #7]
- 8000728:	4770      	bx	lr
+ 80006e4:	6001      	str	r1, [r0, #0]
+ 80006e6:	2200      	movs	r2, #0
+ 80006e8:	7102      	strb	r2, [r0, #4]
+ 80006ea:	7142      	strb	r2, [r0, #5]
+ 80006ec:	7182      	strb	r2, [r0, #6]
+ 80006ee:	71c2      	strb	r2, [r0, #7]
+ 80006f0:	4770      	bx	lr
 	...
 
-0800072c <_ZN9SpiDriver12ConfigureDmaEv>:
+080006f4 <_ZN9SpiDriver12ConfigureDmaEv>:
     if (m_isDmaInitialized) return;
- 800072c:	79c3      	ldrb	r3, [r0, #7]
- 800072e:	2b00      	cmp	r3, #0
- 8000730:	f040 808b 	bne.w	800084a <_ZN9SpiDriver12ConfigureDmaEv+0x11e>
+ 80006f4:	79c3      	ldrb	r3, [r0, #7]
+ 80006f6:	2b00      	cmp	r3, #0
+ 80006f8:	f040 808b 	bne.w	8000812 <_ZN9SpiDriver12ConfigureDmaEv+0x11e>
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
- 8000734:	4a4c      	ldr	r2, [pc, #304]	@ (8000868 <_ZN9SpiDriver12ConfigureDmaEv+0x13c>)
- 8000736:	6b13      	ldr	r3, [r2, #48]	@ 0x30
- 8000738:	f443 0380 	orr.w	r3, r3, #4194304	@ 0x400000
- 800073c:	6313      	str	r3, [r2, #48]	@ 0x30
+ 80006fc:	4a4c      	ldr	r2, [pc, #304]	@ (8000830 <_ZN9SpiDriver12ConfigureDmaEv+0x13c>)
+ 80006fe:	6b13      	ldr	r3, [r2, #48]	@ 0x30
+ 8000700:	f443 0380 	orr.w	r3, r3, #4194304	@ 0x400000
+ 8000704:	6313      	str	r3, [r2, #48]	@ 0x30
     config.rxStream->CR &= ~DMA_SxCR_EN;
- 800073e:	6803      	ldr	r3, [r0, #0]
- 8000740:	685a      	ldr	r2, [r3, #4]
- 8000742:	6813      	ldr	r3, [r2, #0]
- 8000744:	f023 0301 	bic.w	r3, r3, #1
- 8000748:	6013      	str	r3, [r2, #0]
+ 8000706:	6803      	ldr	r3, [r0, #0]
+ 8000708:	685a      	ldr	r2, [r3, #4]
+ 800070a:	6813      	ldr	r3, [r2, #0]
+ 800070c:	f023 0301 	bic.w	r3, r3, #1
+ 8000710:	6013      	str	r3, [r2, #0]
     while (config.rxStream->CR & DMA_SxCR_EN);
- 800074a:	6801      	ldr	r1, [r0, #0]
- 800074c:	684a      	ldr	r2, [r1, #4]
- 800074e:	6813      	ldr	r3, [r2, #0]
- 8000750:	f013 0f01 	tst.w	r3, #1
- 8000754:	d1fb      	bne.n	800074e <_ZN9SpiDriver12ConfigureDmaEv+0x22>
+ 8000712:	6801      	ldr	r1, [r0, #0]
+ 8000714:	684a      	ldr	r2, [r1, #4]
+ 8000716:	6813      	ldr	r3, [r2, #0]
+ 8000718:	f013 0f01 	tst.w	r3, #1
+ 800071c:	d1fb      	bne.n	8000716 <_ZN9SpiDriver12ConfigureDmaEv+0x22>
     *config.rxFcrReg = config.rxClearMask; // Direct Clear
- 8000756:	6a4b      	ldr	r3, [r1, #36]	@ 0x24
- 8000758:	6a8a      	ldr	r2, [r1, #40]	@ 0x28
- 800075a:	601a      	str	r2, [r3, #0]
+ 800071e:	6a4b      	ldr	r3, [r1, #36]	@ 0x24
+ 8000720:	6a8a      	ldr	r2, [r1, #40]	@ 0x28
+ 8000722:	601a      	str	r2, [r3, #0]
     config.rxStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC
- 800075c:	6803      	ldr	r3, [r0, #0]
- 800075e:	685a      	ldr	r2, [r3, #4]
- 8000760:	68d9      	ldr	r1, [r3, #12]
+ 8000724:	6803      	ldr	r3, [r0, #0]
+ 8000726:	685a      	ldr	r2, [r3, #4]
+ 8000728:	68d9      	ldr	r1, [r3, #12]
                         | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
- 8000762:	f240 4316 	movw	r3, #1046	@ 0x416
- 8000766:	ea43 6341 	orr.w	r3, r3, r1, lsl #25
+ 800072a:	f240 4316 	movw	r3, #1046	@ 0x416
+ 800072e:	ea43 6341 	orr.w	r3, r3, r1, lsl #25
     config.rxStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC
- 800076a:	6013      	str	r3, [r2, #0]
+ 8000732:	6013      	str	r3, [r2, #0]
     config.rxStream->CR &= ~(3 << DMA_SxCR_DIR_Pos);
- 800076c:	6803      	ldr	r3, [r0, #0]
- 800076e:	685a      	ldr	r2, [r3, #4]
- 8000770:	6813      	ldr	r3, [r2, #0]
- 8000772:	f023 03c0 	bic.w	r3, r3, #192	@ 0xc0
- 8000776:	6013      	str	r3, [r2, #0]
+ 8000734:	6803      	ldr	r3, [r0, #0]
+ 8000736:	685a      	ldr	r2, [r3, #4]
+ 8000738:	6813      	ldr	r3, [r2, #0]
+ 800073a:	f023 03c0 	bic.w	r3, r3, #192	@ 0xc0
+ 800073e:	6013      	str	r3, [r2, #0]
     config.rxStream->FCR |= DMA_SxFCR_DMDIS;
- 8000778:	6803      	ldr	r3, [r0, #0]
- 800077a:	685a      	ldr	r2, [r3, #4]
- 800077c:	6953      	ldr	r3, [r2, #20]
- 800077e:	f043 0304 	orr.w	r3, r3, #4
- 8000782:	6153      	str	r3, [r2, #20]
+ 8000740:	6803      	ldr	r3, [r0, #0]
+ 8000742:	685a      	ldr	r2, [r3, #4]
+ 8000744:	6953      	ldr	r3, [r2, #20]
+ 8000746:	f043 0304 	orr.w	r3, r3, #4
+ 800074a:	6153      	str	r3, [r2, #20]
     config.rxStream->FCR |= (DMA_SxFCR_FTH_0 | DMA_SxFCR_FTH_1);
- 8000784:	6803      	ldr	r3, [r0, #0]
- 8000786:	685a      	ldr	r2, [r3, #4]
- 8000788:	6953      	ldr	r3, [r2, #20]
- 800078a:	f043 0303 	orr.w	r3, r3, #3
- 800078e:	6153      	str	r3, [r2, #20]
+ 800074c:	6803      	ldr	r3, [r0, #0]
+ 800074e:	685a      	ldr	r2, [r3, #4]
+ 8000750:	6953      	ldr	r3, [r2, #20]
+ 8000752:	f043 0303 	orr.w	r3, r3, #3
+ 8000756:	6153      	str	r3, [r2, #20]
     config.rxStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR); // Set the static peripheral destinations
- 8000790:	6803      	ldr	r3, [r0, #0]
- 8000792:	685a      	ldr	r2, [r3, #4]
- 8000794:	681b      	ldr	r3, [r3, #0]
- 8000796:	330c      	adds	r3, #12
- 8000798:	6093      	str	r3, [r2, #8]
+ 8000758:	6803      	ldr	r3, [r0, #0]
+ 800075a:	685a      	ldr	r2, [r3, #4]
+ 800075c:	681b      	ldr	r3, [r3, #0]
+ 800075e:	330c      	adds	r3, #12
+ 8000760:	6093      	str	r3, [r2, #8]
     NVIC_SetPriority(config.rxDmaIrq, 2);
- 800079a:	6803      	ldr	r3, [r0, #0]
- 800079c:	f993 3015 	ldrsb.w	r3, [r3, #21]
+ 8000762:	6803      	ldr	r3, [r0, #0]
+ 8000764:	f993 3015 	ldrsb.w	r3, [r3, #21]
   if ((int32_t)(IRQn) >= 0)
- 80007a0:	2b00      	cmp	r3, #0
- 80007a2:	db53      	blt.n	800084c <_ZN9SpiDriver12ConfigureDmaEv+0x120>
+ 8000768:	2b00      	cmp	r3, #0
+ 800076a:	db53      	blt.n	8000814 <_ZN9SpiDriver12ConfigureDmaEv+0x120>
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 80007a4:	f103 4360 	add.w	r3, r3, #3758096384	@ 0xe0000000
- 80007a8:	f503 4361 	add.w	r3, r3, #57600	@ 0xe100
- 80007ac:	2220      	movs	r2, #32
- 80007ae:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
+ 800076c:	f103 4360 	add.w	r3, r3, #3758096384	@ 0xe0000000
+ 8000770:	f503 4361 	add.w	r3, r3, #57600	@ 0xe100
+ 8000774:	2220      	movs	r2, #32
+ 8000776:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
     NVIC_EnableIRQ(config.rxDmaIrq);
- 80007b2:	6803      	ldr	r3, [r0, #0]
- 80007b4:	f993 3015 	ldrsb.w	r3, [r3, #21]
+ 800077a:	6803      	ldr	r3, [r0, #0]
+ 800077c:	f993 3015 	ldrsb.w	r3, [r3, #21]
   if ((int32_t)(IRQn) >= 0)
- 80007b8:	2b00      	cmp	r3, #0
- 80007ba:	db08      	blt.n	80007ce <_ZN9SpiDriver12ConfigureDmaEv+0xa2>
+ 8000780:	2b00      	cmp	r3, #0
+ 8000782:	db08      	blt.n	8000796 <_ZN9SpiDriver12ConfigureDmaEv+0xa2>
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 80007bc:	0959      	lsrs	r1, r3, #5
- 80007be:	f003 031f 	and.w	r3, r3, #31
- 80007c2:	2201      	movs	r2, #1
- 80007c4:	fa02 f303 	lsl.w	r3, r2, r3
- 80007c8:	4a28      	ldr	r2, [pc, #160]	@ (800086c <_ZN9SpiDriver12ConfigureDmaEv+0x140>)
- 80007ca:	f842 3021 	str.w	r3, [r2, r1, lsl #2]
+ 8000784:	0959      	lsrs	r1, r3, #5
+ 8000786:	f003 031f 	and.w	r3, r3, #31
+ 800078a:	2201      	movs	r2, #1
+ 800078c:	fa02 f303 	lsl.w	r3, r2, r3
+ 8000790:	4a28      	ldr	r2, [pc, #160]	@ (8000834 <_ZN9SpiDriver12ConfigureDmaEv+0x140>)
+ 8000792:	f842 3021 	str.w	r3, [r2, r1, lsl #2]
     config.txStream->CR &= ~DMA_SxCR_EN;
- 80007ce:	6803      	ldr	r3, [r0, #0]
- 80007d0:	689a      	ldr	r2, [r3, #8]
- 80007d2:	6813      	ldr	r3, [r2, #0]
- 80007d4:	f023 0301 	bic.w	r3, r3, #1
- 80007d8:	6013      	str	r3, [r2, #0]
+ 8000796:	6803      	ldr	r3, [r0, #0]
+ 8000798:	689a      	ldr	r2, [r3, #8]
+ 800079a:	6813      	ldr	r3, [r2, #0]
+ 800079c:	f023 0301 	bic.w	r3, r3, #1
+ 80007a0:	6013      	str	r3, [r2, #0]
     while (config.txStream->CR & DMA_SxCR_EN);
- 80007da:	6801      	ldr	r1, [r0, #0]
- 80007dc:	688a      	ldr	r2, [r1, #8]
- 80007de:	6813      	ldr	r3, [r2, #0]
- 80007e0:	f013 0f01 	tst.w	r3, #1
- 80007e4:	d1fb      	bne.n	80007de <_ZN9SpiDriver12ConfigureDmaEv+0xb2>
+ 80007a2:	6801      	ldr	r1, [r0, #0]
+ 80007a4:	688a      	ldr	r2, [r1, #8]
+ 80007a6:	6813      	ldr	r3, [r2, #0]
+ 80007a8:	f013 0f01 	tst.w	r3, #1
+ 80007ac:	d1fb      	bne.n	80007a6 <_ZN9SpiDriver12ConfigureDmaEv+0xb2>
     *config.txFcrReg = config.txClearMask; // Direct Clear
- 80007e6:	69cb      	ldr	r3, [r1, #28]
- 80007e8:	6a0a      	ldr	r2, [r1, #32]
- 80007ea:	601a      	str	r2, [r3, #0]
+ 80007ae:	69cb      	ldr	r3, [r1, #28]
+ 80007b0:	6a0a      	ldr	r2, [r1, #32]
+ 80007b2:	601a      	str	r2, [r3, #0]
     config.txStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC | DMA_SxCR_DIR_0
- 80007ec:	6803      	ldr	r3, [r0, #0]
- 80007ee:	689a      	ldr	r2, [r3, #8]
- 80007f0:	68d9      	ldr	r1, [r3, #12]
+ 80007b4:	6803      	ldr	r3, [r0, #0]
+ 80007b6:	689a      	ldr	r2, [r3, #8]
+ 80007b8:	68d9      	ldr	r1, [r3, #12]
                         | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
- 80007f2:	f240 4356 	movw	r3, #1110	@ 0x456
- 80007f6:	ea43 6341 	orr.w	r3, r3, r1, lsl #25
+ 80007ba:	f240 4356 	movw	r3, #1110	@ 0x456
+ 80007be:	ea43 6341 	orr.w	r3, r3, r1, lsl #25
     config.txStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC | DMA_SxCR_DIR_0
- 80007fa:	6013      	str	r3, [r2, #0]
+ 80007c2:	6013      	str	r3, [r2, #0]
     config.txStream->FCR |= DMA_SxFCR_DMDIS;
- 80007fc:	6803      	ldr	r3, [r0, #0]
- 80007fe:	689a      	ldr	r2, [r3, #8]
- 8000800:	6953      	ldr	r3, [r2, #20]
- 8000802:	f043 0304 	orr.w	r3, r3, #4
- 8000806:	6153      	str	r3, [r2, #20]
+ 80007c4:	6803      	ldr	r3, [r0, #0]
+ 80007c6:	689a      	ldr	r2, [r3, #8]
+ 80007c8:	6953      	ldr	r3, [r2, #20]
+ 80007ca:	f043 0304 	orr.w	r3, r3, #4
+ 80007ce:	6153      	str	r3, [r2, #20]
     config.txStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR);
- 8000808:	6803      	ldr	r3, [r0, #0]
- 800080a:	689a      	ldr	r2, [r3, #8]
- 800080c:	681b      	ldr	r3, [r3, #0]
- 800080e:	330c      	adds	r3, #12
- 8000810:	6093      	str	r3, [r2, #8]
+ 80007d0:	6803      	ldr	r3, [r0, #0]
+ 80007d2:	689a      	ldr	r2, [r3, #8]
+ 80007d4:	681b      	ldr	r3, [r3, #0]
+ 80007d6:	330c      	adds	r3, #12
+ 80007d8:	6093      	str	r3, [r2, #8]
     NVIC_SetPriority(config.txDmaIrq, 2);
- 8000812:	6803      	ldr	r3, [r0, #0]
- 8000814:	f993 3016 	ldrsb.w	r3, [r3, #22]
+ 80007da:	6803      	ldr	r3, [r0, #0]
+ 80007dc:	f993 3016 	ldrsb.w	r3, [r3, #22]
   if ((int32_t)(IRQn) >= 0)
- 8000818:	2b00      	cmp	r3, #0
- 800081a:	db1e      	blt.n	800085a <_ZN9SpiDriver12ConfigureDmaEv+0x12e>
+ 80007e0:	2b00      	cmp	r3, #0
+ 80007e2:	db1e      	blt.n	8000822 <_ZN9SpiDriver12ConfigureDmaEv+0x12e>
     NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 800081c:	f103 4360 	add.w	r3, r3, #3758096384	@ 0xe0000000
- 8000820:	f503 4361 	add.w	r3, r3, #57600	@ 0xe100
- 8000824:	2220      	movs	r2, #32
- 8000826:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
+ 80007e4:	f103 4360 	add.w	r3, r3, #3758096384	@ 0xe0000000
+ 80007e8:	f503 4361 	add.w	r3, r3, #57600	@ 0xe100
+ 80007ec:	2220      	movs	r2, #32
+ 80007ee:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
     NVIC_EnableIRQ(config.txDmaIrq);
- 800082a:	6803      	ldr	r3, [r0, #0]
- 800082c:	f993 3016 	ldrsb.w	r3, [r3, #22]
+ 80007f2:	6803      	ldr	r3, [r0, #0]
+ 80007f4:	f993 3016 	ldrsb.w	r3, [r3, #22]
   if ((int32_t)(IRQn) >= 0)
- 8000830:	2b00      	cmp	r3, #0
- 8000832:	db08      	blt.n	8000846 <_ZN9SpiDriver12ConfigureDmaEv+0x11a>
+ 80007f8:	2b00      	cmp	r3, #0
+ 80007fa:	db08      	blt.n	800080e <_ZN9SpiDriver12ConfigureDmaEv+0x11a>
     NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
- 8000834:	0959      	lsrs	r1, r3, #5
- 8000836:	f003 031f 	and.w	r3, r3, #31
- 800083a:	2201      	movs	r2, #1
- 800083c:	fa02 f303 	lsl.w	r3, r2, r3
- 8000840:	4a0a      	ldr	r2, [pc, #40]	@ (800086c <_ZN9SpiDriver12ConfigureDmaEv+0x140>)
- 8000842:	f842 3021 	str.w	r3, [r2, r1, lsl #2]
+ 80007fc:	0959      	lsrs	r1, r3, #5
+ 80007fe:	f003 031f 	and.w	r3, r3, #31
+ 8000802:	2201      	movs	r2, #1
+ 8000804:	fa02 f303 	lsl.w	r3, r2, r3
+ 8000808:	4a0a      	ldr	r2, [pc, #40]	@ (8000834 <_ZN9SpiDriver12ConfigureDmaEv+0x140>)
+ 800080a:	f842 3021 	str.w	r3, [r2, r1, lsl #2]
     m_isDmaInitialized = true;
- 8000846:	2301      	movs	r3, #1
- 8000848:	71c3      	strb	r3, [r0, #7]
+ 800080e:	2301      	movs	r3, #1
+ 8000810:	71c3      	strb	r3, [r0, #7]
 }
- 800084a:	4770      	bx	lr
+ 8000812:	4770      	bx	lr
   }
   else
   {
     SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 800084c:	f003 030f 	and.w	r3, r3, #15
- 8000850:	4a07      	ldr	r2, [pc, #28]	@ (8000870 <_ZN9SpiDriver12ConfigureDmaEv+0x144>)
- 8000852:	441a      	add	r2, r3
- 8000854:	2320      	movs	r3, #32
- 8000856:	7613      	strb	r3, [r2, #24]
- 8000858:	e7ab      	b.n	80007b2 <_ZN9SpiDriver12ConfigureDmaEv+0x86>
- 800085a:	f003 030f 	and.w	r3, r3, #15
- 800085e:	4a04      	ldr	r2, [pc, #16]	@ (8000870 <_ZN9SpiDriver12ConfigureDmaEv+0x144>)
- 8000860:	441a      	add	r2, r3
- 8000862:	2320      	movs	r3, #32
- 8000864:	7613      	strb	r3, [r2, #24]
- 8000866:	e7e0      	b.n	800082a <_ZN9SpiDriver12ConfigureDmaEv+0xfe>
- 8000868:	40023800 	.word	0x40023800
- 800086c:	e000e100 	.word	0xe000e100
- 8000870:	e000ecfc 	.word	0xe000ecfc
+ 8000814:	f003 030f 	and.w	r3, r3, #15
+ 8000818:	4a07      	ldr	r2, [pc, #28]	@ (8000838 <_ZN9SpiDriver12ConfigureDmaEv+0x144>)
+ 800081a:	441a      	add	r2, r3
+ 800081c:	2320      	movs	r3, #32
+ 800081e:	7613      	strb	r3, [r2, #24]
+ 8000820:	e7ab      	b.n	800077a <_ZN9SpiDriver12ConfigureDmaEv+0x86>
+ 8000822:	f003 030f 	and.w	r3, r3, #15
+ 8000826:	4a04      	ldr	r2, [pc, #16]	@ (8000838 <_ZN9SpiDriver12ConfigureDmaEv+0x144>)
+ 8000828:	441a      	add	r2, r3
+ 800082a:	2320      	movs	r3, #32
+ 800082c:	7613      	strb	r3, [r2, #24]
+ 800082e:	e7e0      	b.n	80007f2 <_ZN9SpiDriver12ConfigureDmaEv+0xfe>
+ 8000830:	40023800 	.word	0x40023800
+ 8000834:	e000e100 	.word	0xe000e100
+ 8000838:	e000ecfc 	.word	0xe000ecfc
 
-08000874 <_ZN9SpiDriver4InitE17BaudRatePrescaler>:
+0800083c <_ZN9SpiDriver4InitE17BaudRatePrescaler>:
 BareM_Status SpiDriver::Init(BaudRatePrescaler prescaler) {
- 8000874:	b538      	push	{r3, r4, r5, lr}
- 8000876:	4604      	mov	r4, r0
- 8000878:	460d      	mov	r5, r1
+ 800083c:	b538      	push	{r3, r4, r5, lr}
+ 800083e:	4604      	mov	r4, r0
+ 8000840:	460d      	mov	r5, r1
     if (config.lowLevelInit != nullptr) {
- 800087a:	6803      	ldr	r3, [r0, #0]
- 800087c:	699b      	ldr	r3, [r3, #24]
- 800087e:	b103      	cbz	r3, 8000882 <_ZN9SpiDriver4InitE17BaudRatePrescaler+0xe>
+ 8000842:	6803      	ldr	r3, [r0, #0]
+ 8000844:	699b      	ldr	r3, [r3, #24]
+ 8000846:	b103      	cbz	r3, 800084a <_ZN9SpiDriver4InitE17BaudRatePrescaler+0xe>
         config.lowLevelInit();
- 8000880:	4798      	blx	r3
+ 8000848:	4798      	blx	r3
     config.spi->CR1 &= ~SPI_CR1_SPE;
- 8000882:	6823      	ldr	r3, [r4, #0]
- 8000884:	681a      	ldr	r2, [r3, #0]
- 8000886:	6813      	ldr	r3, [r2, #0]
- 8000888:	f023 0340 	bic.w	r3, r3, #64	@ 0x40
- 800088c:	6013      	str	r3, [r2, #0]
+ 800084a:	6823      	ldr	r3, [r4, #0]
+ 800084c:	681a      	ldr	r2, [r3, #0]
+ 800084e:	6813      	ldr	r3, [r2, #0]
+ 8000850:	f023 0340 	bic.w	r3, r3, #64	@ 0x40
+ 8000854:	6013      	str	r3, [r2, #0]
     config.spi->CR1 = SPI_CR1_MSTR | SPI_CR1_SSM | SPI_CR1_SSI | static_cast<uint32_t>(prescaler);
- 800088e:	6823      	ldr	r3, [r4, #0]
- 8000890:	681b      	ldr	r3, [r3, #0]
- 8000892:	f445 7541 	orr.w	r5, r5, #772	@ 0x304
- 8000896:	601d      	str	r5, [r3, #0]
+ 8000856:	6823      	ldr	r3, [r4, #0]
+ 8000858:	681b      	ldr	r3, [r3, #0]
+ 800085a:	f445 7541 	orr.w	r5, r5, #772	@ 0x304
+ 800085e:	601d      	str	r5, [r3, #0]
     config.spi->CR2 = SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN;
- 8000898:	6823      	ldr	r3, [r4, #0]
- 800089a:	681b      	ldr	r3, [r3, #0]
- 800089c:	2203      	movs	r2, #3
- 800089e:	605a      	str	r2, [r3, #4]
+ 8000860:	6823      	ldr	r3, [r4, #0]
+ 8000862:	681b      	ldr	r3, [r3, #0]
+ 8000864:	2203      	movs	r2, #3
+ 8000866:	605a      	str	r2, [r3, #4]
     config.spi->CR1 |= SPI_CR1_SPE;
- 80008a0:	6823      	ldr	r3, [r4, #0]
- 80008a2:	681a      	ldr	r2, [r3, #0]
- 80008a4:	6813      	ldr	r3, [r2, #0]
- 80008a6:	f043 0340 	orr.w	r3, r3, #64	@ 0x40
- 80008aa:	6013      	str	r3, [r2, #0]
+ 8000868:	6823      	ldr	r3, [r4, #0]
+ 800086a:	681a      	ldr	r2, [r3, #0]
+ 800086c:	6813      	ldr	r3, [r2, #0]
+ 800086e:	f043 0340 	orr.w	r3, r3, #64	@ 0x40
+ 8000872:	6013      	str	r3, [r2, #0]
     ConfigureDma();
- 80008ac:	4620      	mov	r0, r4
- 80008ae:	f7ff ff3d 	bl	800072c <_ZN9SpiDriver12ConfigureDmaEv>
+ 8000874:	4620      	mov	r0, r4
+ 8000876:	f7ff ff3d 	bl	80006f4 <_ZN9SpiDriver12ConfigureDmaEv>
     m_state = SpiState::READY;
- 80008b2:	2301      	movs	r3, #1
- 80008b4:	7123      	strb	r3, [r4, #4]
+ 800087a:	2301      	movs	r3, #1
+ 800087c:	7123      	strb	r3, [r4, #4]
 }
- 80008b6:	2000      	movs	r0, #0
- 80008b8:	bd38      	pop	{r3, r4, r5, pc}
+ 800087e:	2000      	movs	r0, #0
+ 8000880:	bd38      	pop	{r3, r4, r5, pc}
 
-080008ba <_ZN9SpiDriver17Handle_DMA_RX_IRQEv>:
+08000882 <_ZN9SpiDriver14TxCpltCallbackEv>:
+}
+ 8000882:	4770      	bx	lr
+
+08000884 <_ZN9SpiDriver14RxCpltCallbackEv>:
+}
+ 8000884:	4770      	bx	lr
+
+08000886 <_ZN9SpiDriver17Handle_DMA_RX_IRQEv>:
+void SpiDriver::Handle_DMA_RX_IRQ() {
+ 8000886:	b508      	push	{r3, lr}
 	*config.rxFcrReg = config.rxClearMask; // Instant hardware clear
- 80008ba:	6803      	ldr	r3, [r0, #0]
- 80008bc:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
- 80008be:	6a9b      	ldr	r3, [r3, #40]	@ 0x28
- 80008c0:	6013      	str	r3, [r2, #0]
+ 8000888:	6803      	ldr	r3, [r0, #0]
+ 800088a:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
+ 800088c:	6a9b      	ldr	r3, [r3, #40]	@ 0x28
+ 800088e:	6013      	str	r3, [r2, #0]
+	 RxCpltCallback();
+ 8000890:	f7ff fff8 	bl	8000884 <_ZN9SpiDriver14RxCpltCallbackEv>
 }
- 80008c2:	4770      	bx	lr
+ 8000894:	bd08      	pop	{r3, pc}
 
-080008c4 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv>:
-    uint32_t lisr = config.dmaBase->LISR;
- 80008c4:	6803      	ldr	r3, [r0, #0]
- 80008c6:	691a      	ldr	r2, [r3, #16]
- 80008c8:	6812      	ldr	r2, [r2, #0]
-    *config.txFcrReg = config.txClearMask; // Instant hardware clear
- 80008ca:	69d9      	ldr	r1, [r3, #28]
- 80008cc:	6a1b      	ldr	r3, [r3, #32]
- 80008ce:	600b      	str	r3, [r1, #0]
-    if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
- 80008d0:	f012 6f00 	tst.w	r2, #134217728	@ 0x8000000
- 80008d4:	d00e      	beq.n	80008f4 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x30>
-        config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
- 80008d6:	6803      	ldr	r3, [r0, #0]
- 80008d8:	689a      	ldr	r2, [r3, #8]
- 80008da:	6813      	ldr	r3, [r2, #0]
- 80008dc:	f023 0301 	bic.w	r3, r3, #1
- 80008e0:	6013      	str	r3, [r2, #0]
-        while (config.spi->SR & SPI_SR_BSY);
- 80008e2:	6803      	ldr	r3, [r0, #0]
- 80008e4:	681a      	ldr	r2, [r3, #0]
- 80008e6:	6893      	ldr	r3, [r2, #8]
- 80008e8:	f013 0f80 	tst.w	r3, #128	@ 0x80
- 80008ec:	d1fb      	bne.n	80008e6 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x22>
-        m_state = SpiState::READY;
- 80008ee:	2301      	movs	r3, #1
- 80008f0:	7103      	strb	r3, [r0, #4]
- 80008f2:	4770      	bx	lr
-        config.txStream->CR &= ~DMA_SxCR_EN;
- 80008f4:	6803      	ldr	r3, [r0, #0]
- 80008f6:	689a      	ldr	r2, [r3, #8]
- 80008f8:	6813      	ldr	r3, [r2, #0]
- 80008fa:	f023 0301 	bic.w	r3, r3, #1
- 80008fe:	6013      	str	r3, [r2, #0]
-        config.rxStream->CR &= ~DMA_SxCR_EN;
- 8000900:	6803      	ldr	r3, [r0, #0]
- 8000902:	685a      	ldr	r2, [r3, #4]
- 8000904:	6813      	ldr	r3, [r2, #0]
- 8000906:	f023 0301 	bic.w	r3, r3, #1
- 800090a:	6013      	str	r3, [r2, #0]
-        *config.rxFcrReg = config.rxClearMask; // Clean RX stream on unexpected fault
- 800090c:	6803      	ldr	r3, [r0, #0]
- 800090e:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
- 8000910:	6a9b      	ldr	r3, [r3, #40]	@ 0x28
- 8000912:	6013      	str	r3, [r2, #0]
-        m_state = SpiState::READY;
- 8000914:	2301      	movs	r3, #1
- 8000916:	7103      	strb	r3, [r0, #4]
+08000896 <_ZN9SpiDriver16TxRxCpltCallbackEv>:
 }
- 8000918:	4770      	bx	lr
+ 8000896:	4770      	bx	lr
+
+08000898 <_ZN9SpiDriver13ErrorCallbackEv>:
+}
+ 8000898:	4770      	bx	lr
+
+0800089a <_ZN9SpiDriver17Handle_DMA_TX_IRQEv>:
+void SpiDriver::Handle_DMA_TX_IRQ() {
+ 800089a:	b508      	push	{r3, lr}
+    uint32_t lisr = config.dmaBase->LISR;
+ 800089c:	6803      	ldr	r3, [r0, #0]
+ 800089e:	691a      	ldr	r2, [r3, #16]
+ 80008a0:	6812      	ldr	r2, [r2, #0]
+    *config.txFcrReg = config.txClearMask; // Instant hardware clear
+ 80008a2:	69d9      	ldr	r1, [r3, #28]
+ 80008a4:	6a1b      	ldr	r3, [r3, #32]
+ 80008a6:	600b      	str	r3, [r1, #0]
+    if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
+ 80008a8:	f012 6f00 	tst.w	r2, #134217728	@ 0x8000000
+ 80008ac:	d01a      	beq.n	80008e4 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x4a>
+    	config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
+ 80008ae:	6803      	ldr	r3, [r0, #0]
+ 80008b0:	689a      	ldr	r2, [r3, #8]
+ 80008b2:	6813      	ldr	r3, [r2, #0]
+ 80008b4:	f023 0301 	bic.w	r3, r3, #1
+ 80008b8:	6013      	str	r3, [r2, #0]
+    	SpiState previousState = m_state;  // Capture the operational context before clearing the state
+ 80008ba:	7901      	ldrb	r1, [r0, #4]
+ 80008bc:	b2c9      	uxtb	r1, r1
+    	while (config.spi->SR & SPI_SR_BSY);
+ 80008be:	6803      	ldr	r3, [r0, #0]
+ 80008c0:	681a      	ldr	r2, [r3, #0]
+ 80008c2:	6893      	ldr	r3, [r2, #8]
+ 80008c4:	f013 0f80 	tst.w	r3, #128	@ 0x80
+ 80008c8:	d1fb      	bne.n	80008c2 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x28>
+    	m_state = SpiState::READY;
+ 80008ca:	2301      	movs	r3, #1
+ 80008cc:	7103      	strb	r3, [r0, #4]
+    	if (previousState == SpiState::BUSY_TX_RX) {
+ 80008ce:	2904      	cmp	r1, #4
+ 80008d0:	d002      	beq.n	80008d8 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x3e>
+    	else if (previousState == SpiState::BUSY_TX) {
+ 80008d2:	2903      	cmp	r1, #3
+ 80008d4:	d003      	beq.n	80008de <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x44>
+}
+ 80008d6:	bd08      	pop	{r3, pc}
+    		TxRxCpltCallback();
+ 80008d8:	f7ff ffdd 	bl	8000896 <_ZN9SpiDriver16TxRxCpltCallbackEv>
+ 80008dc:	e7fb      	b.n	80008d6 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x3c>
+    		TxCpltCallback();
+ 80008de:	f7ff ffd0 	bl	8000882 <_ZN9SpiDriver14TxCpltCallbackEv>
+ 80008e2:	e7f8      	b.n	80008d6 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x3c>
+        config.txStream->CR &= ~DMA_SxCR_EN;
+ 80008e4:	6803      	ldr	r3, [r0, #0]
+ 80008e6:	689a      	ldr	r2, [r3, #8]
+ 80008e8:	6813      	ldr	r3, [r2, #0]
+ 80008ea:	f023 0301 	bic.w	r3, r3, #1
+ 80008ee:	6013      	str	r3, [r2, #0]
+        config.rxStream->CR &= ~DMA_SxCR_EN;
+ 80008f0:	6803      	ldr	r3, [r0, #0]
+ 80008f2:	685a      	ldr	r2, [r3, #4]
+ 80008f4:	6813      	ldr	r3, [r2, #0]
+ 80008f6:	f023 0301 	bic.w	r3, r3, #1
+ 80008fa:	6013      	str	r3, [r2, #0]
+        *config.rxFcrReg = config.rxClearMask; // Clean RX stream on unexpected fault
+ 80008fc:	6803      	ldr	r3, [r0, #0]
+ 80008fe:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
+ 8000900:	6a9b      	ldr	r3, [r3, #40]	@ 0x28
+ 8000902:	6013      	str	r3, [r2, #0]
+        m_state = SpiState::READY;
+ 8000904:	2301      	movs	r3, #1
+ 8000906:	7103      	strb	r3, [r0, #4]
+        ErrorCallback();
+ 8000908:	f7ff ffc6 	bl	8000898 <_ZN9SpiDriver13ErrorCallbackEv>
+}
+ 800090c:	e7e3      	b.n	80008d6 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv+0x3c>
 	...
 
-0800091c <DMA2_Stream2_IRQHandler>:
+08000910 <DMA2_Stream2_IRQHandler>:
 
 
 // C-Compatible Hardware Interrupt Vector Table Routing
 extern "C" {
     void DMA2_Stream2_IRQHandler(void) {
- 800091c:	b508      	push	{r3, lr}
+ 8000910:	b508      	push	{r3, lr}
         spi1.Handle_DMA_RX_IRQ();
- 800091e:	4802      	ldr	r0, [pc, #8]	@ (8000928 <DMA2_Stream2_IRQHandler+0xc>)
- 8000920:	f7ff ffcb 	bl	80008ba <_ZN9SpiDriver17Handle_DMA_RX_IRQEv>
+ 8000912:	4802      	ldr	r0, [pc, #8]	@ (800091c <DMA2_Stream2_IRQHandler+0xc>)
+ 8000914:	f7ff ffb7 	bl	8000886 <_ZN9SpiDriver17Handle_DMA_RX_IRQEv>
     }
- 8000924:	bd08      	pop	{r3, pc}
- 8000926:	bf00      	nop
- 8000928:	2000002c 	.word	0x2000002c
+ 8000918:	bd08      	pop	{r3, pc}
+ 800091a:	bf00      	nop
+ 800091c:	2000002c 	.word	0x2000002c
 
-0800092c <DMA2_Stream3_IRQHandler>:
+08000920 <DMA2_Stream3_IRQHandler>:
 
     void DMA2_Stream3_IRQHandler(void) {
- 800092c:	b508      	push	{r3, lr}
+ 8000920:	b508      	push	{r3, lr}
         spi1.Handle_DMA_TX_IRQ();
- 800092e:	4802      	ldr	r0, [pc, #8]	@ (8000938 <DMA2_Stream3_IRQHandler+0xc>)
- 8000930:	f7ff ffc8 	bl	80008c4 <_ZN9SpiDriver17Handle_DMA_TX_IRQEv>
+ 8000922:	4802      	ldr	r0, [pc, #8]	@ (800092c <DMA2_Stream3_IRQHandler+0xc>)
+ 8000924:	f7ff ffb9 	bl	800089a <_ZN9SpiDriver17Handle_DMA_TX_IRQEv>
     }
- 8000934:	bd08      	pop	{r3, pc}
- 8000936:	bf00      	nop
- 8000938:	2000002c 	.word	0x2000002c
+ 8000928:	bd08      	pop	{r3, pc}
+ 800092a:	bf00      	nop
+ 800092c:	2000002c 	.word	0x2000002c
 
-0800093c <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig>:
+08000930 <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig>:
 }
- 800093c:	b508      	push	{r3, lr}
+ 8000930:	b508      	push	{r3, lr}
 SpiDriver spi1(Spi1Config);
- 800093e:	4902      	ldr	r1, [pc, #8]	@ (8000948 <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig+0xc>)
- 8000940:	4802      	ldr	r0, [pc, #8]	@ (800094c <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig+0x10>)
- 8000942:	f7ff feeb 	bl	800071c <_ZN9SpiDriverC1ERK17SpiHardwareConfig>
+ 8000932:	4902      	ldr	r1, [pc, #8]	@ (800093c <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig+0xc>)
+ 8000934:	4802      	ldr	r0, [pc, #8]	@ (8000940 <_GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig+0x10>)
+ 8000936:	f7ff fed5 	bl	80006e4 <_ZN9SpiDriverC1ERK17SpiHardwareConfig>
 }
- 8000946:	bd08      	pop	{r3, pc}
- 8000948:	08000acc 	.word	0x08000acc
- 800094c:	2000002c 	.word	0x2000002c
+ 800093a:	bd08      	pop	{r3, pc}
+ 800093c:	08000ac0 	.word	0x08000ac0
+ 8000940:	2000002c 	.word	0x2000002c
 
-08000950 <SysTick_Init>:
+08000944 <SysTick_Init>:
 Assuming your System Core Clock (HCLK) is already configured (e.g., to 180 MHz), you can use the CMSIS function SysTick_Config.
 */
 void SysTick_Init() {
     // Configure SysTick to generate an interrupt every 1ms
     // The formula is: ticks = SystemCoreClock / 1000
     if (SysTick_Config(SystemCoreClock / 1000)) {
- 8000950:	4b11      	ldr	r3, [pc, #68]	@ (8000998 <SysTick_Init+0x48>)
- 8000952:	681b      	ldr	r3, [r3, #0]
- 8000954:	4a11      	ldr	r2, [pc, #68]	@ (800099c <SysTick_Init+0x4c>)
- 8000956:	fba2 2303 	umull	r2, r3, r2, r3
- 800095a:	099b      	lsrs	r3, r3, #6
+ 8000944:	4b11      	ldr	r3, [pc, #68]	@ (800098c <SysTick_Init+0x48>)
+ 8000946:	681b      	ldr	r3, [r3, #0]
+ 8000948:	4a11      	ldr	r2, [pc, #68]	@ (8000990 <SysTick_Init+0x4c>)
+ 800094a:	fba2 2303 	umull	r2, r3, r2, r3
+ 800094e:	099b      	lsrs	r3, r3, #6
            function <b>SysTick_Config</b> is not included. In this case, the file <b><i>device</i>.h</b>
            must contain a vendor-specific implementation of this function.
  */
 __STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
 {
   if ((ticks - 1UL) > SysTick_LOAD_RELOAD_Msk)
- 800095c:	3b01      	subs	r3, #1
- 800095e:	f1b3 7f80 	cmp.w	r3, #16777216	@ 0x1000000
- 8000962:	d20b      	bcs.n	800097c <SysTick_Init+0x2c>
+ 8000950:	3b01      	subs	r3, #1
+ 8000952:	f1b3 7f80 	cmp.w	r3, #16777216	@ 0x1000000
+ 8000956:	d20b      	bcs.n	8000970 <SysTick_Init+0x2c>
   {
     return (1UL);                                                   /* Reload value impossible */
   }
 
   SysTick->LOAD  = (uint32_t)(ticks - 1UL);                         /* set reload register */
- 8000964:	f04f 22e0 	mov.w	r2, #3758153728	@ 0xe000e000
- 8000968:	6153      	str	r3, [r2, #20]
+ 8000958:	f04f 22e0 	mov.w	r2, #3758153728	@ 0xe000e000
+ 800095c:	6153      	str	r3, [r2, #20]
     SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
- 800096a:	4b0d      	ldr	r3, [pc, #52]	@ (80009a0 <SysTick_Init+0x50>)
- 800096c:	21f0      	movs	r1, #240	@ 0xf0
- 800096e:	f883 1023 	strb.w	r1, [r3, #35]	@ 0x23
+ 800095e:	4b0d      	ldr	r3, [pc, #52]	@ (8000994 <SysTick_Init+0x50>)
+ 8000960:	21f0      	movs	r1, #240	@ 0xf0
+ 8000962:	f883 1023 	strb.w	r1, [r3, #35]	@ 0x23
   NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
   SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
- 8000972:	2300      	movs	r3, #0
- 8000974:	6193      	str	r3, [r2, #24]
+ 8000966:	2300      	movs	r3, #0
+ 8000968:	6193      	str	r3, [r2, #24]
   SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
- 8000976:	2307      	movs	r3, #7
- 8000978:	6113      	str	r3, [r2, #16]
+ 800096a:	2307      	movs	r3, #7
+ 800096c:	6113      	str	r3, [r2, #16]
     	// The SysTick_Config function returns a value (typically 0 for success and 1 for failure
         // Capture error (should not happen with valid clock)
     	NVIC_SystemReset(); // Force the whole chip to reboot and try again
     }
 }
- 800097a:	4770      	bx	lr
+ 800096e:	4770      	bx	lr
   \details Acts as a special kind of Data Memory Barrier.
            It completes when all explicit memory accesses before this instruction complete.
  */
 __STATIC_FORCEINLINE void __DSB(void)
 {
   __ASM volatile ("dsb 0xF":::"memory");
- 800097c:	f3bf 8f4f 	dsb	sy
+ 8000970:	f3bf 8f4f 	dsb	sy
                            (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) |
- 8000980:	4907      	ldr	r1, [pc, #28]	@ (80009a0 <SysTick_Init+0x50>)
- 8000982:	68ca      	ldr	r2, [r1, #12]
- 8000984:	f402 62e0 	and.w	r2, r2, #1792	@ 0x700
+ 8000974:	4907      	ldr	r1, [pc, #28]	@ (8000994 <SysTick_Init+0x50>)
+ 8000976:	68ca      	ldr	r2, [r1, #12]
+ 8000978:	f402 62e0 	and.w	r2, r2, #1792	@ 0x700
   SCB->AIRCR  = (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos)    |
- 8000988:	4b06      	ldr	r3, [pc, #24]	@ (80009a4 <SysTick_Init+0x54>)
- 800098a:	4313      	orrs	r3, r2
- 800098c:	60cb      	str	r3, [r1, #12]
- 800098e:	f3bf 8f4f 	dsb	sy
+ 800097c:	4b06      	ldr	r3, [pc, #24]	@ (8000998 <SysTick_Init+0x54>)
+ 800097e:	4313      	orrs	r3, r2
+ 8000980:	60cb      	str	r3, [r1, #12]
+ 8000982:	f3bf 8f4f 	dsb	sy
     __NOP();
- 8000992:	bf00      	nop
+ 8000986:	bf00      	nop
   for(;;)                                                           /* wait until reset */
- 8000994:	e7fd      	b.n	8000992 <SysTick_Init+0x42>
- 8000996:	bf00      	nop
- 8000998:	20000000 	.word	0x20000000
- 800099c:	10624dd3 	.word	0x10624dd3
- 80009a0:	e000ed00 	.word	0xe000ed00
- 80009a4:	05fa0004 	.word	0x05fa0004
+ 8000988:	e7fd      	b.n	8000986 <SysTick_Init+0x42>
+ 800098a:	bf00      	nop
+ 800098c:	20000000 	.word	0x20000000
+ 8000990:	10624dd3 	.word	0x10624dd3
+ 8000994:	e000ed00 	.word	0xe000ed00
+ 8000998:	05fa0004 	.word	0x05fa0004
 
-080009a8 <SysTick_Handler>:
+0800099c <SysTick_Handler>:
 
 /*3. The Handler (ISR)
 The SysTick handler is predefined in the vector table. You just need to define it and increment your counter.
  */
 void SysTick_Handler(void) {
 	msTicks++;
- 80009a8:	4a02      	ldr	r2, [pc, #8]	@ (80009b4 <SysTick_Handler+0xc>)
- 80009aa:	6813      	ldr	r3, [r2, #0]
- 80009ac:	3301      	adds	r3, #1
- 80009ae:	6013      	str	r3, [r2, #0]
+ 800099c:	4a02      	ldr	r2, [pc, #8]	@ (80009a8 <SysTick_Handler+0xc>)
+ 800099e:	6813      	ldr	r3, [r2, #0]
+ 80009a0:	3301      	adds	r3, #1
+ 80009a2:	6013      	str	r3, [r2, #0]
+}
+ 80009a4:	4770      	bx	lr
+ 80009a6:	bf00      	nop
+ 80009a8:	20000034 	.word	0x20000034
+
+080009ac <GetSysTick>:
+
+/*4. The GetTick Equivalent : now, create a function to return that value. This is a direct replacement for HAL_GetTick().*/
+uint32_t GetSysTick(void) {
+	return msTicks;
+ 80009ac:	4b01      	ldr	r3, [pc, #4]	@ (80009b4 <GetSysTick+0x8>)
+ 80009ae:	6818      	ldr	r0, [r3, #0]
 }
  80009b0:	4770      	bx	lr
  80009b2:	bf00      	nop
  80009b4:	20000034 	.word	0x20000034
 
-080009b8 <GetSysTick>:
-
-/*4. The GetTick Equivalent : now, create a function to return that value. This is a direct replacement for HAL_GetTick().*/
-uint32_t GetSysTick(void) {
-	return msTicks;
- 80009b8:	4b01      	ldr	r3, [pc, #4]	@ (80009c0 <GetSysTick+0x8>)
- 80009ba:	6818      	ldr	r0, [r3, #0]
-}
- 80009bc:	4770      	bx	lr
- 80009be:	bf00      	nop
- 80009c0:	20000034 	.word	0x20000034
-
-080009c4 <NBdelay_ms>:
+080009b8 <NBdelay_ms>:
 
 
 // Records the starting tick count and waits until the required nb of ms has passed. It’s non-blocking, the CPU can still handle interrupts while waiting
 void NBdelay_ms(uint32_t ms)
 {
     uint32_t start = msTicks;
- 80009c4:	4b03      	ldr	r3, [pc, #12]	@ (80009d4 <NBdelay_ms+0x10>)
- 80009c6:	6819      	ldr	r1, [r3, #0]
+ 80009b8:	4b03      	ldr	r3, [pc, #12]	@ (80009c8 <NBdelay_ms+0x10>)
+ 80009ba:	6819      	ldr	r1, [r3, #0]
     while ((msTicks - start) < ms) {}
- 80009c8:	461a      	mov	r2, r3
- 80009ca:	6813      	ldr	r3, [r2, #0]
- 80009cc:	1a5b      	subs	r3, r3, r1
- 80009ce:	4283      	cmp	r3, r0
- 80009d0:	d3fb      	bcc.n	80009ca <NBdelay_ms+0x6>
+ 80009bc:	461a      	mov	r2, r3
+ 80009be:	6813      	ldr	r3, [r2, #0]
+ 80009c0:	1a5b      	subs	r3, r3, r1
+ 80009c2:	4283      	cmp	r3, r0
+ 80009c4:	d3fb      	bcc.n	80009be <NBdelay_ms+0x6>
 }
- 80009d2:	4770      	bx	lr
- 80009d4:	20000034 	.word	0x20000034
+ 80009c6:	4770      	bx	lr
+ 80009c8:	20000034 	.word	0x20000034
 
-080009d8 <RTC_WKUP_IRQHandler>:
+080009cc <RTC_WKUP_IRQHandler>:
 
 
 void RTC_WKUP_IRQHandler()
 {
     EXTI->PR = (1U<<22);// This bit is set when the selected edge event arrives on the external interrupt line. This bit is cleared by programming it to ‘1’.
- 80009d8:	4b0b      	ldr	r3, [pc, #44]	@ (8000a08 <RTC_WKUP_IRQHandler+0x30>)
- 80009da:	f44f 0280 	mov.w	r2, #4194304	@ 0x400000
- 80009de:	615a      	str	r2, [r3, #20]
+ 80009cc:	4b0b      	ldr	r3, [pc, #44]	@ (80009fc <RTC_WKUP_IRQHandler+0x30>)
+ 80009ce:	f44f 0280 	mov.w	r2, #4194304	@ 0x400000
+ 80009d2:	615a      	str	r2, [r3, #20]
     if((RTC->ISR & RTC_ISR_WUTF)!=0) // (1U<<10 WUTF: this flag is set by hardware when the wakeup auto-reload counter reaches 0.
- 80009e0:	f5a3 338a 	sub.w	r3, r3, #70656	@ 0x11400
- 80009e4:	68db      	ldr	r3, [r3, #12]
- 80009e6:	f413 6f80 	tst.w	r3, #1024	@ 0x400
- 80009ea:	d00c      	beq.n	8000a06 <RTC_WKUP_IRQHandler+0x2e>
+ 80009d4:	f5a3 338a 	sub.w	r3, r3, #70656	@ 0x11400
+ 80009d8:	68db      	ldr	r3, [r3, #12]
+ 80009da:	f413 6f80 	tst.w	r3, #1024	@ 0x400
+ 80009de:	d00c      	beq.n	80009fa <RTC_WKUP_IRQHandler+0x2e>
     {									// 1: Wakeup timer configuration update allowed
     	GPIOK->ODR ^= GPIO_ODR_OD3; //toggle PK3 (bleu)
- 80009ec:	4a07      	ldr	r2, [pc, #28]	@ (8000a0c <RTC_WKUP_IRQHandler+0x34>)
- 80009ee:	6953      	ldr	r3, [r2, #20]
- 80009f0:	f083 0308 	eor.w	r3, r3, #8
- 80009f4:	6153      	str	r3, [r2, #20]
+ 80009e0:	4a07      	ldr	r2, [pc, #28]	@ (8000a00 <RTC_WKUP_IRQHandler+0x34>)
+ 80009e2:	6953      	ldr	r3, [r2, #20]
+ 80009e4:	f083 0308 	eor.w	r3, r3, #8
+ 80009e8:	6153      	str	r3, [r2, #20]
     	RTC->ISR = ~RTC_ISR_WUTF; // (0U<<10); this flag is cleared by software by writing 0
- 80009f6:	4b06      	ldr	r3, [pc, #24]	@ (8000a10 <RTC_WKUP_IRQHandler+0x38>)
- 80009f8:	f46f 6280 	mvn.w	r2, #1024	@ 0x400
- 80009fc:	60da      	str	r2, [r3, #12]
+ 80009ea:	4b06      	ldr	r3, [pc, #24]	@ (8000a04 <RTC_WKUP_IRQHandler+0x38>)
+ 80009ec:	f46f 6280 	mvn.w	r2, #1024	@ 0x400
+ 80009f0:	60da      	str	r2, [r3, #12]
     	countWakeUp++;
- 80009fe:	4a05      	ldr	r2, [pc, #20]	@ (8000a14 <RTC_WKUP_IRQHandler+0x3c>)
- 8000a00:	6813      	ldr	r3, [r2, #0]
- 8000a02:	3301      	adds	r3, #1
- 8000a04:	6013      	str	r3, [r2, #0]
+ 80009f2:	4a05      	ldr	r2, [pc, #20]	@ (8000a08 <RTC_WKUP_IRQHandler+0x3c>)
+ 80009f4:	6813      	ldr	r3, [r2, #0]
+ 80009f6:	3301      	adds	r3, #1
+ 80009f8:	6013      	str	r3, [r2, #0]
     }
 }
- 8000a06:	4770      	bx	lr
- 8000a08:	40013c00 	.word	0x40013c00
- 8000a0c:	40022800 	.word	0x40022800
- 8000a10:	40002800 	.word	0x40002800
- 8000a14:	20000038 	.word	0x20000038
+ 80009fa:	4770      	bx	lr
+ 80009fc:	40013c00 	.word	0x40013c00
+ 8000a00:	40022800 	.word	0x40022800
+ 8000a04:	40002800 	.word	0x40002800
+ 8000a08:	20000038 	.word	0x20000038
 
-08000a18 <Reset_Handler>:
+08000a0c <Reset_Handler>:
 
   .section .text.Reset_Handler
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
   ldr   r0, =_estack
- 8000a18:	480d      	ldr	r0, [pc, #52]	@ (8000a50 <LoopForever+0x2>)
+ 8000a0c:	480d      	ldr	r0, [pc, #52]	@ (8000a44 <LoopForever+0x2>)
   mov   sp, r0          /* set stack pointer */
- 8000a1a:	4685      	mov	sp, r0
+ 8000a0e:	4685      	mov	sp, r0
 /* Call the clock system initialization function.*/
   bl  SystemInit
- 8000a1c:	f3af 8000 	nop.w
+ 8000a10:	f3af 8000 	nop.w
 
 /* Copy the data segment initializers from flash to SRAM */
   ldr r0, =_sdata
- 8000a20:	480c      	ldr	r0, [pc, #48]	@ (8000a54 <LoopForever+0x6>)
+ 8000a14:	480c      	ldr	r0, [pc, #48]	@ (8000a48 <LoopForever+0x6>)
   ldr r1, =_edata
- 8000a22:	490d      	ldr	r1, [pc, #52]	@ (8000a58 <LoopForever+0xa>)
+ 8000a16:	490d      	ldr	r1, [pc, #52]	@ (8000a4c <LoopForever+0xa>)
   ldr r2, =_sidata
- 8000a24:	4a0d      	ldr	r2, [pc, #52]	@ (8000a5c <LoopForever+0xe>)
+ 8000a18:	4a0d      	ldr	r2, [pc, #52]	@ (8000a50 <LoopForever+0xe>)
   movs r3, #0
- 8000a26:	2300      	movs	r3, #0
+ 8000a1a:	2300      	movs	r3, #0
   b LoopCopyDataInit
- 8000a28:	e002      	b.n	8000a30 <LoopCopyDataInit>
+ 8000a1c:	e002      	b.n	8000a24 <LoopCopyDataInit>
 
-08000a2a <CopyDataInit>:
+08000a1e <CopyDataInit>:
 
 CopyDataInit:
   ldr r4, [r2, r3]
- 8000a2a:	58d4      	ldr	r4, [r2, r3]
+ 8000a1e:	58d4      	ldr	r4, [r2, r3]
   str r4, [r0, r3]
- 8000a2c:	50c4      	str	r4, [r0, r3]
+ 8000a20:	50c4      	str	r4, [r0, r3]
   adds r3, r3, #4
- 8000a2e:	3304      	adds	r3, #4
+ 8000a22:	3304      	adds	r3, #4
 
-08000a30 <LoopCopyDataInit>:
+08000a24 <LoopCopyDataInit>:
 
 LoopCopyDataInit:
   adds r4, r0, r3
- 8000a30:	18c4      	adds	r4, r0, r3
+ 8000a24:	18c4      	adds	r4, r0, r3
   cmp r4, r1
- 8000a32:	428c      	cmp	r4, r1
+ 8000a26:	428c      	cmp	r4, r1
   bcc CopyDataInit
- 8000a34:	d3f9      	bcc.n	8000a2a <CopyDataInit>
+ 8000a28:	d3f9      	bcc.n	8000a1e <CopyDataInit>
 
 /* Zero fill the bss segment. */
   ldr r2, =_sbss
- 8000a36:	4a0a      	ldr	r2, [pc, #40]	@ (8000a60 <LoopForever+0x12>)
+ 8000a2a:	4a0a      	ldr	r2, [pc, #40]	@ (8000a54 <LoopForever+0x12>)
   ldr r4, =_ebss
- 8000a38:	4c0a      	ldr	r4, [pc, #40]	@ (8000a64 <LoopForever+0x16>)
+ 8000a2c:	4c0a      	ldr	r4, [pc, #40]	@ (8000a58 <LoopForever+0x16>)
   movs r3, #0
- 8000a3a:	2300      	movs	r3, #0
+ 8000a2e:	2300      	movs	r3, #0
   b LoopFillZerobss
- 8000a3c:	e001      	b.n	8000a42 <LoopFillZerobss>
+ 8000a30:	e001      	b.n	8000a36 <LoopFillZerobss>
 
-08000a3e <FillZerobss>:
+08000a32 <FillZerobss>:
 
 FillZerobss:
   str  r3, [r2]
- 8000a3e:	6013      	str	r3, [r2, #0]
+ 8000a32:	6013      	str	r3, [r2, #0]
   adds r2, r2, #4
- 8000a40:	3204      	adds	r2, #4
+ 8000a34:	3204      	adds	r2, #4
 
-08000a42 <LoopFillZerobss>:
+08000a36 <LoopFillZerobss>:
 
 LoopFillZerobss:
   cmp r2, r4
- 8000a42:	42a2      	cmp	r2, r4
+ 8000a36:	42a2      	cmp	r2, r4
   bcc FillZerobss
- 8000a44:	d3fb      	bcc.n	8000a3e <FillZerobss>
+ 8000a38:	d3fb      	bcc.n	8000a32 <FillZerobss>
 
 
 /* Call static constructors */
   bl __libc_init_array
- 8000a46:	f000 f811 	bl	8000a6c <__libc_init_array>
+ 8000a3a:	f000 f811 	bl	8000a60 <__libc_init_array>
 /* Call the application's entry point.*/
 
   bl main
- 8000a4a:	f7ff fbd1 	bl	80001f0 <main>
+ 8000a3e:	f7ff fbd7 	bl	80001f0 <main>
 
-08000a4e <LoopForever>:
+08000a42 <LoopForever>:
 
 LoopForever:
   b LoopForever
- 8000a4e:	e7fe      	b.n	8000a4e <LoopForever>
+ 8000a42:	e7fe      	b.n	8000a42 <LoopForever>
   ldr   r0, =_estack
- 8000a50:	20040000 	.word	0x20040000
+ 8000a44:	20040000 	.word	0x20040000
   ldr r0, =_sdata
- 8000a54:	20000000 	.word	0x20000000
+ 8000a48:	20000000 	.word	0x20000000
   ldr r1, =_edata
- 8000a58:	20000004 	.word	0x20000004
+ 8000a4c:	20000004 	.word	0x20000004
   ldr r2, =_sidata
- 8000a5c:	08000b04 	.word	0x08000b04
+ 8000a50:	08000af8 	.word	0x08000af8
   ldr r2, =_sbss
- 8000a60:	20000004 	.word	0x20000004
+ 8000a54:	20000004 	.word	0x20000004
   ldr r4, =_ebss
- 8000a64:	2000003c 	.word	0x2000003c
+ 8000a58:	2000003c 	.word	0x2000003c
 
-08000a68 <ADC_IRQHandler>:
+08000a5c <ADC_IRQHandler>:
  * @retval : None
 */
   .section .text.Default_Handler,"ax",%progbits
 Default_Handler:
 Infinite_Loop:
   b Infinite_Loop
- 8000a68:	e7fe      	b.n	8000a68 <ADC_IRQHandler>
+ 8000a5c:	e7fe      	b.n	8000a5c <ADC_IRQHandler>
 	...
 
-08000a6c <__libc_init_array>:
- 8000a6c:	b570      	push	{r4, r5, r6, lr}
- 8000a6e:	4b0d      	ldr	r3, [pc, #52]	@ (8000aa4 <__libc_init_array+0x38>)
- 8000a70:	4d0d      	ldr	r5, [pc, #52]	@ (8000aa8 <__libc_init_array+0x3c>)
- 8000a72:	1b5b      	subs	r3, r3, r5
- 8000a74:	109c      	asrs	r4, r3, #2
- 8000a76:	2600      	movs	r6, #0
- 8000a78:	42a6      	cmp	r6, r4
- 8000a7a:	d109      	bne.n	8000a90 <__libc_init_array+0x24>
- 8000a7c:	f000 f81a 	bl	8000ab4 <_init>
- 8000a80:	4d0a      	ldr	r5, [pc, #40]	@ (8000aac <__libc_init_array+0x40>)
- 8000a82:	4b0b      	ldr	r3, [pc, #44]	@ (8000ab0 <__libc_init_array+0x44>)
- 8000a84:	1b5b      	subs	r3, r3, r5
- 8000a86:	109c      	asrs	r4, r3, #2
- 8000a88:	2600      	movs	r6, #0
- 8000a8a:	42a6      	cmp	r6, r4
- 8000a8c:	d105      	bne.n	8000a9a <__libc_init_array+0x2e>
- 8000a8e:	bd70      	pop	{r4, r5, r6, pc}
- 8000a90:	f855 3b04 	ldr.w	r3, [r5], #4
- 8000a94:	4798      	blx	r3
- 8000a96:	3601      	adds	r6, #1
- 8000a98:	e7ee      	b.n	8000a78 <__libc_init_array+0xc>
- 8000a9a:	f855 3b04 	ldr.w	r3, [r5], #4
- 8000a9e:	4798      	blx	r3
- 8000aa0:	3601      	adds	r6, #1
- 8000aa2:	e7f2      	b.n	8000a8a <__libc_init_array+0x1e>
- 8000aa4:	08000af8 	.word	0x08000af8
- 8000aa8:	08000af8 	.word	0x08000af8
- 8000aac:	08000af8 	.word	0x08000af8
- 8000ab0:	08000b00 	.word	0x08000b00
+08000a60 <__libc_init_array>:
+ 8000a60:	b570      	push	{r4, r5, r6, lr}
+ 8000a62:	4b0d      	ldr	r3, [pc, #52]	@ (8000a98 <__libc_init_array+0x38>)
+ 8000a64:	4d0d      	ldr	r5, [pc, #52]	@ (8000a9c <__libc_init_array+0x3c>)
+ 8000a66:	1b5b      	subs	r3, r3, r5
+ 8000a68:	109c      	asrs	r4, r3, #2
+ 8000a6a:	2600      	movs	r6, #0
+ 8000a6c:	42a6      	cmp	r6, r4
+ 8000a6e:	d109      	bne.n	8000a84 <__libc_init_array+0x24>
+ 8000a70:	f000 f81a 	bl	8000aa8 <_init>
+ 8000a74:	4d0a      	ldr	r5, [pc, #40]	@ (8000aa0 <__libc_init_array+0x40>)
+ 8000a76:	4b0b      	ldr	r3, [pc, #44]	@ (8000aa4 <__libc_init_array+0x44>)
+ 8000a78:	1b5b      	subs	r3, r3, r5
+ 8000a7a:	109c      	asrs	r4, r3, #2
+ 8000a7c:	2600      	movs	r6, #0
+ 8000a7e:	42a6      	cmp	r6, r4
+ 8000a80:	d105      	bne.n	8000a8e <__libc_init_array+0x2e>
+ 8000a82:	bd70      	pop	{r4, r5, r6, pc}
+ 8000a84:	f855 3b04 	ldr.w	r3, [r5], #4
+ 8000a88:	4798      	blx	r3
+ 8000a8a:	3601      	adds	r6, #1
+ 8000a8c:	e7ee      	b.n	8000a6c <__libc_init_array+0xc>
+ 8000a8e:	f855 3b04 	ldr.w	r3, [r5], #4
+ 8000a92:	4798      	blx	r3
+ 8000a94:	3601      	adds	r6, #1
+ 8000a96:	e7f2      	b.n	8000a7e <__libc_init_array+0x1e>
+ 8000a98:	08000aec 	.word	0x08000aec
+ 8000a9c:	08000aec 	.word	0x08000aec
+ 8000aa0:	08000aec 	.word	0x08000aec
+ 8000aa4:	08000af4 	.word	0x08000af4
 
-08000ab4 <_init>:
+08000aa8 <_init>:
+ 8000aa8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8000aaa:	bf00      	nop
+ 8000aac:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8000aae:	bc08      	pop	{r3}
+ 8000ab0:	469e      	mov	lr, r3
+ 8000ab2:	4770      	bx	lr
+
+08000ab4 <_fini>:
  8000ab4:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
  8000ab6:	bf00      	nop
  8000ab8:	bcf8      	pop	{r3, r4, r5, r6, r7}
  8000aba:	bc08      	pop	{r3}
  8000abc:	469e      	mov	lr, r3
  8000abe:	4770      	bx	lr
-
-08000ac0 <_fini>:
- 8000ac0:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
- 8000ac2:	bf00      	nop
- 8000ac4:	bcf8      	pop	{r3, r4, r5, r6, r7}
- 8000ac6:	bc08      	pop	{r3}
- 8000ac8:	469e      	mov	lr, r3
- 8000aca:	4770      	bx	lr

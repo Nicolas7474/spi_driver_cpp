@@ -1,12 +1,16 @@
-../Src/spi1.cpp:307:6:void Spi1_LowLevelInit()	0	static
-../Src/spi1.cpp:23:1:SpiDriver::SpiDriver(const SpiHardwareConfig&)	0	static
-../Src/spi1.cpp:40:6:void SpiDriver::ConfigureDma()	0	static,ignoring_inline_asm
-../Src/spi1.cpp:25:14:BareM_Status SpiDriver::Init(BaudRatePrescaler)	16	static
-../Src/spi1.cpp:80:14:BareM_Status SpiDriver::Receive_MainBody(std::span<unsigned char>, uint32_t)	40	static
-../Src/spi1.cpp:116:14:BareM_Status SpiDriver::Transmit_MainBody(std::span<const unsigned char>, uint32_t)	48	static
-../Src/spi1.cpp:169:14:BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const unsigned char>, std::span<unsigned char>, uint32_t)	72	static
-../Src/spi1.cpp:249:6:void SpiDriver::Handle_DMA_RX_IRQ()	0	static
-../Src/spi1.cpp:255:6:void SpiDriver::Handle_DMA_TX_IRQ()	0	static
-../Src/spi1.cpp:347:10:void DMA2_Stream2_IRQHandler()	8	static
-../Src/spi1.cpp:351:10:void DMA2_Stream3_IRQHandler()	8	static
-../Src/spi1.cpp:354:1:cpp)	8	static
+../Src/spi1.cpp:342:6:void Spi1_LowLevelInit()	0	static
+../Src/spi1.cpp:25:1:SpiDriver::SpiDriver(const SpiHardwareConfig&)	0	static
+../Src/spi1.cpp:42:6:void SpiDriver::ConfigureDma()	0	static,ignoring_inline_asm
+../Src/spi1.cpp:27:14:BareM_Status SpiDriver::Init(BaudRatePrescaler)	16	static
+../Src/spi1.cpp:82:14:BareM_Status SpiDriver::Receive_MainBody(std::span<unsigned char>, uint32_t)	40	static
+../Src/spi1.cpp:118:14:BareM_Status SpiDriver::Transmit_MainBody(std::span<const unsigned char>, uint32_t)	48	static
+../Src/spi1.cpp:171:14:BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const unsigned char>, std::span<unsigned char>, uint32_t)	72	static
+../Src/spi1.cpp:290:28:void SpiDriver::TxCpltCallback()	0	static
+../Src/spi1.cpp:299:28:void SpiDriver::RxCpltCallback()	0	static
+../Src/spi1.cpp:251:6:void SpiDriver::Handle_DMA_RX_IRQ()	8	static
+../Src/spi1.cpp:304:28:void SpiDriver::TxRxCpltCallback()	0	static
+../Src/spi1.cpp:308:28:void SpiDriver::ErrorCallback()	0	static
+../Src/spi1.cpp:258:6:void SpiDriver::Handle_DMA_TX_IRQ()	8	static
+../Src/spi1.cpp:382:10:void DMA2_Stream2_IRQHandler()	8	static
+../Src/spi1.cpp:386:10:void DMA2_Stream3_IRQHandler()	8	static
+../Src/spi1.cpp:389:1:cpp)	8	static

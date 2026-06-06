@@ -74,14 +74,20 @@ public:
     BareM_Status Transmit_DMA(std::span<const uint8_t> txdata);
     BareM_Status TransmitReceive_DMA(std::span<const uint8_t> txData, std::span<uint8_t> rxData);
 
+    static void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; } // "static" strips away the hidden this pointer requirement
+    static void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; } // Enforces the SpiDriver:: or spi1. prefix scoping
+    static void CS2_Low()  { GPIOC->BSRR = GPIO_BSRR_BR13; } // The function becomes a regular, global function
+    static void CS2_High() { GPIOC->BSRR = GPIO_BSRR_BS13; }
+
     SpiState GetState() const { return m_state; }
+
     void Handle_DMA_RX_IRQ();
     void Handle_DMA_TX_IRQ();
 
-    void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; }
-    void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; }
-    static void ChipSelect2_Low()  { GPIOC->BSRR = GPIO_BSRR_BR13; }
-    static void ChipSelect2_High() { GPIOC->BSRR = GPIO_BSRR_BS13; }
+    void TxCpltCallback(); 	// Callbacks declared inside the class
+    void RxCpltCallback(); 	// to enforce the spi1 prefix scoping
+    void TxRxCpltCallback(); // Hard-coded (no function pointers)
+    void ErrorCallback();	// for less time penalty
 
 private:
     const SpiHardwareConfig& config;
