@@ -47,12 +47,16 @@ struct SpiHardwareConfig {
     IRQn_Type           rxDmaIrq;
     IRQn_Type           txDmaIrq;
     SpiLowLevelInitFn   lowLevelInit;
+    // Added these fields for zero-latency flag clearing
+    volatile uint32_t* txFcrReg; // Pointer to LIFCR or HIFCR
+    uint32_t txClearMask;        // Exact 0x3D bitmask shifted to correct stream position
+    volatile uint32_t* rxFcrReg;
+    uint32_t rxClearMask;
 };
 
 
 
 class SpiDriver {
-
 public:
     explicit SpiDriver(const SpiHardwareConfig& hardwareConfig);
     ~SpiDriver() = default;
@@ -62,12 +66,13 @@ public:
     BareM_Status Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs);
     BareM_Status Transmit_MainBody(std::span<const uint8_t> txData, uint32_t timeoutMs);
     BareM_Status Receive(std::span<uint8_t> rxData, uint32_t timeoutMs);
+    BareM_Status Receive_MainBody(std::span<uint8_t> rxData, uint32_t timeoutMs);
     BareM_Status TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
     BareM_Status TransmitReceive_MainBody(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs);
     // DMA functions declarations
     BareM_Status Receive_DMA(std::span<uint8_t> rxData);
     BareM_Status Transmit_DMA(std::span<const uint8_t> txdata);
-
+    BareM_Status TransmitReceive_DMA(std::span<const uint8_t> txData, std::span<uint8_t> rxData);
 
     SpiState GetState() const { return m_state; }
     void Handle_DMA_RX_IRQ();
@@ -82,27 +87,190 @@ private:
     const SpiHardwareConfig& config;
     volatile SpiState        m_state{SpiState::RESET};
     volatile uint8_t         m_dummyTx{0x00};
+    volatile uint8_t 		 m_dummyRx{0x00}; // Dedicated garbage bin for unwanted incoming data
     bool                     m_isDmaInitialized{false};
 
     void ConfigureDma();
-    void ClearDmaFlags(DMA_Stream_TypeDef* stream);
 };
 
 
 /* =======================================================================================================================
-  SEPARATE HIGH-SPEED INLINE DEFINITIONS : the compiler literally erases the concept of the function call.
-  Reduces drastically the delay between falling edge of CS and first edge of MOSI (more than factor 2).
-  Used with polling transfers only, since DMA introduces a much larger latency and inlining has only little effect.
+  SEPARATE HIGH-SPEED INLINE (time-critical) DEFINITIONS
+  More prominent with polling transfers, since DMA preparations introduce a big latency and inlining has a lesser impact.
+  The compiler literally erases the concept of the function call, reducing drastically the delay between the
+  falling edge of CS and first MOSI data (more than factor 2).
   Split the function into a fast inline header and a heavy static worker, which avoids code bloat: if a
   large inline function is called in 20 different places throughout the codebase, the complete function code
   will be copied into the flash memory 20 distinct times and can quickly deplete the available flash space.
-  __attribute__((always_inline)) should be reserved when timing is critical
 ======================================================================================================================= */
+
+/*================================================================
+/ ==============    SPI FUNCTIONS DMA MODE   =====================
+/ ================================================================ */
+
+
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
+	// First CLK edge delay reduced -200ns with function inlining
+
+	if (rxData.empty()) return BareM_Status::ERROR;
+
+	// Fast guard: Compiler assumes this if statement is false
+	// and places the hot registration blitting directly in the pipeline stream.
+	if (__builtin_expect(m_state != SpiState::READY, 0)) {
+		uint32_t timeout_ct = GetSysTick() + 10;
+		while (m_state != SpiState::READY) {
+			if (GetSysTick() > timeout_ct) {
+				m_state = SpiState::READY; // Force reset driver state
+				return BareM_Status::TIMEOUT;
+			}
+		}
+	}
+	m_state = SpiState::BUSY_RX;
+
+	[[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
+
+	config.rxStream->CR &= ~DMA_SxCR_EN; // Disable DMA stream to allow configuration
+	config.txStream->CR &= ~DMA_SxCR_EN;
+	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
+	// ClearDmaFlags() already called in the ISR, no need again here
+
+	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
+	config.rxStream->NDTR = rxData.size();
+
+	config.txStream->M0AR = reinterpret_cast<uintptr_t>(&m_dummyTx);
+	config.txStream->NDTR = rxData.size(); // Dummy bytes to generate the CLK required for the Slave to shift out its data
+
+	config.txStream->CR &= ~DMA_SxCR_MINC; // Disable Memory Increment on TX so it locks onto the single dummy variable address
+	config.rxStream->CR |= DMA_SxCR_EN;
+	config.txStream->CR |= DMA_SxCR_EN;
+
+	return BareM_Status::OK;  // while(m_state!=SpiState::READY) -> no blocking before returning
+}
+
+
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> txdata) {
+	// First MOSI byte delay reduced -200ns with function inlining
+
+	if (txdata.empty()) return BareM_Status::ERROR;
+
+	// Fast guard: Compiler assumes this if statement is false
+	// and places the hot registration blitting directly in the pipeline stream.
+	if (__builtin_expect(m_state != SpiState::READY, 0)) {
+		uint32_t timeout_ct = GetSysTick() + 10;
+		while (m_state != SpiState::READY) {
+			if (GetSysTick() > timeout_ct) {
+				m_state = SpiState::READY; // Force reset driver state
+				return BareM_Status::TIMEOUT;
+			}
+		}
+	}
+	m_state = SpiState::BUSY_TX;
+
+	config.txStream->CR &= ~DMA_SxCR_EN; 	// Disable DMA stream to allow configuration
+	while (config.txStream->CR & DMA_SxCR_EN);
+	// ClearDmaFlags() already called in the ISR, no need again here
+
+    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txdata.data());
+    config.txStream->NDTR = static_cast<uint16_t>(txdata.size()); // NDTR is on 16 bits
+    config.txStream->CR |= DMA_SxCR_MINC; //  (Re)enable Memory Increment
+    config.txStream->CR  |= DMA_SxCR_EN;
+
+    return BareM_Status::OK;   // while(m_state!=SpiState::READY) -> no blocking before returning
+}
+
+
+
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::TransmitReceive_DMA(std::span<const uint8_t> txData, std::span<uint8_t> rxData) {
+	// First MOSI byte delay reduced -250ns with function inlining
+
+	if (__builtin_expect(txData.empty() || txData.size() != rxData.size(), 0)) {
+		return BareM_Status::ERROR;
+	}
+
+	// Fast guard: Compiler assumes this if statement is false
+	// and places the hot registration blitting directly in the pipeline stream.
+	if (__builtin_expect(m_state != SpiState::READY, 0)) {
+		uint32_t timeout_ct = GetSysTick() + 10;
+		while (m_state != SpiState::READY) {
+			if (GetSysTick() > timeout_ct) {
+				m_state = SpiState::READY; // Force reset driver state
+				return BareM_Status::TIMEOUT;
+			}
+		}
+	}
+	m_state = SpiState::BUSY_TX_RX;
+
+	[[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
+
+	// Optimization (delay -250ns ): only disable and wait if a stream is actually still running
+	if (__builtin_expect((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN), 0)) {
+		config.rxStream->CR &= ~DMA_SxCR_EN;
+    	config.txStream->CR &= ~DMA_SxCR_EN;
+    	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
+    }
+    // ClearDmaFlags() already called in the ISR, no need again here
+
+    uint32_t transferSize = txData.size();
+
+    // --- RX Stream Configuration ---
+    config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
+    config.rxStream->NDTR = transferSize; // Corrected: Removed the "+ 1" overread trap
+    // config.rxStream->CR  |= DMA_SxCR_MINC; // No need to re-enable the RX increments memory
+
+    // --- TX Stream Configuration ---
+    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txData.data());
+    config.txStream->NDTR = transferSize; // Corrected: Removed the "+ 1" overread trap
+    config.txStream->CR  |= DMA_SxCR_MINC; // Keep memory increment enabled
+
+    // --- Synchronous Engine Launch ---
+    config.rxStream->CR |= DMA_SxCR_EN; // Corrected: Enable RX first so it waits for incoming data
+    config.txStream->CR |= DMA_SxCR_EN; // Enable TX second; clock pulses begin instantly
+
+    return BareM_Status::OK;  // No blocking before returning
+}
+
+
+/*================================================================
+/ ==============    SPI FUNCTIONS POLLING MODE   =================
+/ ================================================================ */
+
+__attribute__((always_inline)) inline
+BareM_Status SpiDriver::Receive(std::span<uint8_t> rxData, uint32_t timeoutMs) {
+	// Delay reduced ca. 150ns with function inlining
+
+    if (__builtin_expect(rxData.empty(), 0)) return BareM_Status::ERROR;
+
+    // First CLK edge delay reduced -210ns with call the hardware immediately
+    if (__builtin_expect(m_state == SpiState::READY, 1)) {
+        m_state = SpiState::BUSY_RX;
+        [[maybe_unused]] volatile uint32_t dummyRead = config.spi->DR; // Clear residual flags
+
+        config.spi->DR = 0x00; // FAST KICK: Instantly start generating clock pulses!
+    } else {
+        // FALLBACK: Wait for a background task or prior transfer to finish
+        uint32_t timeout_ct = GetSysTick() + timeoutMs;
+        while (m_state != SpiState::READY) {
+            if (GetSysTick() > timeout_ct) {
+                return BareM_Status::TIMEOUT;
+            }
+        }
+        m_state = SpiState::BUSY_RX;
+        [[maybe_unused]] volatile uint32_t dummyRead = config.spi->DR;
+
+        config.spi->DR = 0x00; // Delayed kick
+    }
+
+    // Hand off the rest of the extraction loop to the Flash-resident main body
+    return Receive_MainBody(rxData, timeoutMs);
+}
 
 
 __attribute__((always_inline)) inline
 BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeoutMs) {
-	// FAST-PATH KICK: Compiles to an ultra-fast conditional or direct store
+	// Fast path kick: Compiles to an ultra-fast conditional or direct store
 	if (__builtin_expect(m_state == SpiState::READY, 1)) {
 		if (!txData.empty()) {				// Kick the hardware immediately (the first byte)
 			config.spi->DR = txData[0]; 	// Reduce drastically the delay between falling edge of CS and that of CLK (780ns -> 420ns)
@@ -110,7 +278,7 @@ BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeo
 			return BareM_Status::ERROR;
 		}
 	} else {
-		// FALLBACK: The programmer made a mistake or a background task is running
+		// Fallback: The programmer made a mistake or a background task is running
 		uint32_t timeout_ct = GetSysTick() + timeoutMs;
 		// We wait/block right here until the previous transaction clears up or times out
 		while (m_state != SpiState::READY) {
@@ -157,8 +325,6 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
 }
 
 
-
-extern SpiDriver spi1;
-
+extern SpiDriver spi1; // declaration of global instance of an SpiDriver object named spi1
 
 

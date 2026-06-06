@@ -1,4 +1,4 @@
 ../Src/myConfig.c:6:6:activateFPU	0	static
-../Src/myConfig.c:22:6:SysClockConfig	4	static,ignoring_inline_asm
-../Src/myConfig.c:100:6:GPIO_Config	12	static
+../Src/myConfig.c:22:6:SysClockConfig	0	static,ignoring_inline_asm
+../Src/myConfig.c:100:6:GPIO_Config	8	static
 ../Src/myConfig.c:138:6:InterruptGPIO_Config	0	static,ignoring_inline_asm

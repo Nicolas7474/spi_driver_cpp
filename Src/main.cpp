@@ -35,29 +35,52 @@ int main (void)
 	// Simply call initialization with your desired runtime prescaler speed division
 	spi1.Init(BaudRatePrescaler::DIV_8); // DIV_8 => 11.25 MHz
 
+//	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+//	DWT->CYCCNT = 0;
+//	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
-	uint8_t bufferTx[] = {0x9F, 0x11, 0x22, 0x33, 0x44};
+
+	uint8_t bufferTx[] = {0x9F, 0x00, 0x00, 0x00, 0x00};
 
 	NBdelay_ms(200);
 
-	auto vue = std::span(bufferTx).subspan(0, 1);
-	auto vue2 = std::span(buf).subspan(0, 3);
+	auto voue = std::span(bufferTx).subspan(0, 1);
+    auto voue2 = std::span(buf).subspan(0, 3);
+
+	auto vue = std::span(bufferTx).subspan(0, 4);
+	auto vue2 = std::span(buf).subspan(0, 4);
 
 	while(1) {
 
 		spi1.CS1_Low();
-		//spi1.Transmit(vue, 10);
-		//spi1.Receive(vue2, 10);
-		spi1.Transmit_DMA(vue);
-		spi1.Receive_DMA(vue2);
-		//while(DMA2_Stream2->CR & DMA_SxCR_EN);
+		spi1.Transmit(voue, 10);
+		spi1.Receive(voue2, 10);
 		while(spi1.GetState() != SpiState::READY);
-
-		//spi1.TransmitReceive(vue, vue2, 10);
-
 		spi1.CS1_High();
 
-		NBdelay_ms(800);
+		NBdelay_ms(1);
+
+		spi1.CS1_Low();
+		spi1.TransmitReceive(vue, vue2, 10);
+		while(spi1.GetState() != SpiState::READY);
+		spi1.CS1_High();
+
+		NBdelay_ms(1);
+
+		spi1.CS1_Low();
+		spi1.Transmit_DMA(voue);
+		spi1.Receive_DMA(voue2);
+		while(spi1.GetState() != SpiState::READY);
+		spi1.CS1_High();
+
+		NBdelay_ms(1);
+
+		spi1.CS1_Low();
+		spi1.TransmitReceive_DMA(vue, vue2);
+		while(spi1.GetState() != SpiState::READY);
+		spi1.CS1_High();
+
+		NBdelay_ms(1000);
 
 	}
 

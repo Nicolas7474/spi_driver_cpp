@@ -1,5 +1,23 @@
+/*
+*		SPI - Polling & DMA-based driver
+* 		with MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
+*
+*   About the combined TransmitReceive_DMA() function and the rule of symmetrical DMA drivers:
+*   - txData.size() must equal rxData.size().
+*   - That size must represent the TOTAL number of clock pulses needed for the entire conversation.
+*   - The real incoming data will always be offset in your receive buffer by the length of your command header !
+*   - Allocating a massive array to send only a few command bytes (ex: reading a Flash sector) is a massive waste of precious RAM.
+*   -> Use TransmitReceive_DMA (Symmetrical) only for tiny, fixed-size control messages (like reading the 3-byte Unique ID) where creating a tiny matching array is trivial.
+*	-> Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads or 256-byte page reads) to keep your RAM completely clean.
+*	-> Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
+*	-> Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions
+*/
+
+
 #include "spi1.hpp"
 #include <span>
+
+
 
 // Constructor definition
 SpiDriver::SpiDriver(const SpiHardwareConfig& hardwareConfig) : config(hardwareConfig) {}
@@ -24,28 +42,30 @@ void SpiDriver::ConfigureDma() {
 
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
 
-    // 1. Configure Rx Stream
+    // Configure Rx Stream
     config.rxStream->CR &= ~DMA_SxCR_EN;
     while (config.rxStream->CR & DMA_SxCR_EN);
-    ClearDmaFlags(config.rxStream);
+    *config.rxFcrReg = config.rxClearMask; // Direct Clear
 
     config.rxStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC
                         | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
     config.rxStream->CR &= ~(3 << DMA_SxCR_DIR_Pos);
     config.rxStream->FCR |= DMA_SxFCR_DMDIS;
     config.rxStream->FCR |= (DMA_SxFCR_FTH_0 | DMA_SxFCR_FTH_1);
+    config.rxStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR); // Set the static peripheral destinations
 
     NVIC_SetPriority(config.rxDmaIrq, 2);
     NVIC_EnableIRQ(config.rxDmaIrq);
 
-    // 2. Configure Tx Stream
+    // Configure Tx Stream
     config.txStream->CR &= ~DMA_SxCR_EN;
     while (config.txStream->CR & DMA_SxCR_EN);
-    ClearDmaFlags(config.txStream);
+    *config.txFcrReg = config.txClearMask; // Direct Clear
 
     config.txStream->CR = (config.dmaChannel << DMA_SxCR_CHSEL_Pos) | DMA_SxCR_MINC | DMA_SxCR_DIR_0
                         | DMA_SxCR_TCIE | DMA_SxCR_TEIE | DMA_SxCR_DMEIE;
     config.txStream->FCR |= DMA_SxFCR_DMDIS;
+    config.txStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR);
 
     NVIC_SetPriority(config.txDmaIrq, 2);
     NVIC_EnableIRQ(config.txDmaIrq);
@@ -53,84 +73,44 @@ void SpiDriver::ConfigureDma() {
     m_isDmaInitialized = true;
 }
 
-void SpiDriver::ClearDmaFlags(DMA_Stream_TypeDef* stream) {
-/*	Calculates the exact bit offset inside the DMA Low Interrupt Status Register (LISR)
-    or (HISR) based on the stream passed in, clearing all status flags in one shot. */
+/*=================================================================
+/=============    SPI FUNCTIONS POLLING MODE   ====================
+/================================================================== */
 
-    uint32_t streamIndex = 0;
-
-    if      (stream == DMA2_Stream0 || stream == DMA1_Stream0) streamIndex = 0;
-    else if (stream == DMA2_Stream1 || stream == DMA1_Stream1) streamIndex = 6;
-    else if (stream == DMA2_Stream2 || stream == DMA1_Stream2) streamIndex = 16;
-    else if (stream == DMA2_Stream3 || stream == DMA1_Stream3) streamIndex = 22;
-    else if (stream == DMA2_Stream4 || stream == DMA1_Stream4) streamIndex = 0;   // HISR boundary
-    else if (stream == DMA2_Stream5 || stream == DMA1_Stream5) streamIndex = 6;   // HISR boundary
-    else if (stream == DMA2_Stream6 || stream == DMA1_Stream6) streamIndex = 16;  // HISR boundary
-    else if (stream == DMA2_Stream7 || stream == DMA1_Stream7) streamIndex = 22;  // HISR boundary
-
-    // Mask 0x3DU clears FIFO Error, Direct Mode Error, Transfer Error, Half Transfer, and Transfer Complete
-    uint32_t mask = (0x3DU << streamIndex);
-
-    if (stream < DMA2_Stream4) {
-        config.dmaBase->LIFCR = mask;
-    } else {
-        config.dmaBase->HIFCR = mask;
-    }
-}
-
-
-
-BareM_Status SpiDriver::Receive(std::span<uint8_t> rxData, uint32_t timeoutMs) {
-    if (rxData.empty()) return BareM_Status::ERROR;
-
+BareM_Status SpiDriver::Receive_MainBody(std::span<uint8_t> rxData, uint32_t timeoutMs) {
     uint32_t timeout_ct = GetSysTick() + timeoutMs;
 
-    // Check if the peripheral is ready
-    while (m_state != SpiState::READY) {
-    	if (GetSysTick() > timeout_ct) {
-    		m_state = SpiState::READY;
-    		return BareM_Status::TIMEOUT;
-    	}
-    }
-    m_state = SpiState::BUSY_RX;
-
-    // Clear any residual garbage flag
-    [[maybe_unused]] volatile uint32_t dummyRead = config.spi->DR;
-
-    uint32_t txCounter = rxData.size();
     uint32_t rxCounter = rxData.size();
+    // CRITICAL: We already kicked off the first byte in the inline header!
+    // So the transmit pipeline counter starts at size - 1.
+    uint32_t txCounter = rxData.size() - 1;
     uint8_t* destPtr = rxData.data();
 
-    // PIPELINED LOOP: Separate the TX pushes from the RX pulls
+    // HIGH-SPEED PIPELINED LOOP
     while (rxCounter > 0) {
-        // 1. Keep the TX pipeline full (Up to 2 bytes can be safely queued in hardware)
+        // 1. Keep the TX pipeline full to maintain continuous SCK cycles
         if (txCounter > 0 && (config.spi->SR & SPI_SR_TXE)) {
-            config.spi->DR = 0x00; // Drop a dummy byte into the hardware buffer
+            config.spi->DR = 0x00;
             txCounter--;
         }
-        // 2. Read bytes as soon as they arrive
+        // 2. Extract incoming data bytes as they land
         if (config.spi->SR & SPI_SR_RXNE) {
             *destPtr++ = static_cast<uint8_t>(config.spi->DR);
             rxCounter--;
         }
-        // 3. Optional: Add your timeout check here if needed
+        // 3. Safety Gate
         if (GetSysTick() > timeout_ct) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
     }
-    // Ensure the final bits completely clear the physical shifts before exiting
+
+    // Allow physical shift registers to completely settle
     while (config.spi->SR & SPI_SR_BSY);
 
     m_state = SpiState::READY;
     return BareM_Status::OK;
 }
-
-
-
-
-
-
 
 
 BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint32_t timeoutMs) {
@@ -261,70 +241,20 @@ BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData
 }
 
 
-BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
-
-	if (rxData.empty()) return BareM_Status::ERROR;
-
-	while (m_state != SpiState::READY);
-	m_state = SpiState::BUSY_RX;
-
-	[[maybe_unused]] volatile uint32_t tmpreg = config.spi->DR;
-
-	config.rxStream->CR &= ~DMA_SxCR_EN; // Disable DMA stream to allow configuration
-	config.txStream->CR &= ~DMA_SxCR_EN;
-	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
-
-	ClearDmaFlags(config.txStream);
-	ClearDmaFlags(config.rxStream);
-
-	config.rxStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
-	config.rxStream->NDTR = rxData.size();
-
-	config.txStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-	config.txStream->M0AR = reinterpret_cast<uintptr_t>(&m_dummyTx);
-	config.txStream->NDTR = rxData.size(); // Dummy bytes to generate the CLK required for the Slave to shift out its data
-
-	config.txStream->CR &= ~DMA_SxCR_MINC; // Disable Memory Increment on TX so it locks onto the single dummy variable address
-	config.rxStream->CR |= DMA_SxCR_EN;
-	config.txStream->CR |= DMA_SxCR_EN;
-
-	return BareM_Status::OK;  // while(m_state!=SpiState::READY) -> no blocking before returning
-}
 
 
-BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> txdata) {
-
-    if (txdata.empty()) return BareM_Status::ERROR;
-
-    while (m_state != SpiState::READY);
-    m_state = SpiState::BUSY_TX;
-
-    config.txStream->CR &= ~DMA_SxCR_EN; 	// Disable DMA stream to allow configuration
-    while (config.txStream->CR & DMA_SxCR_EN);
-
-    ClearDmaFlags(config.txStream);
-
-    config.txStream->PAR  = reinterpret_cast<uint32_t>(&config.spi->DR);
-    config.txStream->M0AR = reinterpret_cast<uintptr_t>(txdata.data());
-    config.txStream->NDTR = static_cast<uint16_t>(txdata.size()); // NDTR is on 16 bits
-    config.txStream->CR |= DMA_SxCR_MINC; //  Re-enable Memory Increment
-    config.txStream->CR  |= DMA_SxCR_EN;
-
-    return BareM_Status::OK;   // while(m_state!=SpiState::READY) -> no blocking before returning
-}
 
 
 
 void SpiDriver::Handle_DMA_RX_IRQ() {
     // RX is a pure data worker. We clear flags and leave CR alone.
     // The STM32 hardware automatically disables the stream when NDTR hits 0.
-    ClearDmaFlags(config.rxStream);
+	*config.rxFcrReg = config.rxClearMask; // Instant hardware clear
 }
 
 void SpiDriver::Handle_DMA_TX_IRQ() {
     uint32_t lisr = config.dmaBase->LISR;
-    ClearDmaFlags(config.txStream);
+    *config.txFcrReg = config.txClearMask; // Instant hardware clear
 
     if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
         config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
@@ -332,17 +262,24 @@ void SpiDriver::Handle_DMA_TX_IRQ() {
         // CRITICAL: Ensure the hardware shift registers are 100% empty
         // and the physical pins have stopped toggling before freeing the driver
         while (config.spi->SR & SPI_SR_BSY);
-
         m_state = SpiState::READY;
     } else {
         // Fallback for DMA Errors (TEIF, DMEIF)
         config.txStream->CR &= ~DMA_SxCR_EN;
         config.rxStream->CR &= ~DMA_SxCR_EN;
+        *config.rxFcrReg = config.rxClearMask; // Clean RX stream on unexpected fault
         m_state = SpiState::READY;
     }
 }
 
-/***************************** SPI1 INSTANCE CONFIGURATION ********************************/
+
+
+
+/*================================================================
+/==============    SPI1 INSTANCE CONFIGURATION   =================
+/================================================================= */
+
+
 
 // Forward declaration of local low-level pin mapping function
 void Spi1_LowLevelInit(void);
@@ -357,22 +294,14 @@ constexpr SpiHardwareConfig Spi1Config {
     SPI1_IRQn,          // .spiIrq
     DMA2_Stream2_IRQn,  // .rxDmaIrq
     DMA2_Stream3_IRQn,  // .txDmaIrq
-    Spi1_LowLevelInit   // .lowLevelInit
+    Spi1_LowLevelInit,   // .lowLevelInit
+	&DMA2->LIFCR, (0x3DU << 22), // TX: Stream 3 is at bit 22 in LIFCR
+	&DMA2->LIFCR, (0x3DU << 16)  // RX: Stream 2 is at bit 16 in LIFCR
 };
+
 
 // Global Instance Allocation (Instantiates the extern declared in the header)
 SpiDriver spi1(Spi1Config);
-
-// C-Compatible Hardware Interrupt Vector Table Routing
-extern "C" {
-    void DMA2_Stream2_IRQHandler(void) {
-        spi1.Handle_DMA_RX_IRQ();
-    }
-
-    void DMA2_Stream3_IRQHandler(void) {
-        spi1.Handle_DMA_TX_IRQ();
-    }
-}
 
 // Concrete execution block mapping GPIO, AF5 configurations, and CS pins
 void Spi1_LowLevelInit(void) {
@@ -410,4 +339,16 @@ void Spi1_LowLevelInit(void) {
     GPIOC->OSPEEDR &= ~(3 << GPIO_OSPEEDR_OSPEED13_Pos);
     GPIOC->OSPEEDR |=  (2 << GPIO_OSPEEDR_OSPEED13_Pos); // 2 = High Speed, 1 = Mid Speed
     GPIOC->BSRR     =  GPIO_BSRR_BS13;                    // Start High
+}
+
+
+// C-Compatible Hardware Interrupt Vector Table Routing
+extern "C" {
+    void DMA2_Stream2_IRQHandler(void) {
+        spi1.Handle_DMA_RX_IRQ();
+    }
+
+    void DMA2_Stream3_IRQHandler(void) {
+        spi1.Handle_DMA_TX_IRQ();
+    }
 }
