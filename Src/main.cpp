@@ -52,20 +52,20 @@ int main (void)
 
 	while(1) {
 
-		spi1.CS1_Low();
-		spi1.Transmit(voue, 10);
-		spi1.Receive(voue2, 10);
-		while(spi1.GetState() != SpiState::READY);
-		spi1.CS1_High();
-
-		NBdelay_ms(1);
-
-		spi1.CS1_Low();
-		spi1.TransmitReceive(vue, vue2, 10);
-		while(spi1.GetState() != SpiState::READY);
-		spi1.CS1_High();
-
-		NBdelay_ms(1);
+//		spi1.CS1_Low();
+//		spi1.Transmit(voue, 10);
+//		spi1.Receive(voue2, 10);
+//		while(spi1.GetState() != SpiState::READY);
+//		spi1.CS1_High();
+//
+//		NBdelay_ms(1);
+//
+//		spi1.CS1_Low();
+//		spi1.TransmitReceive(vue, vue2, 10);
+//		while(spi1.GetState() != SpiState::READY);
+//		spi1.CS1_High();
+//
+//		NBdelay_ms(1);
 
 		spi1.CS1_Low();
 		spi1.Transmit_DMA(voue);
@@ -73,12 +73,12 @@ int main (void)
 		while(spi1.GetState() != SpiState::READY);
 		spi1.CS1_High();
 
-		NBdelay_ms(1);
-
-		spi1.CS1_Low();
-		spi1.TransmitReceive_DMA(vue, vue2);
-		while(spi1.GetState() != SpiState::READY);
-		spi1.CS1_High();
+//		NBdelay_ms(1);
+//
+//		spi1.CS1_Low();
+//		spi1.TransmitReceive_DMA(vue, vue2);
+//		while(spi1.GetState() != SpiState::READY);
+//		spi1.CS1_High();
 
 		NBdelay_ms(1000);
 
