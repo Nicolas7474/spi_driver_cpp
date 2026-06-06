@@ -1,6 +1,7 @@
 /*
-*		SPI - Polling & DMA-based driver
-* 		with MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
+*		***  SPI bus - Polling & DMA modes bare-metal driver	---	  Nicolas PRATA - 06/2026  ***
+*
+*	Notes and instructions:
 *
 *   About the combined TransmitReceive_DMA() function and the rule of symmetrical DMA drivers:
 *   - txData.size() must equal rxData.size().
@@ -10,7 +11,10 @@
 *   -> Use TransmitReceive_DMA (Symmetrical) only for tiny, fixed-size control messages (like reading the 3-byte Unique ID) where creating a tiny matching array is trivial.
 *	-> Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads or 256-byte page reads) to keep your RAM completely clean.
 *	-> Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
-*	-> Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions
+*	-> Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
+*	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
+*	- DMA functions have been kept non-blocking, so check while(spi1.GetState() != SpiState::READY); before pulling CS low or high again
+*	- GPIO used for STM32F469: MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
 */
 
 
