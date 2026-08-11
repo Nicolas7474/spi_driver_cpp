@@ -50,3 +50,6 @@ release
 *.su
 *.idb
 *.pdb
+*.o
+*.su
+*.cyclo
