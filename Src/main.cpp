@@ -4,7 +4,6 @@
 //GPIOD->BSRR = GPIO_BSRR_BS4; // turns off oarange
 
 #include <spi.hpp>
-#include <spi.hpp>
 #include "stm32f469xx.h"
 #include <stdint.h>
 #include <stdio.h>
