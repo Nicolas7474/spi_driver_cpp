@@ -3,7 +3,8 @@
 // GPIOD->ODR^=GPIO_ODR_OD4; // orange
 //GPIOD->BSRR = GPIO_BSRR_BS4; // turns off oarange
 
-#include <spi1.hpp>
+#include <spi.hpp>
+#include <spi.hpp>
 #include "stm32f469xx.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -14,7 +15,6 @@
 #include "BareM_Def.h"
 //#include "main.h"
 #include "myConfig.h"
-#include "spi1.hpp"
 #include "timers.h"
 #include "Flash_W25Q.h"
 uint8_t buf[10] = {0};

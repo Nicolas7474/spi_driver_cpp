@@ -8,8 +8,8 @@
 *   - That size must represent the TOTAL number of clock pulses needed for the entire conversation.
 *   - The real incoming data will always be offset in your receive buffer by the length of your command header !
 *   - Allocating a massive array to send only a few command bytes (ex: reading a Flash sector) is a massive waste of precious RAM.
-*   -> Use TransmitReceive_DMA (symmetrical) only for tiny, fixed-size control messages (like reading the 3-byte Unique ID) where creating a tiny matching array is trivial.
-*	-> Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads or 256-byte page reads) to keep your RAM completely clean.
+*   -> Use TransmitReceive_DMA only for small control messages (like reading a 3-byte Unique ID) where creating a tiny matching array is trivial.
+*	-> Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads) to keep the RAM completely clean.
 *	-> Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
 *	-> Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
 *	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
@@ -18,7 +18,7 @@
 *	- GPIO used (STM32F469): MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
 */
 
-#include "spi1.hpp"
+#include <spi.hpp>
 #include <span>
 
 

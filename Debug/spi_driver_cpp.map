@@ -145,12 +145,9 @@ Discarded input sections
  .group         0x00000000        0xc ./Src/myConfig.o
  .group         0x00000000        0xc ./Src/myConfig.o
  .group         0x00000000        0xc ./Src/myConfig.o
- .group         0x00000000        0xc ./Src/myConfig.o
- .group         0x00000000        0xc ./Src/myConfig.o
  .text          0x00000000        0x0 ./Src/myConfig.o
  .data          0x00000000        0x0 ./Src/myConfig.o
  .bss           0x00000000        0x0 ./Src/myConfig.o
- .debug_macro   0x00000000       0x2e ./Src/myConfig.o
  .debug_macro   0x00000000       0x28 ./Src/myConfig.o
  .debug_macro   0x00000000       0x22 ./Src/myConfig.o
  .debug_macro   0x00000000       0x51 ./Src/myConfig.o
@@ -162,122 +159,121 @@ Discarded input sections
  .debug_macro   0x00000000       0xfb ./Src/myConfig.o
  .debug_macro   0x00000000      0x11f ./Src/myConfig.o
  .debug_macro   0x00000000    0x1d810 ./Src/myConfig.o
- .debug_macro   0x00000000       0x6d ./Src/myConfig.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .group         0x00000000        0xc ./Src/spi1.o
- .text          0x00000000        0x0 ./Src/spi1.o
- .data          0x00000000        0x0 ./Src/spi1.o
- .bss           0x00000000        0x0 ./Src/spi1.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .group         0x00000000        0xc ./Src/spi.o
+ .text          0x00000000        0x0 ./Src/spi.o
+ .data          0x00000000        0x0 ./Src/spi.o
+ .bss           0x00000000        0x0 ./Src/spi.o
  .text._ZN9SpiDriver16Receive_MainBodyESt4spanIhLj4294967295EEm
-                0x00000000       0x7a ./Src/spi1.o
+                0x00000000       0x7a ./Src/spi.o
  .text._ZN9SpiDriver17Transmit_MainBodyESt4spanIKhLj4294967295EEm
-                0x00000000       0xaa ./Src/spi1.o
+                0x00000000       0xaa ./Src/spi.o
  .text._ZN9SpiDriver24TransmitReceive_MainBodyESt4spanIKhLj4294967295EES0_IhLj4294967295EEm
-                0x00000000      0x16e ./Src/spi1.o
- .debug_macro   0x00000000      0xc88 ./Src/spi1.o
- .debug_macro   0x00000000       0x1c ./Src/spi1.o
- .debug_macro   0x00000000       0x22 ./Src/spi1.o
- .debug_macro   0x00000000       0x8e ./Src/spi1.o
- .debug_macro   0x00000000       0x51 ./Src/spi1.o
- .debug_macro   0x00000000      0x103 ./Src/spi1.o
- .debug_macro   0x00000000       0x6a ./Src/spi1.o
- .debug_macro   0x00000000      0x1df ./Src/spi1.o
- .debug_macro   0x00000000       0x10 ./Src/spi1.o
- .debug_macro   0x00000000      0x1f2 ./Src/spi1.o
- .debug_macro   0x00000000       0x10 ./Src/spi1.o
- .debug_macro   0x00000000       0xcf ./Src/spi1.o
- .debug_macro   0x00000000       0xed ./Src/spi1.o
- .debug_macro   0x00000000      0x464 ./Src/spi1.o
- .debug_macro   0x00000000      0x8a1 ./Src/spi1.o
- .debug_macro   0x00000000       0x10 ./Src/spi1.o
- .debug_macro   0x00000000      0x89a ./Src/spi1.o
- .debug_macro   0x00000000       0x10 ./Src/spi1.o
- .debug_macro   0x00000000      0x893 ./Src/spi1.o
- .debug_macro   0x00000000       0x94 ./Src/spi1.o
- .debug_macro   0x00000000      0x915 ./Src/spi1.o
- .debug_macro   0x00000000       0x1c ./Src/spi1.o
- .debug_macro   0x00000000      0x7f5 ./Src/spi1.o
- .debug_macro   0x00000000       0x12 ./Src/spi1.o
- .debug_macro   0x00000000       0x4f ./Src/spi1.o
- .debug_macro   0x00000000       0x1f ./Src/spi1.o
- .debug_macro   0x00000000       0x28 ./Src/spi1.o
- .debug_macro   0x00000000       0x2e ./Src/spi1.o
- .debug_macro   0x00000000       0x16 ./Src/spi1.o
- .debug_macro   0x00000000      0x80a ./Src/spi1.o
- .debug_macro   0x00000000       0x12 ./Src/spi1.o
- .debug_macro   0x00000000       0x88 ./Src/spi1.o
- .debug_macro   0x00000000       0x28 ./Src/spi1.o
- .debug_macro   0x00000000      0x7fc ./Src/spi1.o
- .debug_macro   0x00000000       0x12 ./Src/spi1.o
- .debug_macro   0x00000000       0x1c ./Src/spi1.o
- .debug_macro   0x00000000      0x7d9 ./Src/spi1.o
- .debug_macro   0x00000000       0x28 ./Src/spi1.o
- .debug_macro   0x00000000      0x197 ./Src/spi1.o
- .debug_macro   0x00000000      0x7b6 ./Src/spi1.o
- .debug_macro   0x00000000       0x10 ./Src/spi1.o
- .debug_macro   0x00000000      0x7af ./Src/spi1.o
- .debug_macro   0x00000000       0x12 ./Src/spi1.o
- .debug_macro   0x00000000      0x7a1 ./Src/spi1.o
- .debug_macro   0x00000000       0x2e ./Src/spi1.o
- .debug_macro   0x00000000       0x28 ./Src/spi1.o
- .debug_macro   0x00000000       0x1c ./Src/spi1.o
- .debug_macro   0x00000000       0x22 ./Src/spi1.o
- .debug_macro   0x00000000       0xfb ./Src/spi1.o
- .debug_macro   0x00000000     0x1011 ./Src/spi1.o
- .debug_macro   0x00000000      0x11f ./Src/spi1.o
- .debug_macro   0x00000000    0x1d810 ./Src/spi1.o
- .debug_macro   0x00000000       0x6d ./Src/spi1.o
+                0x00000000      0x16e ./Src/spi.o
+ .debug_macro   0x00000000      0xc88 ./Src/spi.o
+ .debug_macro   0x00000000       0x1c ./Src/spi.o
+ .debug_macro   0x00000000       0x22 ./Src/spi.o
+ .debug_macro   0x00000000       0x8e ./Src/spi.o
+ .debug_macro   0x00000000       0x51 ./Src/spi.o
+ .debug_macro   0x00000000      0x103 ./Src/spi.o
+ .debug_macro   0x00000000       0x6a ./Src/spi.o
+ .debug_macro   0x00000000      0x1df ./Src/spi.o
+ .debug_macro   0x00000000       0x10 ./Src/spi.o
+ .debug_macro   0x00000000      0x1f2 ./Src/spi.o
+ .debug_macro   0x00000000       0x10 ./Src/spi.o
+ .debug_macro   0x00000000       0xcf ./Src/spi.o
+ .debug_macro   0x00000000       0xed ./Src/spi.o
+ .debug_macro   0x00000000      0x464 ./Src/spi.o
+ .debug_macro   0x00000000      0x8a1 ./Src/spi.o
+ .debug_macro   0x00000000       0x10 ./Src/spi.o
+ .debug_macro   0x00000000      0x89a ./Src/spi.o
+ .debug_macro   0x00000000       0x10 ./Src/spi.o
+ .debug_macro   0x00000000      0x893 ./Src/spi.o
+ .debug_macro   0x00000000       0x94 ./Src/spi.o
+ .debug_macro   0x00000000      0x915 ./Src/spi.o
+ .debug_macro   0x00000000       0x1c ./Src/spi.o
+ .debug_macro   0x00000000      0x7f5 ./Src/spi.o
+ .debug_macro   0x00000000       0x12 ./Src/spi.o
+ .debug_macro   0x00000000       0x4f ./Src/spi.o
+ .debug_macro   0x00000000       0x1f ./Src/spi.o
+ .debug_macro   0x00000000       0x28 ./Src/spi.o
+ .debug_macro   0x00000000       0x2e ./Src/spi.o
+ .debug_macro   0x00000000       0x16 ./Src/spi.o
+ .debug_macro   0x00000000      0x80a ./Src/spi.o
+ .debug_macro   0x00000000       0x12 ./Src/spi.o
+ .debug_macro   0x00000000       0x88 ./Src/spi.o
+ .debug_macro   0x00000000       0x28 ./Src/spi.o
+ .debug_macro   0x00000000      0x7fc ./Src/spi.o
+ .debug_macro   0x00000000       0x12 ./Src/spi.o
+ .debug_macro   0x00000000       0x1c ./Src/spi.o
+ .debug_macro   0x00000000      0x7d9 ./Src/spi.o
+ .debug_macro   0x00000000       0x28 ./Src/spi.o
+ .debug_macro   0x00000000      0x197 ./Src/spi.o
+ .debug_macro   0x00000000      0x7b6 ./Src/spi.o
+ .debug_macro   0x00000000       0x10 ./Src/spi.o
+ .debug_macro   0x00000000      0x7af ./Src/spi.o
+ .debug_macro   0x00000000       0x12 ./Src/spi.o
+ .debug_macro   0x00000000      0x7a1 ./Src/spi.o
+ .debug_macro   0x00000000       0x2e ./Src/spi.o
+ .debug_macro   0x00000000       0x28 ./Src/spi.o
+ .debug_macro   0x00000000       0x1c ./Src/spi.o
+ .debug_macro   0x00000000       0x22 ./Src/spi.o
+ .debug_macro   0x00000000       0xfb ./Src/spi.o
+ .debug_macro   0x00000000     0x1011 ./Src/spi.o
+ .debug_macro   0x00000000      0x11f ./Src/spi.o
+ .debug_macro   0x00000000    0x1d810 ./Src/spi.o
+ .debug_macro   0x00000000       0x6d ./Src/spi.o
  .group         0x00000000        0xc ./Src/syscalls.o
  .group         0x00000000        0xc ./Src/syscalls.o
  .group         0x00000000        0xc ./Src/syscalls.o
@@ -765,7 +761,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
 LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.win32_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/crt0.o
 LOAD ./Src/main.o
 LOAD ./Src/myConfig.o
-LOAD ./Src/spi1.o
+LOAD ./Src/spi.o
 LOAD ./Src/syscalls.o
 LOAD ./Src/sysmem.o
 LOAD ./Src/timers.o
@@ -824,46 +820,46 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x08000568       0xb0 ./Src/myConfig.o
                 0x08000568                InterruptGPIO_Config
  .text._Z17Spi1_LowLevelInitv
-                0x08000618       0xcc ./Src/spi1.o
+                0x08000618       0xcc ./Src/spi.o
                 0x08000618                Spi1_LowLevelInit()
  .text._ZN9SpiDriverC2ERK17SpiHardwareConfig
-                0x080006e4        0xe ./Src/spi1.o
+                0x080006e4        0xe ./Src/spi.o
                 0x080006e4                SpiDriver::SpiDriver(SpiHardwareConfig const&)
                 0x080006e4                SpiDriver::SpiDriver(SpiHardwareConfig const&)
  *fill*         0x080006f2        0x2 
  .text._ZN9SpiDriver12ConfigureDmaEv
-                0x080006f4      0x148 ./Src/spi1.o
+                0x080006f4      0x148 ./Src/spi.o
                 0x080006f4                SpiDriver::ConfigureDma()
  .text._ZN9SpiDriver4InitE17BaudRatePrescaler
-                0x0800083c       0x46 ./Src/spi1.o
+                0x0800083c       0x46 ./Src/spi.o
                 0x0800083c                SpiDriver::Init(BaudRatePrescaler)
  .text._ZN9SpiDriver14TxCpltCallbackEv
-                0x08000882        0x2 ./Src/spi1.o
+                0x08000882        0x2 ./Src/spi.o
                 0x08000882                SpiDriver::TxCpltCallback()
  .text._ZN9SpiDriver14RxCpltCallbackEv
-                0x08000884        0x2 ./Src/spi1.o
+                0x08000884        0x2 ./Src/spi.o
                 0x08000884                SpiDriver::RxCpltCallback()
  .text._ZN9SpiDriver17Handle_DMA_RX_IRQEv
-                0x08000886       0x10 ./Src/spi1.o
+                0x08000886       0x10 ./Src/spi.o
                 0x08000886                SpiDriver::Handle_DMA_RX_IRQ()
  .text._ZN9SpiDriver16TxRxCpltCallbackEv
-                0x08000896        0x2 ./Src/spi1.o
+                0x08000896        0x2 ./Src/spi.o
                 0x08000896                SpiDriver::TxRxCpltCallback()
  .text._ZN9SpiDriver13ErrorCallbackEv
-                0x08000898        0x2 ./Src/spi1.o
+                0x08000898        0x2 ./Src/spi.o
                 0x08000898                SpiDriver::ErrorCallback()
  .text._ZN9SpiDriver17Handle_DMA_TX_IRQEv
-                0x0800089a       0x74 ./Src/spi1.o
+                0x0800089a       0x74 ./Src/spi.o
                 0x0800089a                SpiDriver::Handle_DMA_TX_IRQ()
  *fill*         0x0800090e        0x2 
  .text.DMA2_Stream2_IRQHandler
-                0x08000910       0x10 ./Src/spi1.o
+                0x08000910       0x10 ./Src/spi.o
                 0x08000910                DMA2_Stream2_IRQHandler
  .text.DMA2_Stream3_IRQHandler
-                0x08000920       0x10 ./Src/spi1.o
+                0x08000920       0x10 ./Src/spi.o
                 0x08000920                DMA2_Stream3_IRQHandler
  .text._GLOBAL__sub_I__ZN9SpiDriverC2ERK17SpiHardwareConfig
-                0x08000930       0x14 ./Src/spi1.o
+                0x08000930       0x14 ./Src/spi.o
  .text.SysTick_Init
                 0x08000944       0x58 ./Src/timers.o
                 0x08000944                SysTick_Init
@@ -1016,7 +1012,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  *(.rodata)
  *(.rodata*)
  .rodata._ZL10Spi1Config
-                0x08000ac0       0x2c ./Src/spi1.o
+                0x08000ac0       0x2c ./Src/spi.o
                 0x08000aec                        . = ALIGN (0x4)
 
 .ARM.extab      0x08000aec        0x0
@@ -1044,7 +1040,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
  .init_array    0x08000aec        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.win32_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v7e-m+fp/hard/crtbegin.o
- .init_array    0x08000af0        0x4 ./Src/spi1.o
+ .init_array    0x08000af0        0x4 ./Src/spi.o
                 0x08000af4                        PROVIDE (__init_array_end = .)
                 0x08000af4                        . = ALIGN (0x4)
 
@@ -1096,7 +1092,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .bss.buf       0x20000020        0xa ./Src/main.o
                 0x20000020                buf
  *fill*         0x2000002a        0x2 
- .bss.spi1      0x2000002c        0x8 ./Src/spi1.o
+ .bss.spi1      0x2000002c        0x8 ./Src/spi.o
                 0x2000002c                spi1
  .bss.msTicks   0x20000034        0x4 ./Src/timers.o
                 0x20000034                msTicks
@@ -1137,7 +1133,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .ARM.attributes
                 0x0000008a       0x34 ./Src/myConfig.o
  .ARM.attributes
-                0x000000be       0x34 ./Src/spi1.o
+                0x000000be       0x34 ./Src/spi.o
  .ARM.attributes
                 0x000000f2       0x34 ./Src/timers.o
  .ARM.attributes
@@ -1155,14 +1151,14 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
 .debug_info     0x00000000     0x5e5f
  .debug_info    0x00000000     0x2193 ./Src/main.o
  .debug_info    0x00002193      0xecb ./Src/myConfig.o
- .debug_info    0x0000305e     0x1f06 ./Src/spi1.o
+ .debug_info    0x0000305e     0x1f06 ./Src/spi.o
  .debug_info    0x00004f64      0xecb ./Src/timers.o
  .debug_info    0x00005e2f       0x30 ./Startup/startup_stm32f469nihx.o
 
 .debug_abbrev   0x00000000     0x10b1
  .debug_abbrev  0x00000000      0x63a ./Src/main.o
  .debug_abbrev  0x0000063a      0x1a7 ./Src/myConfig.o
- .debug_abbrev  0x000007e1      0x622 ./Src/spi1.o
+ .debug_abbrev  0x000007e1      0x622 ./Src/spi.o
  .debug_abbrev  0x00000e03      0x28a ./Src/timers.o
  .debug_abbrev  0x0000108d       0x24 ./Startup/startup_stm32f469nihx.o
 
@@ -1173,7 +1169,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_loclists
                 0x0000025f       0x9e ./Src/myConfig.o
  .debug_loclists
-                0x000002fd      0x6bb ./Src/spi1.o
+                0x000002fd      0x6bb ./Src/spi.o
  .debug_loclists
                 0x000009b8       0x8e ./Src/timers.o
 
@@ -1183,7 +1179,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_aranges
                 0x00000020       0x38 ./Src/myConfig.o
  .debug_aranges
-                0x00000058       0x98 ./Src/spi1.o
+                0x00000058       0x98 ./Src/spi.o
  .debug_aranges
                 0x000000f0       0x48 ./Src/timers.o
  .debug_aranges
@@ -1196,122 +1192,122 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_rnglists
                 0x00000031       0x28 ./Src/myConfig.o
  .debug_rnglists
-                0x00000059       0xb6 ./Src/spi1.o
+                0x00000059       0xb6 ./Src/spi.o
  .debug_rnglists
                 0x0000010f       0x3d ./Src/timers.o
  .debug_rnglists
                 0x0000014c       0x19 ./Startup/startup_stm32f469nihx.o
 
-.debug_macro    0x00000000    0x290ef
- .debug_macro   0x00000000      0x424 ./Src/main.o
- .debug_macro   0x00000424      0xc88 ./Src/main.o
- .debug_macro   0x000010ac       0x1c ./Src/main.o
- .debug_macro   0x000010c8       0x22 ./Src/main.o
- .debug_macro   0x000010ea       0x8e ./Src/main.o
- .debug_macro   0x00001178       0x51 ./Src/main.o
- .debug_macro   0x000011c9      0x103 ./Src/main.o
- .debug_macro   0x000012cc       0x6a ./Src/main.o
- .debug_macro   0x00001336      0x1df ./Src/main.o
- .debug_macro   0x00001515       0x10 ./Src/main.o
- .debug_macro   0x00001525      0x1f2 ./Src/main.o
- .debug_macro   0x00001717       0x10 ./Src/main.o
- .debug_macro   0x00001727       0xcf ./Src/main.o
- .debug_macro   0x000017f6       0xed ./Src/main.o
- .debug_macro   0x000018e3      0x464 ./Src/main.o
- .debug_macro   0x00001d47      0x8a1 ./Src/main.o
- .debug_macro   0x000025e8       0x10 ./Src/main.o
- .debug_macro   0x000025f8      0x89a ./Src/main.o
- .debug_macro   0x00002e92       0x10 ./Src/main.o
- .debug_macro   0x00002ea2      0x893 ./Src/main.o
- .debug_macro   0x00003735       0x94 ./Src/main.o
- .debug_macro   0x000037c9      0x915 ./Src/main.o
- .debug_macro   0x000040de       0x1c ./Src/main.o
- .debug_macro   0x000040fa      0x7f5 ./Src/main.o
- .debug_macro   0x000048ef       0x12 ./Src/main.o
- .debug_macro   0x00004901       0x4f ./Src/main.o
- .debug_macro   0x00004950       0x1f ./Src/main.o
- .debug_macro   0x0000496f       0x28 ./Src/main.o
- .debug_macro   0x00004997       0x2e ./Src/main.o
- .debug_macro   0x000049c5       0x16 ./Src/main.o
- .debug_macro   0x000049db      0x80a ./Src/main.o
- .debug_macro   0x000051e5       0x12 ./Src/main.o
- .debug_macro   0x000051f7       0x88 ./Src/main.o
- .debug_macro   0x0000527f       0x28 ./Src/main.o
- .debug_macro   0x000052a7      0x7fc ./Src/main.o
- .debug_macro   0x00005aa3       0x12 ./Src/main.o
- .debug_macro   0x00005ab5       0x1c ./Src/main.o
- .debug_macro   0x00005ad1      0x7d9 ./Src/main.o
- .debug_macro   0x000062aa       0x28 ./Src/main.o
- .debug_macro   0x000062d2      0x197 ./Src/main.o
- .debug_macro   0x00006469      0x7b6 ./Src/main.o
- .debug_macro   0x00006c1f       0x10 ./Src/main.o
- .debug_macro   0x00006c2f      0x7af ./Src/main.o
- .debug_macro   0x000073de       0x12 ./Src/main.o
- .debug_macro   0x000073f0      0x7a1 ./Src/main.o
- .debug_macro   0x00007b91       0x2e ./Src/main.o
- .debug_macro   0x00007bbf       0x28 ./Src/main.o
- .debug_macro   0x00007be7       0x1c ./Src/main.o
- .debug_macro   0x00007c03       0x22 ./Src/main.o
- .debug_macro   0x00007c25       0xfb ./Src/main.o
- .debug_macro   0x00007d20     0x1011 ./Src/main.o
- .debug_macro   0x00008d31      0x11f ./Src/main.o
- .debug_macro   0x00008e50    0x1d810 ./Src/main.o
- .debug_macro   0x00026660       0x6d ./Src/main.o
- .debug_macro   0x000266cd       0x61 ./Src/main.o
- .debug_macro   0x0002672e       0x2a ./Src/main.o
- .debug_macro   0x00026758       0x43 ./Src/main.o
- .debug_macro   0x0002679b       0x34 ./Src/main.o
- .debug_macro   0x000267cf       0x16 ./Src/main.o
- .debug_macro   0x000267e5       0x3c ./Src/main.o
- .debug_macro   0x00026821      0x380 ./Src/main.o
- .debug_macro   0x00026ba1       0x10 ./Src/main.o
- .debug_macro   0x00026bb1       0x16 ./Src/main.o
- .debug_macro   0x00026bc7       0x4a ./Src/main.o
- .debug_macro   0x00026c11       0x34 ./Src/main.o
- .debug_macro   0x00026c45       0x10 ./Src/main.o
- .debug_macro   0x00026c55       0x58 ./Src/main.o
- .debug_macro   0x00026cad       0x8e ./Src/main.o
- .debug_macro   0x00026d3b       0x16 ./Src/main.o
- .debug_macro   0x00026d51      0x17e ./Src/main.o
- .debug_macro   0x00026ecf       0x16 ./Src/main.o
- .debug_macro   0x00026ee5       0x16 ./Src/main.o
- .debug_macro   0x00026efb      0x138 ./Src/main.o
- .debug_macro   0x00027033       0x16 ./Src/main.o
- .debug_macro   0x00027049       0x20 ./Src/main.o
- .debug_macro   0x00027069       0x4c ./Src/main.o
- .debug_macro   0x000270b5       0xe8 ./Src/myConfig.o
- .debug_macro   0x0002719d      0xade ./Src/myConfig.o
- .debug_macro   0x00027c7b       0x8e ./Src/myConfig.o
- .debug_macro   0x00027d09     0x1011 ./Src/myConfig.o
- .debug_macro   0x00028d1a      0x2f9 ./Src/spi1.o
- .debug_macro   0x00029013       0xdc ./Src/timers.o
+.debug_macro    0x00000000    0x290d4
+ .debug_macro   0x00000000      0x420 ./Src/main.o
+ .debug_macro   0x00000420      0xc88 ./Src/main.o
+ .debug_macro   0x000010a8       0x1c ./Src/main.o
+ .debug_macro   0x000010c4       0x22 ./Src/main.o
+ .debug_macro   0x000010e6       0x8e ./Src/main.o
+ .debug_macro   0x00001174       0x51 ./Src/main.o
+ .debug_macro   0x000011c5      0x103 ./Src/main.o
+ .debug_macro   0x000012c8       0x6a ./Src/main.o
+ .debug_macro   0x00001332      0x1df ./Src/main.o
+ .debug_macro   0x00001511       0x10 ./Src/main.o
+ .debug_macro   0x00001521      0x1f2 ./Src/main.o
+ .debug_macro   0x00001713       0x10 ./Src/main.o
+ .debug_macro   0x00001723       0xcf ./Src/main.o
+ .debug_macro   0x000017f2       0xed ./Src/main.o
+ .debug_macro   0x000018df      0x464 ./Src/main.o
+ .debug_macro   0x00001d43      0x8a1 ./Src/main.o
+ .debug_macro   0x000025e4       0x10 ./Src/main.o
+ .debug_macro   0x000025f4      0x89a ./Src/main.o
+ .debug_macro   0x00002e8e       0x10 ./Src/main.o
+ .debug_macro   0x00002e9e      0x893 ./Src/main.o
+ .debug_macro   0x00003731       0x94 ./Src/main.o
+ .debug_macro   0x000037c5      0x915 ./Src/main.o
+ .debug_macro   0x000040da       0x1c ./Src/main.o
+ .debug_macro   0x000040f6      0x7f5 ./Src/main.o
+ .debug_macro   0x000048eb       0x12 ./Src/main.o
+ .debug_macro   0x000048fd       0x4f ./Src/main.o
+ .debug_macro   0x0000494c       0x1f ./Src/main.o
+ .debug_macro   0x0000496b       0x28 ./Src/main.o
+ .debug_macro   0x00004993       0x2e ./Src/main.o
+ .debug_macro   0x000049c1       0x16 ./Src/main.o
+ .debug_macro   0x000049d7      0x80a ./Src/main.o
+ .debug_macro   0x000051e1       0x12 ./Src/main.o
+ .debug_macro   0x000051f3       0x88 ./Src/main.o
+ .debug_macro   0x0000527b       0x28 ./Src/main.o
+ .debug_macro   0x000052a3      0x7fc ./Src/main.o
+ .debug_macro   0x00005a9f       0x12 ./Src/main.o
+ .debug_macro   0x00005ab1       0x1c ./Src/main.o
+ .debug_macro   0x00005acd      0x7d9 ./Src/main.o
+ .debug_macro   0x000062a6       0x28 ./Src/main.o
+ .debug_macro   0x000062ce      0x197 ./Src/main.o
+ .debug_macro   0x00006465      0x7b6 ./Src/main.o
+ .debug_macro   0x00006c1b       0x10 ./Src/main.o
+ .debug_macro   0x00006c2b      0x7af ./Src/main.o
+ .debug_macro   0x000073da       0x12 ./Src/main.o
+ .debug_macro   0x000073ec      0x7a1 ./Src/main.o
+ .debug_macro   0x00007b8d       0x2e ./Src/main.o
+ .debug_macro   0x00007bbb       0x28 ./Src/main.o
+ .debug_macro   0x00007be3       0x1c ./Src/main.o
+ .debug_macro   0x00007bff       0x22 ./Src/main.o
+ .debug_macro   0x00007c21       0xfb ./Src/main.o
+ .debug_macro   0x00007d1c     0x1011 ./Src/main.o
+ .debug_macro   0x00008d2d      0x11f ./Src/main.o
+ .debug_macro   0x00008e4c    0x1d810 ./Src/main.o
+ .debug_macro   0x0002665c       0x6d ./Src/main.o
+ .debug_macro   0x000266c9       0x61 ./Src/main.o
+ .debug_macro   0x0002672a       0x2a ./Src/main.o
+ .debug_macro   0x00026754       0x43 ./Src/main.o
+ .debug_macro   0x00026797       0x34 ./Src/main.o
+ .debug_macro   0x000267cb       0x16 ./Src/main.o
+ .debug_macro   0x000267e1       0x3c ./Src/main.o
+ .debug_macro   0x0002681d      0x380 ./Src/main.o
+ .debug_macro   0x00026b9d       0x10 ./Src/main.o
+ .debug_macro   0x00026bad       0x16 ./Src/main.o
+ .debug_macro   0x00026bc3       0x4a ./Src/main.o
+ .debug_macro   0x00026c0d       0x34 ./Src/main.o
+ .debug_macro   0x00026c41       0x10 ./Src/main.o
+ .debug_macro   0x00026c51       0x58 ./Src/main.o
+ .debug_macro   0x00026ca9       0x8e ./Src/main.o
+ .debug_macro   0x00026d37       0x16 ./Src/main.o
+ .debug_macro   0x00026d4d      0x17e ./Src/main.o
+ .debug_macro   0x00026ecb       0x16 ./Src/main.o
+ .debug_macro   0x00026ee1       0x16 ./Src/main.o
+ .debug_macro   0x00026ef7      0x138 ./Src/main.o
+ .debug_macro   0x0002702f       0x16 ./Src/main.o
+ .debug_macro   0x00027045       0x20 ./Src/main.o
+ .debug_macro   0x00027065       0x4c ./Src/main.o
+ .debug_macro   0x000270b1       0xd5 ./Src/myConfig.o
+ .debug_macro   0x00027186      0xade ./Src/myConfig.o
+ .debug_macro   0x00027c64       0x8e ./Src/myConfig.o
+ .debug_macro   0x00027cf2     0x1011 ./Src/myConfig.o
+ .debug_macro   0x00028d03      0x2f5 ./Src/spi.o
+ .debug_macro   0x00028ff8       0xdc ./Src/timers.o
 
-.debug_line     0x00000000     0x3cc9
- .debug_line    0x00000000     0x131b ./Src/main.o
- .debug_line    0x0000131b      0x9a6 ./Src/myConfig.o
- .debug_line    0x00001cc1     0x18e0 ./Src/spi1.o
- .debug_line    0x000035a1      0x6ad ./Src/timers.o
- .debug_line    0x00003c4e       0x7b ./Startup/startup_stm32f469nihx.o
+.debug_line     0x00000000     0x3f43
+ .debug_line    0x00000000     0x13bd ./Src/main.o
+ .debug_line    0x000013bd      0xa3a ./Src/myConfig.o
+ .debug_line    0x00001df7     0x1981 ./Src/spi.o
+ .debug_line    0x00003778      0x750 ./Src/timers.o
+ .debug_line    0x00003ec8       0x7b ./Startup/startup_stm32f469nihx.o
 
-.debug_str      0x00000000    0xbc9e7
- .debug_str     0x00000000    0xbc9e7 ./Src/main.o
+.debug_str      0x00000000    0xbc9e6
+ .debug_str     0x00000000    0xbc9e6 ./Src/main.o
                               0xbc536 (size before relaxing)
- .debug_str     0x000bc9e7    0xafb11 ./Src/myConfig.o
- .debug_str     0x000bc9e7    0xb8688 ./Src/spi1.o
- .debug_str     0x000bc9e7    0xafb4a ./Src/timers.o
- .debug_str     0x000bc9e7       0x85 ./Startup/startup_stm32f469nihx.o
+ .debug_str     0x000bc9e6    0xaf3e3 ./Src/myConfig.o
+ .debug_str     0x000bc9e6    0xb8687 ./Src/spi.o
+ .debug_str     0x000bc9e6    0xafb4a ./Src/timers.o
+ .debug_str     0x000bc9e6       0x85 ./Startup/startup_stm32f469nihx.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 ./Src/main.o
                                  0x44 (size before relaxing)
  .comment       0x00000043       0x44 ./Src/myConfig.o
- .comment       0x00000043       0x44 ./Src/spi1.o
+ .comment       0x00000043       0x44 ./Src/spi.o
  .comment       0x00000043       0x44 ./Src/timers.o
 
 .debug_frame    0x00000000      0x2d0
  .debug_frame   0x00000000       0x2c ./Src/main.o
  .debug_frame   0x0000002c       0x60 ./Src/myConfig.o
- .debug_frame   0x0000008c      0x1a8 ./Src/spi1.o
+ .debug_frame   0x0000008c      0x1a8 ./Src/spi.o
  .debug_frame   0x00000234       0x70 ./Src/timers.o
  .debug_frame   0x000002a4       0x2c C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.win32_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libc_nano.a(libc_a-init.o)
 

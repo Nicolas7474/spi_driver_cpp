@@ -1,17 +1,22 @@
-Src/spi1.o: ../Src/spi1.cpp ../Inc/spi1.hpp ../Inc/stm32f4xx.h \
- ../Inc/stm32f469xx.h ../Inc/core_cm4.h ../Inc/cmsis_version.h \
- ../Inc/cmsis_compiler.h ../Inc/cmsis_gcc.h ../Inc/mpu_armv7.h \
- ../Inc/system_stm32f4xx.h ../Inc/timers.h ../Inc/stm32f4xx.h \
- ../Inc/stm32f469xx.h
+Src/spi1.o: ../Src/spi1.cpp ../Inc/spi1.hpp \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f4xx.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f469xx.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/core_cm4.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_version.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_compiler.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_gcc.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/mpu_armv7.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/system_stm32f4xx.h \
+ ../Inc/timers.h \
+ C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f469xx.h
 ../Inc/spi1.hpp:
-../Inc/stm32f4xx.h:
-../Inc/stm32f469xx.h:
-../Inc/core_cm4.h:
-../Inc/cmsis_version.h:
-../Inc/cmsis_compiler.h:
-../Inc/cmsis_gcc.h:
-../Inc/mpu_armv7.h:
-../Inc/system_stm32f4xx.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f4xx.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f469xx.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/core_cm4.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_version.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_compiler.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/cmsis_gcc.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS/mpu_armv7.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/system_stm32f4xx.h:
 ../Inc/timers.h:
-../Inc/stm32f4xx.h:
-../Inc/stm32f469xx.h:
+C:/Users/Intel\ NUC/STM32CubeIDE/workspace_1.19.0/spi_driver_cpp/drivers/CMSIS_Device/stm32f469xx.h:

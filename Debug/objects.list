@@ -1,6 +1,6 @@
 "./Src/main.o"
 "./Src/myConfig.o"
-"./Src/spi1.o"
+"./Src/spi.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"
 "./Src/timers.o"
