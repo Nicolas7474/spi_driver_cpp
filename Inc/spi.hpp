@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <span>
 #include "stm32f4xx.h"
+#include <stm32f469xx.h>
+#include "myConfig.h"
 #include "timers.h"
 
 
@@ -75,7 +77,7 @@ public:
     BareM_Status TransmitReceive_DMA(std::span<const uint8_t> txData, std::span<uint8_t> rxData);
 
     static void CS1_Low()  { GPIOA->BSRR = GPIO_BSRR_BR15; } // "static" strips away the hidden this pointer requirement
-    static void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; } // Enforces the SpiDriver:: or spi1. prefix scoping
+    static void CS1_High() { GPIOA->BSRR = GPIO_BSRR_BS15; } // Enforces the SpiDriver:: or spi. prefix scoping
     static void CS2_Low()  { GPIOC->BSRR = GPIO_BSRR_BR13; } // The function becomes a regular, global function
     static void CS2_High() { GPIOC->BSRR = GPIO_BSRR_BS13; }
 
@@ -141,8 +143,9 @@ BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
 	while ((config.txStream->CR & DMA_SxCR_EN) || (config.rxStream->CR & DMA_SxCR_EN));
 	// ClearDmaFlags() already called in the ISR, no need again here
 
+	config.rxStream->CR |= DMA_SxCR_MINC; // Re-enable in case it was disabled in Transmit_DMA
 	config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
-	config.rxStream->NDTR = rxData.size();
+	config.rxStream->NDTR = static_cast<uint16_t>(rxData.size());
 
 	config.txStream->M0AR = reinterpret_cast<uintptr_t>(&m_dummyTx);
 	config.txStream->NDTR = rxData.size(); // Dummy bytes to generate the CLK required for the Slave to shift out its data
@@ -156,34 +159,55 @@ BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
 
 
 __attribute__((always_inline)) inline
-BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> txdata) {
-	// First MOSI byte delay reduced -200ns with function inlining
+BareM_Status SpiDriver::Transmit_DMA(std::span<const uint8_t> txdata)
+{
+    if (txdata.empty() || txdata.size() > UINT16_MAX)
+        return BareM_Status::ERROR;
 
-	if (txdata.empty()) return BareM_Status::ERROR;
+    // Fast guard: READY is the normal case
+    if (__builtin_expect(m_state != SpiState::READY, 0))
+    {
+        uint32_t timeout_ct = GetSysTick() + 10;
 
-	// Fast guard: Compiler assumes this if statement is false
-	// and places the hot registration blitting directly in the pipeline stream.
-	if (__builtin_expect(m_state != SpiState::READY, 0)) {
-		uint32_t timeout_ct = GetSysTick() + 10;
-		while (m_state != SpiState::READY) {
-			if (GetSysTick() > timeout_ct) {
-				m_state = SpiState::READY; // Force reset driver state
-				return BareM_Status::TIMEOUT;
-			}
-		}
-	}
-	m_state = SpiState::BUSY_TX;
+        while (m_state != SpiState::READY)
+        {
+            if (GetSysTick() > timeout_ct)
+            {
+                m_state = SpiState::READY;
+                return BareM_Status::TIMEOUT;
+            }
+        }
+    }
 
-	config.txStream->CR &= ~DMA_SxCR_EN; 	// Disable DMA stream to allow configuration
-	while (config.txStream->CR & DMA_SxCR_EN);
-	// ClearDmaFlags() already called in the ISR, no need again here
+    m_state = SpiState::BUSY_TX;
 
+    // --- Configure RX DMA stream (dummy drain) ---
+    //  Every byte clocked out by TX has a corresponding RX byte consumed by DMA.
+    // No RX overrun should occur simply because Transmit_DMA() is TX-only from the API perspective.
+    config.rxStream->CR &= ~DMA_SxCR_EN;
+    while (config.rxStream->CR & DMA_SxCR_EN);
+
+    *config.rxFcrReg = config.rxClearMask;
+    config.rxStream->CR &= ~DMA_SxCR_MINC; // Disable memory increment: all received bytes go to m_dummyRx.
+    config.rxStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR);
+    config.rxStream->M0AR = reinterpret_cast<uint32_t>(&m_dummyRx);
+    config.rxStream->NDTR = static_cast<uint16_t>(txdata.size());
+
+    // ---  Configure TX DMA stream ---
+    config.txStream->CR &= ~DMA_SxCR_EN;
+    while (config.txStream->CR & DMA_SxCR_EN);
+
+    *config.txFcrReg = config.txClearMask;
+    config.txStream->CR |= DMA_SxCR_MINC;
+    config.txStream->PAR = reinterpret_cast<uint32_t>(&config.spi->DR);
     config.txStream->M0AR = reinterpret_cast<uintptr_t>(txdata.data());
-    config.txStream->NDTR = static_cast<uint16_t>(txdata.size()); // NDTR is on 16 bits
-    config.txStream->CR |= DMA_SxCR_MINC; //  (Re)enable Memory Increment
-    config.txStream->CR  |= DMA_SxCR_EN;
+    config.txStream->NDTR = static_cast<uint16_t>(txdata.size());
 
-    return BareM_Status::OK;   // while(m_state!=SpiState::READY) -> no blocking before returning
+    // RX first: make sure every received byte has somewhere to go before TX starts generating SPI clocks.
+    config.rxStream->CR |= DMA_SxCR_EN;
+    config.txStream->CR |= DMA_SxCR_EN;
+
+    return BareM_Status::OK;
 }
 
 
@@ -224,7 +248,7 @@ BareM_Status SpiDriver::TransmitReceive_DMA(std::span<const uint8_t> txData, std
     // --- RX Stream Configuration ---
     config.rxStream->M0AR = reinterpret_cast<uintptr_t>(rxData.data());
     config.rxStream->NDTR = transferSize; // Corrected: Removed the "+ 1" overread trap
-    // config.rxStream->CR  |= DMA_SxCR_MINC; // No need to re-enable the RX increments memory
+    config.rxStream->CR  |= DMA_SxCR_MINC; // Re-enable the RX increments memory in case it was disabled in Transmit_DMA()
 
     // --- TX Stream Configuration ---
     config.txStream->M0AR = reinterpret_cast<uintptr_t>(txData.data());
@@ -330,7 +354,7 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
     return TransmitReceive_MainBody(txData, rxData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
 }
 
-
 extern SpiDriver spi1; // declaration of global instance of an SpiDriver object named spi1
+// extern SpiDriver spi3; // declaration of global instance of an SpiDriver object named spi3
 
 

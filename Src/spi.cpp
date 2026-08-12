@@ -16,12 +16,10 @@
 *	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
 *	- DMA functions have been kept non-blocking, so check while(spi1.GetState() != SpiState::READY); before pulling CS low or high again
 *	- Weak Callback functions available for Tx/Rx/TxRx complete and Errors
-*	- GPIO used (STM32F469): MISO = PB4; MOSI = PB5; SCK = PA5; NSS = PA15
+*	- GPIO used (STM32F446): MISO = ; MOSI = ; SCK = ; NSS =
 */
 
 #include <spi.hpp>
-#include <span>
-
 
 // Constructor definition
 SpiDriver::SpiDriver(const SpiHardwareConfig& hardwareConfig) : config(hardwareConfig) {}
@@ -44,7 +42,10 @@ BareM_Status SpiDriver::Init(BaudRatePrescaler prescaler) {
 void SpiDriver::ConfigureDma() {
     if (m_isDmaInitialized) return;
 
-    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+    if (config.dmaBase == DMA1)
+           RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN;
+       else if (config.dmaBase == DMA2)
+           RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
 
     // Configure Rx Stream
     config.rxStream->CR &= ~DMA_SxCR_EN;
@@ -82,7 +83,8 @@ void SpiDriver::ConfigureDma() {
 /================================================================== */
 
 BareM_Status SpiDriver::Receive_MainBody(std::span<uint8_t> rxData, uint32_t timeoutMs) {
-    uint32_t timeout_ct = GetSysTick() + timeoutMs;
+
+    uint32_t startTick = GetSysTick();
 
     uint32_t rxCounter = rxData.size();
     // CRITICAL: We already kicked off the first byte in the inline header!
@@ -103,7 +105,7 @@ BareM_Status SpiDriver::Receive_MainBody(std::span<uint8_t> rxData, uint32_t tim
             rxCounter--;
         }
         // 3. Safety Gate
-        if (GetSysTick() > timeout_ct) {
+        if ((GetSysTick() - startTick) > timeoutMs) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
@@ -120,18 +122,18 @@ BareM_Status SpiDriver::Receive_MainBody(std::span<uint8_t> rxData, uint32_t tim
 BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint32_t timeoutMs) {
 	// Regular, non-inlined function that does the heavy lifting
 
-    uint32_t timeout_ct = GetSysTick() + timeoutMs;
+	uint32_t startTick = GetSysTick();
 
     // Check if the peripheral is ready
     while (m_state != SpiState::READY) {
-        if (GetSysTick() > timeout_ct) {
+    	if ((GetSysTick() - startTick) > timeoutMs) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
     }
     m_state = SpiState::BUSY_TX;
 
-    const uint8_t* txPtr = txData.data();
+    const uint8_t* txPtr = txData.data() + 1; // added +1 since the wrapper already sends txData[0]
     uint32_t totalBytes  = txData.size() - 1;
     uint32_t bytesSent   = 0;
     uint32_t bytesRead   = 0;
@@ -150,7 +152,7 @@ BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint3
             bytesRead++;
         }
         // 3. Single safety timeout gate for the entire loop execution
-        if (GetSysTick() > timeout_ct) {
+        if ((GetSysTick() - startTick) > timeoutMs) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
@@ -158,7 +160,7 @@ BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint3
 
     // Wait to allow Chip Select (CS) to be pulled high again
     while (config.spi->SR & SPI_SR_BSY) {
-        if (GetSysTick() > timeout_ct) {
+    	if ((GetSysTick() - startTick) > timeoutMs) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
@@ -186,7 +188,8 @@ BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData
     if (totalSize == 0) return BareM_Status::ERROR;
 
     m_state = SpiState::BUSY_TX_RX;
-    uint32_t timeout_ct = GetSysTick() + timeoutMs;
+
+    uint32_t startTick = GetSysTick();
 
     // HW Trackers adjusted for the byte we just pushed
     uint32_t txBytesRemaining = totalSize - 1;
@@ -234,7 +237,7 @@ BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData
             }
             rxClocksCounted++;
         }
-        if (GetSysTick() > timeout_ct) {
+        if ((GetSysTick() - startTick) > timeoutMs) {
             m_state = SpiState::READY;
             return BareM_Status::TIMEOUT;
         }
@@ -245,40 +248,84 @@ BareM_Status SpiDriver::TransmitReceive_MainBody(std::span<const uint8_t> txData
 }
 
 
+void SpiDriver::Handle_DMA_RX_IRQ()
+{
+    // Determine the status register and flag position from the configured
+    // clear-register/mask, so this remains valid for any DMA stream.
+    volatile uint32_t* statusReg =
+        (config.rxFcrReg == &config.dmaBase->HIFCR)
+            ? &config.dmaBase->HISR
+            : &config.dmaBase->LISR;
 
+    const uint32_t flagShift = __builtin_ctz(config.rxClearMask);
+    const uint32_t tcMask    = (1U << (flagShift + 5U));
+    const uint32_t errorMask =
+        (1U << (flagShift + 3U)) |   // TEIF
+        (1U << (flagShift + 2U)) |   // DMEIF
+        (1U << (flagShift + 0U));     // FEIF
 
+    const uint32_t flags = *statusReg;
+    *config.rxFcrReg = config.rxClearMask;
 
-
-
-void SpiDriver::Handle_DMA_RX_IRQ() {
-    // RX is a pure data worker. We clear flags and leave CR alone.
-    // The STM32 hardware automatically disables the stream when NDTR hits 0.
-	*config.rxFcrReg = config.rxClearMask; // Instant hardware clear
-	 RxCpltCallback();
+    if (flags & tcMask)
+    {
+        // RX stream is automatically disabled when NDTR reaches zero.
+    	m_state = SpiState::READY; // Reset state before user callback executes
+        RxCpltCallback();
+    }
+    else if (flags & errorMask)
+    {
+        config.rxStream->CR &= ~DMA_SxCR_EN;
+        m_state = SpiState::READY;
+        ErrorCallback();
+    }
 }
 
-void SpiDriver::Handle_DMA_TX_IRQ() {
-    uint32_t lisr = config.dmaBase->LISR;
-    *config.txFcrReg = config.txClearMask; // Instant hardware clear
+void SpiDriver::Handle_DMA_TX_IRQ()
+{
+    // Stream 5 is on HISR for SPI3, but derive the correct status register
+    // from the configured HIFCR/LIFCR pointer so the driver stays generic.
+    volatile uint32_t* statusReg =
+        (config.txFcrReg == &config.dmaBase->HIFCR)
+            ? &config.dmaBase->HISR
+            : &config.dmaBase->LISR;
 
-    if (__builtin_expect(lisr & DMA_LISR_TCIF3, 1)) {
-    	config.txStream->CR &= ~DMA_SxCR_EN; // Explicit shutdown
-    	SpiState previousState = m_state;  // Capture the operational context before clearing the state
-    	while (config.spi->SR & SPI_SR_BSY);
-    	m_state = SpiState::READY;
-    	// Route to the correct callback based on what the driver was doing
-    	if (previousState == SpiState::BUSY_TX_RX) {
-    		TxRxCpltCallback();
-    	}
-    	else if (previousState == SpiState::BUSY_TX) {
-    		TxCpltCallback();
-    	}
+    const uint32_t flagShift = __builtin_ctz(config.txClearMask);
+    const uint32_t tcMask    = (1U << (flagShift + 5U));
+    const uint32_t errorMask =
+        (1U << (flagShift + 3U)) |   // TEIF
+        (1U << (flagShift + 2U)) |   // DMEIF
+        (1U << (flagShift + 0U));     // FEIF
 
-    } else {
-    	// Fallback for DMA Errors (TEIF, DMEIF)
+    const uint32_t flags = *statusReg;
+    *config.txFcrReg = config.txClearMask;
+
+    if (flags & tcMask)
+    {
+        config.txStream->CR &= ~DMA_SxCR_EN;
+
+        SpiState previousState = m_state;
+
+        // DMA TC can occur while the final SPI bit is still shifting.
+        while (config.spi->SR & SPI_SR_BSY);
+
+        m_state = SpiState::READY;
+
+        if (previousState == SpiState::BUSY_TX_RX)
+        {
+            // RX DMA is active in BUSY_TX_RX, so it drains SPI->DR.
+            TxRxCpltCallback();
+        }
+        else if (previousState == SpiState::BUSY_TX)
+        {
+            TxCpltCallback();
+        }
+    }
+    else if (flags & errorMask)
+    {
         config.txStream->CR &= ~DMA_SxCR_EN;
         config.rxStream->CR &= ~DMA_SxCR_EN;
-        *config.rxFcrReg = config.rxClearMask; // Clean RX stream on unexpected fault
+        *config.rxFcrReg = config.rxClearMask;
         m_state = SpiState::READY;
         ErrorCallback();
     }
@@ -317,7 +364,6 @@ __attribute__((weak)) void SpiDriver::ErrorCallback() {
 /==============    SPI1 INSTANCE CONFIGURATION   =================
 /================================================================= */
 
-
 // Forward declaration of local low-level pin mapping function
 void Spi1_LowLevelInit(void);
 
@@ -335,7 +381,6 @@ constexpr SpiHardwareConfig Spi1Config {
 	&DMA2->LIFCR, (0x3DU << 22), // TX: Stream 3 is at bit 22 in LIFCR
 	&DMA2->LIFCR, (0x3DU << 16)  // RX: Stream 2 is at bit 16 in LIFCR
 };
-
 
 // Global Instance Allocation (Instantiates the extern declared in the header)
 SpiDriver spi1(Spi1Config);
@@ -387,5 +432,84 @@ extern "C" {
 
     void DMA2_Stream3_IRQHandler(void) {
         spi1.Handle_DMA_TX_IRQ();
+    }
+}
+
+
+
+/*================================================================
+/==============    SPI3 INSTANCE CONFIGURATION   =================
+/================================================================= */
+
+// Forward declaration of local low-level pin mapping function
+void Spi3_LowLevelInit(void);
+
+// Compile-time hardware parameters (internal to this source file)
+constexpr SpiHardwareConfig Spi3Config {
+    SPI3,                    // .spi
+    DMA1_Stream0,            // .rxStream
+    DMA1_Stream5,            // .txStream
+    0,                       // .dmaChannel
+    DMA1,                    // .dmaBase
+    SPI3_IRQn,               // .spiIrq
+    DMA1_Stream0_IRQn,       // .rxDmaIrq
+    DMA1_Stream5_IRQn,       // .txDmaIrq
+    Spi3_LowLevelInit,       // .lowLevelInit
+
+    &DMA1->HIFCR, (0x3DU << 6), // TX: Stream 5
+    &DMA1->LIFCR, (0x3DU << 0)   // RX: Stream 0
+};
+
+
+// Global Instance Allocation (Instantiates the extern declared in the header)
+SpiDriver spi3(Spi3Config);
+
+void Spi3_LowLevelInit(void)
+{
+    // Enable GPIO and SPI3 clocks
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN;
+    RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+
+    // PC10 = SCK, PC11 = MISO, PC12 = MOSI, AF6
+    GPIOC->MODER &= ~((3 << GPIO_MODER_MODER10_Pos) |
+                      (3 << GPIO_MODER_MODER11_Pos) |
+                      (3 << GPIO_MODER_MODER12_Pos));
+
+    GPIOC->MODER |=  ((2 << GPIO_MODER_MODER10_Pos) |
+                      (2 << GPIO_MODER_MODER11_Pos) |
+                      (2 << GPIO_MODER_MODER12_Pos));
+
+    GPIOC->AFR[1] &= ~((0xF << GPIO_AFRH_AFSEL10_Pos) |
+                       (0xF << GPIO_AFRH_AFSEL11_Pos) |
+                       (0xF << GPIO_AFRH_AFSEL12_Pos));
+
+    GPIOC->AFR[1] |=  ((6 << GPIO_AFRH_AFSEL10_Pos) |
+                       (6 << GPIO_AFRH_AFSEL11_Pos) |
+                       (6 << GPIO_AFRH_AFSEL12_Pos));
+
+    GPIOC->OSPEEDR |= (3 << GPIO_OSPEEDR_OSPEED10_Pos) |
+                      (3 << GPIO_OSPEEDR_OSPEED11_Pos) |
+                      (3 << GPIO_OSPEEDR_OSPEED12_Pos);
+
+    // PD0 = W5500 CS
+    GPIOD->MODER &= ~(3 << GPIO_MODER_MODER0_Pos);
+    GPIOD->MODER |=  (1 << GPIO_MODER_MODER0_Pos);
+    GPIOD->BSRR = GPIO_BSRR_BS0;
+
+    // PD1 = W5500 RESET
+    GPIOD->MODER &= ~(3 << GPIO_MODER_MODER1_Pos);
+    GPIOD->MODER |=  (1 << GPIO_MODER_MODER1_Pos);
+    GPIOD->BSRR = GPIO_BSRR_BR1;
+}
+
+
+// C-Compatible Hardware Interrupt Vector Table Routing
+extern "C" {
+    void DMA1_Stream0_IRQHandler(void) {
+        spi3.Handle_DMA_RX_IRQ();
+    }
+
+    void DMA1_Stream5_IRQHandler(void) {
+        spi3.Handle_DMA_TX_IRQ();
     }
 }
