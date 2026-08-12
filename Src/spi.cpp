@@ -269,13 +269,20 @@ void SpiDriver::Handle_DMA_RX_IRQ()
 
     if (flags & tcMask)
     {
-        // RX stream is automatically disabled when NDTR reaches zero.
-    	m_state = SpiState::READY; // Reset state before user callback executes
-        RxCpltCallback();
+    	// RX stream is automatically disabled when NDTR reaches zero.
+    	if (m_state == SpiState::BUSY_RX) //
+    		// For Transmit_DMA(), Rx is only a dummy drain so we don't call
+    		// the relatd callback upon completion
+    		// For TransmitReceive_DMA(), RX is receiving data,
+    		// but TX determines when the complete SPI transaction is physically finished
+    	{
+    		m_state = SpiState::READY;  // Reset state before user callback executes
+    		RxCpltCallback();
+    	}
     }
     else if (flags & errorMask)
     {
-        config.rxStream->CR &= ~DMA_SxCR_EN;
+    	config.rxStream->CR &= ~DMA_SxCR_EN;
         m_state = SpiState::READY;
         ErrorCallback();
     }
@@ -490,16 +497,6 @@ void Spi3_LowLevelInit(void)
     GPIOC->OSPEEDR |= (3 << GPIO_OSPEEDR_OSPEED10_Pos) |
                       (3 << GPIO_OSPEEDR_OSPEED11_Pos) |
                       (3 << GPIO_OSPEEDR_OSPEED12_Pos);
-
-    // PD0 = W5500 CS
-    GPIOD->MODER &= ~(3 << GPIO_MODER_MODER0_Pos);
-    GPIOD->MODER |=  (1 << GPIO_MODER_MODER0_Pos);
-    GPIOD->BSRR = GPIO_BSRR_BS0;
-
-    // PD1 = W5500 RESET
-    GPIOD->MODER &= ~(3 << GPIO_MODER_MODER1_Pos);
-    GPIOD->MODER |=  (1 << GPIO_MODER_MODER1_Pos);
-    GPIOD->BSRR = GPIO_BSRR_BR1;
 }
 
 

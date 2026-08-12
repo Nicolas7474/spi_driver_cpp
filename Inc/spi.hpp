@@ -126,9 +126,9 @@ BareM_Status SpiDriver::Receive_DMA(std::span<uint8_t> rxData) {
 	// Fast guard: Compiler assumes this if statement is false
 	// and places the hot registration blitting directly in the pipeline stream.
 	if (__builtin_expect(m_state != SpiState::READY, 0)) {
-		uint32_t timeout_ct = GetSysTick() + 10;
+		const uint32_t startTick = GetSysTick();
 		while (m_state != SpiState::READY) {
-			if (GetSysTick() > timeout_ct) {
+			 if ((GetSysTick() - startTick) >= 10) {
 				m_state = SpiState::READY; // Force reset driver state
 				return BareM_Status::TIMEOUT;
 			}
@@ -223,9 +223,9 @@ BareM_Status SpiDriver::TransmitReceive_DMA(std::span<const uint8_t> txData, std
 	// Fast guard: Compiler assumes this if statement is false
 	// and places the hot registration blitting directly in the pipeline stream.
 	if (__builtin_expect(m_state != SpiState::READY, 0)) {
-		uint32_t timeout_ct = GetSysTick() + 10;
+		const uint32_t startTick = GetSysTick();
 		while (m_state != SpiState::READY) {
-			if (GetSysTick() > timeout_ct) {
+			 if ((GetSysTick() - startTick) >= 10) {
 				m_state = SpiState::READY; // Force reset driver state
 				return BareM_Status::TIMEOUT;
 			}
@@ -309,10 +309,10 @@ BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeo
 		}
 	} else {
 		// Fallback: The programmer made a mistake or a background task is running
-		uint32_t timeout_ct = GetSysTick() + timeoutMs;
+		const uint32_t startTick = GetSysTick();
 		// We wait/block right here until the previous transaction clears up or times out
 		while (m_state != SpiState::READY) {
-			if (GetSysTick() > timeout_ct) {
+			if ((GetSysTick() - startTick) >= timeoutMs) {
 				return BareM_Status::TIMEOUT;
 			}
 		}
@@ -339,9 +339,9 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
 		}
 	} else {
         // FALLBACK: The programmer made a mistake or a background task is running
-        uint32_t timeout_ct = GetSysTick() + timeoutMs;
+		const uint32_t startTick = GetSysTick();
         while (m_state != SpiState::READY) {
-            if (GetSysTick() > timeout_ct) {
+        	if ((GetSysTick() - startTick) >= timeoutMs) {
                 return BareM_Status::TIMEOUT;
             }
         }
