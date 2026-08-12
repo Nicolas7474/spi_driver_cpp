@@ -26,7 +26,6 @@ int main (void)
 	SysTick_Init();
 
 	GPIO_Config();
-	//InterruptGPIO_Config();
 
 	GPIOD->ODR^=GPIO_ODR_OD4; // turns off orange led
 	NBdelay_ms(100);
