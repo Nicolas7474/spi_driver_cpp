@@ -1,4 +1,0 @@
-../Src/myConfig.c:6:6:activateFPU	1
-../Src/myConfig.c:22:6:SysClockConfig	8
-../Src/myConfig.c:100:6:GPIO_Config	1
-../Src/myConfig.c:138:6:InterruptGPIO_Config	1

@@ -1,7 +1,0 @@
-"./Src/main.o"
-"./Src/myConfig.o"
-"./Src/spi.o"
-"./Src/syscalls.o"
-"./Src/sysmem.o"
-"./Src/timers.o"
-"./Startup/startup_stm32f469nihx.o"
