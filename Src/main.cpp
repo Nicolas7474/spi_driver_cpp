@@ -15,7 +15,7 @@
 //#include "main.h"
 #include "myConfig.h"
 #include "timers.h"
-#include "Flash_W25Q.h"
+//#include "Flash_W25Q.h"
 uint8_t buf[10] = {0};
 
 int main (void)
@@ -26,7 +26,7 @@ int main (void)
 	SysTick_Init();
 
 	GPIO_Config();
-	InterruptGPIO_Config();
+	//InterruptGPIO_Config();
 
 	GPIOD->ODR^=GPIO_ODR_OD4; // turns off orange led
 	NBdelay_ms(100);
@@ -66,20 +66,20 @@ int main (void)
 //
 //		NBdelay_ms(1);
 
-//		spi1.CS1_Low();
-//		spi1.Transmit_DMA(voue);
-//		spi1.Receive_DMA(voue2);
-//		while(spi1.GetState() != SpiState::READY);
-//		spi1.CS1_High();
-
-//		NBdelay_ms(1);
-//
 		spi1.CS1_Low();
-		spi1.TransmitReceive_DMA(vue, vue2);
+		spi1.Transmit_DMA(voue);
+		spi1.Receive_DMA(voue2);
 		while(spi1.GetState() != SpiState::READY);
 		spi1.CS1_High();
 
-		NBdelay_ms(500);
+//		NBdelay_ms(1);
+//
+//		spi1.CS1_Low();
+//		spi1.TransmitReceive_DMA(vue, vue2);
+//		while(spi1.GetState() != SpiState::READY);
+//		spi1.CS1_High();
+
+		NBdelay_ms(1000);
 
 	}
 

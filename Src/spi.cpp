@@ -9,11 +9,15 @@
 	   - The real incoming data will always be offset in your receive buffer by the length of your command header !
 	   - Allocating a massive array to send only a few command bytes (ex: reading a Flash sector) is a massive waste of precious RAM.
 	   -> Use TransmitReceive_DMA only for small control messages (like reading a 3-byte Unique ID) where creating a tiny matching array is trivial
-	  	  and don't forget to subtract the first garbage bytes (ex: std::span<uint8_t> clean_payload = std::span(raw_buffer).subspan(3);)
-*	- Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads) to keep the RAM completely clean.
+	  	  and don't forget to subtract the first garbage bytes ( ex: std::span(raw_buffer).subspan(3); )
+
+*	- Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads) to avoid a massive buffer allocation on the stack
+*	  Unlike the combined function, using separate Tx and Rx leaves a gap of about 1,5µs between both functions (software/DMA setup overhead)
+*
 *	- Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
-*	- Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
+*	  Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
 *	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
+*
 *	- DMA functions have been kept non-blocking, so check while(spi1.GetState() != SpiState::READY); before pulling CS low or high again
 *	- Weak Callback functions available for Tx/Rx/TxRx complete and Errors
 *	- GPIO used (STM32F446): MISO = ; MOSI = ; SCK = ; NSS =
