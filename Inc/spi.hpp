@@ -325,16 +325,12 @@ BareM_Status SpiDriver::Transmit(std::span<const uint8_t> txData, uint32_t timeo
 	return Transmit_MainBody(txData, timeoutMs);  // Hand off the heavy lifting to the single, shared function in Flash
 }
 
+
 __attribute__((always_inline)) inline
 BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs)
 {
-
-    // VALIDATION
-    if (__builtin_expect(txData.empty() && rxData.empty(), 0))
-        return BareM_Status::ERROR;
-
-    // WAIT FOR SPI DRIVER TO BECOME AVAILABLE
-    if (__builtin_expect(m_state != SpiState::READY, 0))
+    // READY
+    if (__builtin_expect(m_state != SpiState::READY, 1))
     {
         const uint32_t waitStart = GetSysTick();
 
@@ -345,100 +341,85 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
         }
     }
 
-    // ================================================================
-    // DETERMINE TOTAL NUMBER OF SPI CLOCKED BYTES    //
-    // Equal TX/RX sizes:
-    //     TX and RX are simultaneous for the whole transfer.
-    // Different TX/RX sizes:
-    //     TX bytes are sent first, then dummy bytes generate the
-    //     remaining clocks needed to receive the RX payload.
-    // Example:
-    //     TX = 3 bytes, RX = 1 byte
-    //     SPI clocks = 4 bytes
-    //     RX byte #1, #2, #3 = command/header garbage
-    //     RX byte #4         = actual payload
-    // ================================================================
+    if (__builtin_expect(txData.empty() && rxData.empty(), 0))
+        return BareM_Status::ERROR;
+
+
+    // FIRST BYTE — IMMEDIATE HARDWARE KICK
+    const uint32_t txSize = static_cast<uint32_t>(txData.size());
+    const uint32_t rxSize = static_cast<uint32_t>(rxData.size());
+    config.spi->DR = txSize ? txData[0] : 0x00;
+
+
+    // NOW INITIALIZE THE SOFTWARE STATE
+    m_state = SpiState::BUSY_TX_RX;
+
+    const uint32_t startTick = GetSysTick();
 
     uint32_t totalSize;
-    uint32_t skipRxBytes = 0;
+    uint32_t skipRxBytes;
 
-    if (!txData.empty() && !rxData.empty() && txData.size() != rxData.size())
+    if (txSize && rxSize && txSize != rxSize)
     {
-        totalSize = static_cast<uint32_t>(txData.size() + rxData.size());
-        skipRxBytes = static_cast<uint32_t>(txData.size());
+        totalSize = txSize + rxSize;
+        skipRxBytes = txSize;
     }
     else
     {
-        totalSize = static_cast<uint32_t>((txData.size() > rxData.size()) ? txData.size() : rxData.size());
+        totalSize = (txSize > rxSize) ? txSize : rxSize;
+        skipRxBytes = 0;
     }
 
-    // START TRANSFER
-    m_state = SpiState::BUSY_TX_RX;
-    const uint32_t startTick = GetSysTick();
-    // Number of bytes already transmitted.
-    uint32_t txBytesSent = 0;
-
-    // Number of SPI bytes already received.
+    // Byte 0 has already been written to DR.
+    uint32_t txBytesSent = 1;
     uint32_t rxClocksCounted = 0;
 
-    // Number of actual RX payload bytes still wanted.
-    uint32_t realRxLeft = static_cast<uint32_t>(rxData.size());
+    uint32_t realTxLeft = (txSize > 1) ? (txSize - 1) : 0;
+    uint32_t realRxLeft = rxSize;
 
-    // Number of initial RX bytes to discard.
-    uint32_t rxBytesToSkip = skipRxBytes;
+    const uint8_t* txPtr = (txSize > 1) ? txData.data() + 1 : nullptr;
 
-    // Dummy destination for transfers where the caller doesn't request RX data.
     uint8_t dummyRx = 0;
     uint8_t* rxPtr = rxData.empty() ? &dummyRx : rxData.data();
 
-    // ================================================================
-    // STANDARD FULL-DUPLEX POLLING LOOP
-    // No special first-byte kick.
-    // TX and RX are serviced independently. As soon as TXE becomes
-    // available, the next byte is written to DR.
-    // This is the important part for eliminating the artificial gap
-    // between byte #1 and byte #2.
-    // ================================================================
 
+    // NORMAL INTERLEAVED SPI ENGINE
     while (rxClocksCounted < totalSize)
     {
-
-        // TRANSMIT
-        // Keep the SPI TX register supplied as soon as possible.
+        // -------- TX ----------
         if (txBytesSent < totalSize && (config.spi->SR & SPI_SR_TXE))
         {
-            if (txBytesSent < txData.size())
+            if (realTxLeft)
             {
-                // Send actual application data.
-                config.spi->DR = txData[txBytesSent];
+                config.spi->DR = *txPtr++;
+                --realTxLeft;
             }
             else
             {
-                // TX data exhausted. Continue generating clocks for RX.
-                config.spi->DR = 0x00;
+                config.spi->DR = 0x00; // Generate clocks for RX-only remainder
             }
+
             ++txBytesSent;
         }
 
-        // RECEIVE
-        // Every RXNE corresponds to one completed SPI byte.
+        // ---------- RX -----------
         if (config.spi->SR & SPI_SR_RXNE)
         {
-            const uint8_t receivedByte = static_cast<uint8_t>(config.spi->DR);
+            const uint8_t received = static_cast<uint8_t>(config.spi->DR);
 
-            // Discard command/header bytes when TX and RX lengths
-            // represent different phases of one SPI transaction.
-            if (rxBytesToSkip > 0)
+            if (skipRxBytes)
             {
-                --rxBytesToSkip;
+                --skipRxBytes;
             }
-            else if (realRxLeft > 0)
+            else if (realRxLeft)
             {
-                *rxPtr++ = receivedByte;
+                *rxPtr++ = received;
                 --realRxLeft;
             }
+
             ++rxClocksCounted;
         }
+
 
         // TIMEOUT
         if ((GetSysTick() - startTick) > timeoutMs)
@@ -448,7 +429,7 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
         }
     }
 
-    // WAIT UNTIL THE PHYSICAL SPI SHIFT REGISTER IS FINISHED
+    // WAIT FOR THE LAST BIT TO LEAVE THE SHIFT REGISTER
     while (config.spi->SR & SPI_SR_BSY)
     {
         if ((GetSysTick() - startTick) > timeoutMs)
@@ -458,8 +439,8 @@ BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::sp
         }
     }
 
-    // TRANSFER COMPLETE
     m_state = SpiState::READY;
+
     return BareM_Status::OK;
 }
 
