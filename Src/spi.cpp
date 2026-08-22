@@ -21,7 +21,7 @@
 *
 *	 IMPORTANT: This driver is timing-sensitive and MUST NOT be compiled without optimization.
 	 At -O0, the call path to Transmit() introduces ~1.1 µs before SPI activity.
-	 With optimization enabled, this drops to ~240 ns on STM32F446. Keep Og or better -O1 enabled.
+	 With optimization enabled, this drops to ~240 ns on STM32F446. Keep Og or better -O1 / -O2 enabled.
 */
 
 #include <spi.hpp>
