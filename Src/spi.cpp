@@ -9,18 +9,19 @@
 	   - The real incoming data will always be offset in your receive buffer by the length of your command header !
 	   - Allocating a massive array to send only a few command bytes (ex: reading a Flash sector) is a massive waste of precious RAM.
 	   -> Use TransmitReceive_DMA only for small control messages (like reading a 3-byte Unique ID) where creating a tiny matching array is trivial
-	  	  and don't forget to subtract the first garbage bytes ( ex: std::span(raw_buffer).subspan(3); )
-
-*	- Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads) to avoid a massive buffer allocation on the stack
-*	  Unlike the combined function, using separate Tx and Rx leaves a gap of about 1,5µs between both functions (software/DMA setup overhead)
-*
+	  	  and don't forget to subtract the first garbage bytes (ex: std::span<uint8_t> clean_payload = std::span(raw_buffer).subspan(3);)
+*	- Use Transmit_DMA followed by Receive_DMA for heavy payload operations (like 4KB sector reads) to keep the RAM completely clean.
 *	- Polling is slightly faster (1µs less latency than equivalent DMA functions at 11.25Mhz) - best for small transfers if blocking is not a problem
-*	  Using Polling TransmitReceive() is actually slightly slower than combining the separate Transmit() + Receive() functions !
-*	   But unlike DMA you don't need to have equal sizes of buffers for Rx and Tx.
-*
+*	- Using Polling TransmitReceive() may be ? actually slightly slower than combining the separate Transmit() + Receive() functions !
+*	  	Unlike the DMA function, polling TransmitReceive() supports different TX and RX buffer sizes. SPI remains full-duplex; received bytes
+ 	  	that are not represented in the RX buffer are simply discarded.
 *	- DMA functions have been kept non-blocking, so check while(spi1.GetState() != SpiState::READY); before pulling CS low or high again
 *	- Weak Callback functions available for Tx/Rx/TxRx complete and Errors
 *	- GPIO used (STM32F446): MISO = ; MOSI = ; SCK = ; NSS =
+*
+*	 IMPORTANT: This driver is timing-sensitive and MUST NOT be compiled without optimization.
+	 At -O0, the call path to Transmit() introduces ~1.1 µs before SPI activity.
+	 With optimization enabled, this drops to ~240 ns on STM32F446. Keep Og or better -O1 enabled.
 */
 
 #include <spi.hpp>
@@ -173,6 +174,146 @@ BareM_Status SpiDriver::Transmit_MainBody(std::span<const uint8_t> txData, uint3
     m_state = SpiState::READY;
     return BareM_Status::OK;
 }
+
+
+BareM_Status SpiDriver::TransmitReceive(std::span<const uint8_t> txData, std::span<uint8_t> rxData, uint32_t timeoutMs)
+{
+
+    // READY
+    if (__builtin_expect(m_state != SpiState::READY, 0))
+    {
+        const uint32_t waitStart = GetSysTick();
+
+        while (m_state != SpiState::READY)
+        {
+            if ((GetSysTick() - waitStart) >= timeoutMs)
+                return BareM_Status::TIMEOUT;
+        }
+    }
+
+    // FIRST BYTE — fastest possible normal path
+    const uint32_t txSize = txData.size();
+
+    if (__builtin_expect(txSize == 0, 0))
+    {
+        // RX-only transfer
+        if (__builtin_expect(rxData.empty(), 0))
+            return BareM_Status::ERROR;
+
+        config.spi->DR = 0x00;
+    }
+    else
+    {
+        // Normal TX / TX+RX
+        config.spi->DR = txData[0];
+    }
+
+    // Remaining setup
+
+    const uint32_t rxSize = rxData.size();
+
+    m_state = SpiState::BUSY_TX_RX;
+
+    volatile const uint32_t startTick = GetSysTick();
+
+    uint32_t totalSize;
+    uint32_t skipRxBytes;
+
+    if (txSize && rxSize && txSize != rxSize)
+    {
+        totalSize = txSize + rxSize;
+        skipRxBytes = txSize;
+    }
+    else
+    {
+        totalSize = (txSize > rxSize) ? txSize : rxSize;
+        skipRxBytes = 0;
+    }
+
+    // Byte 0 has already been written to DR
+
+    uint32_t txBytesSent = 1;
+    uint32_t rxClocksCounted = 0;
+
+    uint32_t realTxLeft = (txSize > 1) ? (txSize - 1) : 0;
+    uint32_t realRxLeft = rxSize;
+
+    const uint8_t* txPtr = (txSize > 1) ? txData.data() + 1 : nullptr;
+
+    uint8_t dummyRx = 0;
+    uint8_t* rxPtr = rxData.empty() ? &dummyRx : rxData.data();
+
+
+
+    // NORMAL INTERLEAVED SPI ENGINE
+    while (rxClocksCounted < totalSize)
+    {
+
+        // TX
+        if (txBytesSent < totalSize &&
+            (config.spi->SR & SPI_SR_TXE))
+        {
+            if (realTxLeft)
+            {
+                config.spi->DR = *txPtr++;
+                --realTxLeft;
+            }
+            else
+            {
+                // Generate clocks for RX-only remainder
+                config.spi->DR = 0x00;
+            }
+
+            ++txBytesSent;
+        }
+
+        // RX
+        if (config.spi->SR & SPI_SR_RXNE)
+        {
+            const uint8_t received = static_cast<uint8_t>(config.spi->DR);
+
+            if (skipRxBytes)
+            {
+                --skipRxBytes;
+            }
+            else if (realRxLeft)
+            {
+                *rxPtr++ = received;
+                --realRxLeft;
+            }
+
+            // IMPORTANT:
+            // On the final received byte, leave the loop
+            // immediately instead of going back through the
+            // while-condition once more.
+            if (++rxClocksCounted == totalSize)
+                break;
+        }
+
+         // TIMEOUT
+        if ((GetSysTick() - startTick) > timeoutMs)
+        {
+            m_state = SpiState::READY;
+            return BareM_Status::TIMEOUT;
+        }
+    }
+
+    // LAST BIT MUST LEAVE THE SHIFT REGISTER
+    while (config.spi->SR & SPI_SR_BSY)
+    {
+        if ((GetSysTick() - startTick) > timeoutMs)
+        {
+            m_state = SpiState::READY;
+            return BareM_Status::TIMEOUT;
+        }
+    }
+
+    // SUCCESS
+    m_state = SpiState::READY;
+
+    return BareM_Status::OK;
+}
+
 
 
 void SpiDriver::Handle_DMA_RX_IRQ()
